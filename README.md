@@ -8,7 +8,7 @@ Questo repository contiene il progetto per il corso di Ingegneria del Software, 
 
 ## 👥 Membri del Team
 
-* **Giuseppe Paolo Esposito** - ([Kiyo](https://github.com/kiyowastakenn))
+* **Giuseppe Paolo Esposito** - ([Kiyo](https://github.com/kiyx))
 * **Virginia Antonia Esposito** - ([Virginia](https://github.com/virginiaesposito))
 
 ---

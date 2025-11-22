@@ -53,7 +53,7 @@ CREATE TABLE Issue
     Titolo VARCHAR(200) NOT NULL,
     Descrizione TEXT NOT NULL,
     Tipo Tipo_Issue NOT NULL,
-    Stato Stato_Issue NOT NULL,
+    Stato Stato_Issue NOT NULL DEFAULT 'Todo',
     IsArchiviato BOOLEAN DEFAULT FALSE,
     Immagine VARCHAR(255),
     Priorita Tipo_Priorita,

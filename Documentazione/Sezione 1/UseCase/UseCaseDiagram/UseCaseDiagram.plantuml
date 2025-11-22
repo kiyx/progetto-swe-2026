@@ -1,22 +1,14 @@
-@startuml UseCaseDiagram
-' Titolo del diagramma
+@startuml UseCaseDiagram_BugBoard26
+!theme plain
 
-' ==============================================
-' 1. CONFIGURAZIONE MOTORE
-' ==============================================
 left to right direction
 skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam handwritten false
 skinparam linetype polyline
-
-' Spaziatura aumentata per evitare incroci
 skinparam nodesep 50
 skinparam ranksep 100
 
-' ==============================================
-' 2. STILE GRAFICO
-' ==============================================
 skinparam defaultFontName "Segoe UI"
 skinparam defaultFontSize 13
 skinparam defaultFontColor #444444
@@ -57,17 +49,11 @@ skinparam actor<<Team Manager>> {
     FontColor #9B59B6
 }
 
-' ==============================================
-' 3. DEFINIZIONE ELEMENTI (Sequenziale)
-' ==============================================
-
-' --- LIVELLO 1: GUEST ---
 actor :GenericUser: as GenUser <<Guest>>
 package "Accesso" as PkgAuth #F7F9F9 {
     usecase "Autenticati" as UC_Auth
 }
 
-' --- LIVELLO 2: DEVELOPER ---
 actor :LoggedUser: as LogUser <<Developer>>
 package "Gestione Issues" as PkgIssues #EBF5FB {
     usecase "CreaIssue" as UC_Crea
@@ -79,7 +65,6 @@ package "Gestione Issues" as PkgIssues #EBF5FB {
     UC_View <.. UC_Filter : <<extend>>
 }
 
-' --- LIVELLO 3: MANAGER ---
 actor :Admin: as Admin <<Team Manager>>
 package "Gestione Admin(Team Manager)" as PkgAdmin #F4ECF7 {
     package "Gestione Team" as GrpStruct #White {
@@ -96,9 +81,6 @@ package "Gestione Admin(Team Manager)" as PkgAdmin #F4ECF7 {
     }
 }
 
-' ==============================================
-' 4. COLLEGAMENTI LOGICI (FRECCE)
-' ==============================================
 GenUser --> UC_Auth
 
 LogUser --> UC_Crea
@@ -115,23 +97,14 @@ Admin --> UC_AssIss
 Admin --> UC_Change
 Admin --> UC_Archive
 
-' Ereditarietà (Messa qui per non rompere il layout)
 LogUser <|-- Admin
 
-' ==============================================
-' 5. SCHELETRO RIGIDO (FIX DEFINITIVO)
-' ==============================================
-' Usiamo [hidden]down-> per forzare la direzione verticale ESPLICITA
-
-' A. Colonna Attori (Verticale)
 GenUser -[hidden]down-> LogUser
 LogUser -[hidden]down-> Admin
 
-' B. Colonna Pacchetti (Verticale)
 PkgAuth -[hidden]down-> PkgIssues
 PkgIssues -[hidden]down-> PkgAdmin
 
-' C. Allineamento Orizzontale (Attore -> Pacchetto)
 GenUser -[hidden]right-> PkgAuth
 LogUser -[hidden]right-> PkgIssues
 Admin   -[hidden]right-> PkgAdmin

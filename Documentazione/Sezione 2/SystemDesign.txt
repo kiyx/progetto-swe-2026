@@ -1,0 +1,41 @@
+2.a
+
+L'architettura del sistema BugBoard26 è stata progettata come un sistema distribuito Client-Server, composto da
+due macro-componenti logicamente e fisicamente disaccoppiate che comunicano attraverso la rete tramite protocollo HTTP
+seguendo le Restful API.
+Questo garantisce la totale indipendenza tra il Frontend (Presentation) e il Backend(Logica) permettendo lo sviluppo, il testing
+e il deploy autonomo delle due parti. 
+
+Il backend è il cuore del sistema ed è il responsabile della gestione della logica di business e persistenza dei dati.
+L'architettura interna del backend segue il pattern Layered Architecture, implementando il modello di analisi
+Boundary-Control-Entity (BCE) dividendo il sistema in 3 parti principali:
+Boundary Layer (Interfaccia API): Funge da interfaccia verso l'esterno ed è implementato tramite Controller REST.
+Si occupa di ricevere richieste HTTP, validare i dati in ingresso trasferiti tramite Data Transfer Objects (DTO) e 
+restituire le risposte al client in formato JSON. Non contiene alcuna logica di business.
+Control Layer (Servizi): Implementato tramite le classi Service, questo livello incapsula la logica applicativa del sistema e agisce
+da coordinatore tra i controller e il livello di persistenza/entity.
+Entity Layer (Model/Data Access): Costituito da Repository e dalle entità di dominio, gestisce l'interazione col database PostgreSQL.
+
+Il frontend, realizzato come applicazione Java desktop, adotta il pattern architetturale MVVM (Model - View - ViewModel).
+Questa scelta è stata effettuata per disaccoppiare l'interfaccia utente(definita tramite FXML) dalla logica di presentazione
+e dai dati. Il ViewModel agisce da mediatore, esponendo i dati e i comandi alla View tramite Data Binding e comunica con il backend
+tramite un livello di servizio (Service Gateway). Ciò permette l'aggiornamento dell'interfaccia utente in modo reattivo, senza che
+la grafica debba conoscere i dettagli implementativi delle chiamate di rete.
+
+2.b
+
+Java & SpringBoot (Backend): La scelta del framework SpringBoot è motivata dalla sua capacità di implementare architetture modulari,
+fornendo supporto nativo per la creazione di API RESTful e per la Dependency Injection. Questo facilita enormemente la scrittura di  codice
+testabile, requisito fondamentale per la fase di testing automatico che verrà implementata utilizzando JUnit e Mockito per i test di unità isolati.
+
+JavaFX (Frontend): Per l'interfaccia utente è stato scelto JavaFX in quanto permette lo sviluppo di app desktop moderne e mantiene
+una separazione tra la definizione del layout (file FXML) e la logica di controllo.
+
+Docker (Containerizzazione): Il backend è stato progettato per essere distribuito tramite container. Questo garantisce
+che l'ambiente di esecuzione sia isolato e replicabile, eliminando problemi di compatibilità tra le macchine di sviluppo e 
+l'ambiente di produzione simulato.
+
+Supabase (Persistenza): Per la base di dati è stato scelto Supabase, utilizzato esclusivamente come fornitore di un 
+database relazionale PostgreSQL. In conformità con i vincoli, non vengono utilizzati servizi MBaaS proprietari che sostituiscono
+la logica applicativa. L'interazione avviene tramite connessioni JDBC standard gestite dal Backend SpringBoot, garantendo
+che la logica rimanga interamente sotto il controllo del codice sorgente sviluppato. 

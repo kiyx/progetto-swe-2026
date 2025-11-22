@@ -1,0 +1,13 @@
+Issue: Segnalazione creata da un developer per documentare un problema, porre un quesito o richiedere l'inserimento di una funzionalità. 
+Bug: Tipo di issue che indica un errore o un malfunzionamento del software
+Feature: Tipo di issue che rappresenta una proposta di aggiunta di una nuova funzionalità 
+Documentation: Tipo di issue che riguarda errori o mancanze nella documentazione del progetto
+Question: Tipo di issue utilizzata per porre quesiti o chiedere chiarimenti sul progetto.
+Priorità: Livello di urgenza associato a una issue, delinea la velocità di intervento necessaria
+Stato: Indica la fase corrente della issue nel suo ciclo di esistenza (todo, risolta, etc..)
+Admin: Utente con privilegi elevati, può creare nuovi progetti(team), assegnare issue a ogni membro, gestire gli utenti, archiviare bug e creare nuove utenze. Può essere considerato come un project manager, che gestisce il progetto e assegna le issue ai vari utenti del team
+GenericUser: Utente non ancora loggato, può solo effettuare il login
+LoggedUser: Utente con privilegi base che si occupa di visualizzare, creare e risolvere Issues assegnategli dall'admin del team, può essere considerato come un developer 
+Team: Gruppo di utenti loggati responsabili di un progetto che possono segnalare e risolvere issues, gestito da un admin
+Filtro (Filter): Funzione che consente di individuare issue in base a tipologia, stato, priorità o altri parametri rilevanti
+Archivio (Archive): Sezione in cui le issue archiviate non sono più visibili nelle liste principali, ma restano consultabili da una pagina dedicata. Solo l’admin può archiviare una issue.

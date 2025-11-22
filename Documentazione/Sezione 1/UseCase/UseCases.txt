@@ -1,0 +1,18 @@
+NON FUNZIONALI: 
+- I dati degli utenti devono essere preservati in integrità e segretezza. 
+- Il sistema deve essere realizzato con un linguaggio object-oriented
+- Il sistema deve essere distribuito (backend / frontend)
+
+FUNZIONALI: 
+- Autenticazione utente: Il sistema deve permettere agli utenti di autenticarsi tramite email e password
+- Gestione amministratori: L’amministratore può creare nuovi account, definire ruolo (normale o amministratore)
+- Creazione di una issue: Ogni utente autenticato può segnalare una issue con titolo e descrizione.
+- Tipologia issue: Le issue possono essere classificate come question, bug, documentation, feature
+- Allegato issue: L'utente potrebbe allegare una immagine alla issue e assegnare una priorità
+- Stato iniziale: Ogni issue creata deve entrare nello stato "todo" 
+- Vista riepilogativa: Il sistema deve fornire una lista riepilogativa di tutte le issue
+- Filtraggio issues: Il sistema deve permettere di filtrare e/o ordinare le issue per tipologia/stato/priorità o altri parametri
+- Archiviazione bug: Un amministratore deve poter archiviare un bug, in modo che non sia visibile agli utenti ma rimanga
+in una apposita sezione
+- Assegnazione: Gli amministratori possono assegnare issue a membri del team
+- Gestione bug: Gli amministratori possono cambiare lo stato delle issues

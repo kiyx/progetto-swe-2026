@@ -42,7 +42,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -62,6 +61,11 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>3.0.0-M1</version>
         </dependency>
     </dependencies>
 
@@ -90,8 +94,54 @@
                         </exclude>
                     </excludes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>start-backend-for-openapi</id>
+                        <phase>pre-integration-test</phase>
+                        <goals><goal>start</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>stop-backend-after-openapi</id>
+                        <phase>post-integration-test</phase>
+                        <goals><goal>stop</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Generazione file OpenAPI -->
+            <plugin>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                <version>1.7.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-openapi</id>
+                        <phase>integration-test</phase>
+                        <goals><goal>generate</goal></goals>
+                        <configuration>
+                            <apiDocsUrl>http://localhost:8080/v3/api-docs</apiDocsUrl>
+                            <outputDir>${project.build.directory}/openapi</outputDir>
+                            <outputFileName>openapi</outputFileName>
+                            <format>yaml</format>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.12.0</version>
+                <executions>
+                    <execution>
+                        <id>javadoc-html-and-jar</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>javadoc</goal>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>

@@ -53,7 +53,8 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
-    </dependency>  </dependencies>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -83,6 +84,21 @@
               <stripDebug>true</stripDebug>
               <noHeaderFiles>true</noHeaderFiles>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.12.0</version>
+        <executions>
+          <execution>
+            <id>javadoc-html-and-jar</id>
+            <phase>verify</phase>
+            <goals>
+                <goal>javadoc</goal>
+                <goal>jar</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

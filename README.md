@@ -1,41 +1,106 @@
-#  BugBoard26 - Progetto di Ingegneria del Software 2025/26
+# 🐞 BugBoard26
 
-Questo repository contiene il progetto per il corso di Ingegneria del Software, A.A. 2025/2026. L'obiettivo è realizzare un sistema distribuito per la gestione di issue (BugBoard), seguendo i pattern di progettazione e le best practice di ingegneria.
+> **Progetto di Ingegneria del Software - A.A. 2025/2026**
+>
+> *Università degli Studi di Napoli Federico II*
 
-**Committente:** Università degli Studi di Napoli Federico II
-
----
-
-## 👥 Membri del Team
-
-* **Giuseppe Paolo Esposito** - ([Kiyo](https://github.com/kiyx))
-* **Virginia Antonia Esposito** - ([Virginia](https://github.com/virginiaesposito))
+**BugBoard26** è una piattaforma distribuita per la gestione collaborativa di *issue* e *bug tracking* in progetti software. Il sistema permette ai team di segnalare problemi, monitorarne lo stato e tracciare le attività di risoluzione in modo intuitivo e centralizzato.
 
 ---
 
-## 🏗️ Architettura di Sistema
+## 👥 Team di Sviluppo
 
-L'applicazione segue un'architettura a **sistema distribuito** (Client-Server), come richiesto dalle specifiche, composta da 3 macro-componenti indipendenti.
+| Matricola | Studente | GitHub |
+| :--- | :--- | :--- |
+| **N86005174** | **Giuseppe Paolo Esposito** | [@kiyx](https://github.com/kiyx) |
+| **N86004987** | **Virginia Antonia Esposito** | [@virginiaesposito](https://github.com/virginiaesposito) |
 
+---
 
+## 🚀 Funzionalità Implementate
 
-1.  **Frontend (Client) 💻:** Un'applicazione desktop **JavaFX** indipendente. Gestisce solo la logica di presentazione (pattern **MVC**) e comunica con il backend esclusivamente tramite API REST.
-2.  **Backend (Server) ⚙️:** Un'applicazione **Spring Boot** (Java) che espone API REST. Contiene tutta la logica di business (pattern **BCE**) e non ha conoscenza del frontend.
-3.  **Database (Persistence) 🗄️:** Un database **PostgreSQL** gestito. È accessibile *solo* dal Backend.
+Il progetto implementa un sottoinsieme specifico di requisiti funzionali, assegnati sulla base della matricola del gruppo:
+
+### 1. Autenticazione e Gestione Utenti
+* Sistema di login sicuro basato su email e password.
+* Distinzione dei ruoli tra **Amministratore** e **Utente Standard**.
+* Gestione della sicurezza e integrità delle credenziali.
+
+### 2. Creazione e Gestione Issue
+* Segnalazione di issue con **Titolo** e **Descrizione** obbligatori.
+* Classificazione per tipologia: `Question`, `Bug`, `Documentation`, `Feature`.
+* Supporto per livelli di priorità e allegati (immagini).
+* Stato iniziale automatico impostato su `Todo`.
+
+### 3. Dashboard e Visualizzazione
+* Vista riepilogativa di tutte le issue presenti nel sistema.
+* Funzionalità di **filtro** e **ordinamento** avanzato (per stato, tipologia, priorità, ecc.).
+
+### 13. Archiviazione (Admin)
+* Funzionalità dedicata agli amministratori per **archiviare** i bug risolti o non più rilevanti.
+* I bug archiviati vengono rimossi dalle viste principali ma rimangono consultabili in una sezione storica dedicata.
+
+---
+
+## 🏗️ Architettura del Sistema
+
+L'applicazione è progettata come un **sistema distribuito Client-Server**, garantendo il totale disaccoppiamento tra la logica di presentazione e la logica di business.
+
+### 🔙 Backend (Core Logic)
+Il cuore del sistema, responsabile della logica di business e della persistenza. Segue una **Layered Architecture** implementando il modello **Boundary-Control-Entity (BCE)**:
+* **Boundary Layer (API REST):** Espone endpoint HTTP tramite Controller. Gestisce la validazione dei DTO in ingresso e la serializzazione delle risposte JSON.
+* **Control Layer (Service):** Incapsula la logica applicativa, coordinando le operazioni tra i controller e il livello dati.
+* **Entity Layer (Persistence):** Mappa le entità di dominio sul database relazionale tramite ORM.
+
+### 🖥️ Frontend (Presentation)
+Applicazione Desktop indipendente che comunica con il server esclusivamente tramite API REST. Adotta il pattern **Model-View-ViewModel (MVVM)**:
+* **View (FXML):** Definisce la struttura dell'interfaccia utente, priva di logica.
+* **ViewModel:** Agisce da mediatore, esponendo dati e comandi alla View tramite *Data Binding*.
+* **Service Gateway:** Gestisce la comunicazione di rete, isolando la UI dai dettagli delle chiamate HTTP.
 
 ---
 
 ## 🛠️ Stack Tecnologico
 
+Le scelte tecnologiche sono state guidate dai principi di modularità, testabilità e astrazione richiesti dal progetto.
+
 ### Backend
+* **Language:** Java 17+
+* **Framework:** **Spring Boot** (Web, Data JPA, Security). Scelto per il supporto nativo alla *Dependency Injection* e la facilità di creazione di API RESTful testabili.
+* **Testing:** JUnit 5 & Mockito.
 
 ### Frontend
+* **Framework:** **JavaFX** 17+. Scelto per la creazione di interfacce desktop moderne e reattive.
+* **Librerie:** Gson/Jackson (JSON parsing), HttpClient (Networking).
 
-### Database & Deploy
+### Data & Persistence
+* **Database:** **PostgreSQL**.
+* **Hosting:** **Supabase** (utilizzato esclusivamente come provider *Database-as-a-Service*).
+* **Accesso Dati:** Standard **JDBC** tramite **Spring Data JPA**.
+> *Nota: Non viene utilizzato alcun servizio MBaaS proprietario per la logica, garantendo l'indipendenza dal provider e la conformità ai requisiti di progetto.*
 
-### Sviluppo & Gestione
-* **Git & GitHub** (per il versioning)
-* **GitHub Desktop** (per la gestione visuale dei branch)
-* **Maven** (per la gestione delle dipendenze)
-* **IntelliJ IDEA** (come IDE)
-* **Scene Builder** (per la progettazione FXML)
+### DevOps & Tools
+* **Container:** **Docker**. Il backend è containerizzato per garantire un ambiente di esecuzione isolato e replicabile.
+* **VCS:** Git & GitHub (con GitHub Desktop).
+* **Build Tool:** Maven.
+
+---
+
+## 📂 Struttura del Repository
+
+```text
+BugBoard26/
+├── backend/          # Spring Boot Application
+│   ├── src/main/java/com/unina/bugboard
+│   │   ├── api       # Boundary (Controllers)
+│   │   ├── service   # Control (Business Logic)
+│   │   └── model     # Entity (Domain & Repo)
+│   └── Dockerfile
+│
+├── frontend/         # JavaFX Application
+│   ├── src/main/resources/fxml  # Views
+│   └── src/main/java/com/unina/client
+│       ├── viewmodel
+│       └── service   # API Consumers
+│
+└── docs/             # Documentazione di progetto

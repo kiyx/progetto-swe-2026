@@ -10,26 +10,26 @@ import lombok.Data;
 @Entity
 public class Issue
 {
-    @Column(name = "IdIssue", nullable = false, unique = true)
+    @Column(name = "idissue", nullable = false, unique = true)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idIssue;
 
-    @Column(name = "Titolo", length = 200, nullable = false)
+    @Column(length = 200, nullable = false)
     private String titolo;
 
-    @Column(name = "Descrizione", nullable = false)
+    @Column(nullable = false)
     private String descrizione;
 
-    @Column(name = "Tipo", nullable = false )
+    @Column(nullable = false )
     @Enumerated(EnumType.ORDINAL)
     private TipoIssue tipo;
 
-    @Column(name = "Stato", nullable = false )
+    @Column(nullable = false )
     @Enumerated(EnumType.ORDINAL)
     private StatoIssue stato = StatoIssue.TODO;
 
-    @Column(name = "IsArchiviato" )
+    @Column(nullable = false)
     private boolean isArchiviato = false;
 
     @Column(name = "Priorita" )
@@ -40,16 +40,11 @@ public class Issue
     private String immagine;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn (name = "IdUtente" )
+    @JoinColumn (name = "idutente" )
     private Utente utente;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IdProgetto" )
+    @JoinColumn(name = "idprogetto" )
     private Progetto progetto;
 
-    @Builder
-    public Issue(idIssue, titolo, descrizione, tipo, stato, isArchiviato, priorita, immagine)
-    {
-
-    }
 }

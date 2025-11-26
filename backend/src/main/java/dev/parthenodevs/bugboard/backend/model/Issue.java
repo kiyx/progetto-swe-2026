@@ -46,5 +46,10 @@ public class Issue
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdProgetto" )
     private Progetto progetto;
-    
+
+    @Builder
+    public Issue(idIssue, titolo, descrizione, tipo, stato, isArchiviato, priorita, immagine)
+    {
+
+    }
 }

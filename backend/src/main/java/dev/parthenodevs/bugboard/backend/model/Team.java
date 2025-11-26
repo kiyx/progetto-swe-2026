@@ -17,6 +17,6 @@ public class Team
     private String nome;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "IdAdmin" )
+    @JoinColumn (name = "IdAdmin" )
     private Utente admin;
 }

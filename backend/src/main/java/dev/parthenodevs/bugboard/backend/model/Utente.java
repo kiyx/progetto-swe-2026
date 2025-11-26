@@ -1,8 +1,7 @@
 package dev.parthenodevs.bugboard.backend.model;
 
 import java.util.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 

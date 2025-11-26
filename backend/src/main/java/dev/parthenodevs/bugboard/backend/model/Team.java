@@ -8,7 +8,7 @@ import lombok.Data;
 @Table(name = "Utente", schema = "bugboard26")
 public class Team
 {
-    @Column(name = "IdTeam", nullable = false, unique = true)
+    @Column(name = "idteam", nullable = false, unique = true)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idTeam;
@@ -17,6 +17,6 @@ public class Team
     private String nome;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn (name = "IdAdmin" )
+    @JoinColumn (name = "idadmin" )
     private Utente admin;
 }

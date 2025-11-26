@@ -41,7 +41,7 @@ EXECUTE FUNCTION check_project_assignment_permission();
 CREATE OR REPLACE FUNCTION check_assignee_is_in_team()
 RETURNS TRIGGER AS $$
 DECLARE
-    team_id INT;
+    team_id BIGINT;
 BEGIN
     SELECT P.IdTeam INTO team_id
     FROM Issue I
@@ -75,7 +75,7 @@ BEGIN
     FROM Progetto
     WHERE IdProgetto = NEW.IdProgetto;
 
-    IF project_status = 'Concluso' THEN
+    IF project_status = 'CONCLUSO' THEN
         RAISE EXCEPTION 'Operazione non consentita: non è possibile aprire issues su progetti conclusi.';
     END IF;
     RETURN NEW;
@@ -91,7 +91,7 @@ EXECUTE FUNCTION check_project_status_before_issue();
 CREATE OR REPLACE FUNCTION check_resolved_issue_has_assignee()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.Stato = 'Risolta' THEN
+    IF NEW.Stato = 'RISOLTA' THEN
         IF NOT EXISTS (
             SELECT 1
             FROM Assegnazioni
@@ -126,14 +126,14 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER trg_prevent_modification_of_archived_issues
 BEFORE UPDATE ON Issue
 FOR EACH ROW
-WHERE OLD.Tipo = 'Bug'
+WHEN (OLD.Tipo = 'BUG')
 EXECUTE FUNCTION prevent_modification_of_archived_issues();
 
 -- Non è possibile archiviare una issue che non è di tipo bug
 CREATE OR REPLACE FUNCTION prevent_archiving_non_bug_issues()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.IsArchiviato = TRUE AND OLD.Tipo <> 'Bug' THEN
+    IF NEW.IsArchiviato = TRUE AND OLD.Tipo <> 'BUG' THEN
         RAISE EXCEPTION 'Operazione non consentita: solo le issue di tipo Bug possono essere archiviate.';
     END IF;
     RETURN NEW;
@@ -209,7 +209,7 @@ BEGIN
                 JOIN Progetto P ON I.IdProgetto = P.IdProgetto
                 WHERE A.IdUtente = OLD.IdUtente
                   AND P.IdTeam = OLD.IdTeam
-                  AND I.Stato <> 'Risolta'
+                  AND I.Stato <> 'RISOLTA'
     )
     THEN
         RAISE EXCEPTION 'Operazione non consentita: non è possibile rimuovere un utente con issue attive dal team.';

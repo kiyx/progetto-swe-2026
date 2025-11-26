@@ -11,8 +11,5 @@ public class BackendApplication
     static void main(String[] args)
     {
         SpringApplication.run(BackendApplication.class, args);
-        System.out.println(
-                "ciao"
-        );
     }
 }

@@ -22,21 +22,21 @@ public class Issue
     private String descrizione;
 
     @Column(nullable = false )
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private TipoIssue tipo;
 
     @Column(nullable = false )
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private StatoIssue stato = StatoIssue.TODO;
 
     @Column(nullable = false)
     private boolean isArchiviato = false;
 
     @Column(name = "Priorita" )
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private TipoPriorita priorita;
 
-    @Column(name = "Immagine" )
+    @Column(name = "immagine" )
     private String immagine;
 
     @ManyToOne(fetch = FetchType.LAZY)

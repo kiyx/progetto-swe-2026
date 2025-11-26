@@ -14,7 +14,7 @@ CREATE TYPE Stato_Progetto AS ENUM('ATTIVO', 'FUTURO', 'CONCLUSO');
 -- Utente
 CREATE TABLE Utente
 (
-    IdUtente SERIAL PRIMARY KEY,
+    IdUtente BIGSERIAL PRIMARY KEY,
     Email TEXT UNIQUE NOT NULL, 
     Nome VARCHAR(100) NOT NULL,
     Cognome VARCHAR(100) NOT NULL,
@@ -28,20 +28,20 @@ CREATE TABLE Utente
 
 CREATE TABLE Team
 (
-    IdTeam SERIAL PRIMARY KEY,
+    IdTeam BIGSERIAL PRIMARY KEY,
     Nome VARCHAR(100) UNIQUE NOT NULL,
-    IdAdmin INT NOT NULL,
+    IdAdmin BIGINT NOT NULL,
     CONSTRAINT fk_team_admin FOREIGN KEY (IdAdmin) REFERENCES Utente(IdUtente) ON DELETE RESTRICT,
     CONSTRAINT check_empty_team_nome CHECK (LENGTH(Nome) > 0)
 );
 
 CREATE TABLE Progetto
 (
-    IdProgetto SERIAL PRIMARY KEY,
+    IdProgetto BIGSERIAL PRIMARY KEY,
     Nome VARCHAR(100) NOT NULL,
     Stato Stato_Progetto NOT NULL,
-    IdTeam INT NOT NULL,
-    IdAdmin INT NOT NULL,
+    IdTeam BIGINT NOT NULL,
+    IdAdmin BIGINT NOT NULL,
     CONSTRAINT fk_progetto_team FOREIGN KEY (IdTeam) REFERENCES Team(IdTeam) ON DELETE CASCADE,
     CONSTRAINT fk_progetto_admin FOREIGN KEY (IdAdmin) REFERENCES Utente(IdUtente) ON DELETE RESTRICT,
     CONSTRAINT check_empty_progetto_nome CHECK (LENGTH(Nome) > 0)
@@ -49,16 +49,16 @@ CREATE TABLE Progetto
 
 CREATE TABLE Issue 
 (
-    IdIssue SERIAL PRIMARY KEY,
+    IdIssue BIGSERIAL PRIMARY KEY,
     Titolo VARCHAR(200) NOT NULL,
     Descrizione TEXT NOT NULL,
     Tipo Tipo_Issue NOT NULL,
-    Stato Stato_Issue NOT NULL DEFAULT 'Todo',
+    Stato Stato_Issue NOT NULL DEFAULT 'TODO',
     IsArchiviato BOOLEAN DEFAULT FALSE,
     Immagine VARCHAR(255),
     Priorita Tipo_Priorita,
-    IdUtente INT NOT NULL,
-    IdProgetto INT NOT NULL,
+    IdUtente BIGINT NOT NULL,
+    IdProgetto BIGINT NOT NULL,
     CONSTRAINT fk_issue_utente FOREIGN KEY (IdUtente) REFERENCES Utente(IdUtente) ON DELETE SET NULL,
     CONSTRAINT fk_issue_progetto FOREIGN KEY (IdProgetto) REFERENCES Progetto(IdProgetto) ON DELETE CASCADE,
     CONSTRAINT check_empty_issue_titolo CHECK (LENGTH(Titolo) > 0),
@@ -67,8 +67,8 @@ CREATE TABLE Issue
 
 CREATE TABLE Assegnazioni
 (
-    IdUtente INT NOT NULL,
-    IdIssue INT NOT NULL,
+    IdUtente BIGINT NOT NULL,
+    IdIssue BIGINT NOT NULL,
     PRIMARY KEY (IdUtente, IdIssue),
     CONSTRAINT fk_assegnazioni_utente FOREIGN KEY (IdUtente) REFERENCES Utente(IdUtente) ON DELETE CASCADE,
     CONSTRAINT fk_assegnazioni_issue FOREIGN KEY (IdIssue) REFERENCES Issue(IdIssue) ON DELETE CASCADE
@@ -76,8 +76,8 @@ CREATE TABLE Assegnazioni
 
 CREATE TABLE Partecipanti
 (
-    IdUtente INT NOT NULL,
-    IdTeam INT NOT NULL,
+    IdUtente BIGINT NOT NULL,
+    IdTeam BIGINT NOT NULL,
     PRIMARY KEY (IdUtente, IdTeam),
     CONSTRAINT fk_partecipanti_utente FOREIGN KEY (IdUtente) REFERENCES Utente(IdUtente) ON DELETE CASCADE,
     CONSTRAINT fk_partecipanti_team FOREIGN KEY (IdTeam) REFERENCES Team(IdTeam) ON DELETE CASCADE

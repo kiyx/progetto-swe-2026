@@ -18,8 +18,8 @@ public class Progetto
     @Column(nullable = false, length = 100)
     private String nome;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Enumerated(EnumType.ORDINAL)
     private StatoProgetto stato;
 
     @ManyToOne(fetch = FetchType.LAZY)

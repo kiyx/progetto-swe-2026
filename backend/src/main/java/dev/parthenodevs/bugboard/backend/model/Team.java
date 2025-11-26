@@ -1,14 +1,15 @@
 package dev.parthenodevs.bugboard.backend.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Data
 @Entity
-@Table(name = "Utente", schema = "bugboard26")
+@NoArgsConstructor
+@Table(name = "Team", schema = "bugboard26")
 public class Team
 {
-    @Column(name = "idteam", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idTeam;
@@ -17,6 +18,12 @@ public class Team
     private String nome;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn (name = "idadmin" )
+    @JoinColumn (nullable = false)
     private Utente admin;
+
+    @Builder
+    public Team(String nome)
+    {
+        this.nome = nome;
+    }
 }

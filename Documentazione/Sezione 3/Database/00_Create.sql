@@ -6,10 +6,10 @@ CREATE SCHEMA BugBoard26;
 
 -- 00_Create: Definizione Enum e Tabelle
 
-CREATE TYPE Tipo_Issue AS ENUM ('Question', 'Bug', 'Documentation', 'Feature');
-CREATE TYPE Tipo_Priorita AS ENUM ('Bassa', 'Media', 'Alta');
-CREATE TYPE Stato_Issue AS ENUM('Todo', 'Assegnata', 'DaAccettare', 'Risolta');
-CREATE TYPE Stato_Progetto AS ENUM('Attivo', 'Futuro', 'Concluso');
+CREATE TYPE Tipo_Issue AS ENUM ('QUESTION', 'BUG', 'DOCUMENTATION', 'FEATURE');
+CREATE TYPE Tipo_Priorita AS ENUM ('ALTA', 'MEDIA', 'BASSA');
+CREATE TYPE Stato_Issue AS ENUM('TODO', 'ASSEGNATA', 'DA_ACCETTARE', 'RISOLTA');
+CREATE TYPE Stato_Progetto AS ENUM('ATTIVO', 'FUTURO', 'CONCLUSO');
 
 -- Utente
 CREATE TABLE Utente

@@ -11,7 +11,6 @@ public class GlobalExceptionHandler
 {
     // Handler per errori di validazione (protezione ulteriore oltre alla validazione Frontend)
     @ExceptionHandler(InvalidFieldException.class)
-    @NonNull
     public ResponseEntity<ErrorDTO> handleInvalidFieldException(InvalidFieldException ex)
     {
         ErrorDTO errorResponse = new ErrorDTO(

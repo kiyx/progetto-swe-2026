@@ -87,12 +87,12 @@ public class Utente
     public void addTeam(Team team)
     {
         this.assignedTeams.add(team);
-        //team.getMembri().add(this);
+        team.getMembri().add(this);
     }
 
     public void removeTeam(Team team)
     {
         this.assignedTeams.remove(team);
-        //team.getMembri().remove(this);
+        team.getMembri().remove(this);
     }
 }

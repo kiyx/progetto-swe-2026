@@ -33,11 +33,9 @@ public class Issue
     @Column(nullable = false)
     private boolean isArchiviato = false;
 
-    @Column(name = "Priorita" )
     @Enumerated(EnumType.ORDINAL)
     private TipoPriorita priorita;
 
-    @Column(name = "Immagine" )
     private String immagine;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,7 +49,15 @@ public class Issue
     @Builder
     public Issue(String titolo, String descrizione, TipoIssue tipo, StatoIssue stato, boolean isArchiviato, TipoPriorita priorita, String immagine)
     {
-        this.titolo = titolo;
+        if(titolo == null || titolo.isBlank())
+            throw new IllegalArgumentException("Titolo obbligatorio");
+        if(descrizione == null || descrizione.isBlank())
+            throw new IllegalArgumentException("Descrizione obbligatoria");
+        if(tipo == null )
+            throw new IllegalArgumentException("Tipo obbligatorio");
+        if(stato == null )
+            throw new IllegalArgumentException("Stato obbligatorio");
+
         this.descrizione = descrizione;
         this.tipo = tipo;
         this.stato = stato;

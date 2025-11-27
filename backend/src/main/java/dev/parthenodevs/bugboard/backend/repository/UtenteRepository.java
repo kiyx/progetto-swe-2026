@@ -9,6 +9,7 @@ import java.util.*;
 @Repository
 public interface UtenteRepository extends JpaRepository<Utente, Long>
 {
-    Optional<Utente> findById(Long id);
+    Optional<Utente> findByEmail(String email);
     boolean existsByEmail(String email);
+    List<Utente> findByAssignedTeams_Id(Long id);
 }

@@ -9,6 +9,6 @@ import java.util.*;
 @Repository
 public interface ProgettoRepository extends JpaRepository<Progetto, Long>
 {
-    Optional<Progetto> findById(Long id);
     List<Progetto> findByTeamId(Long id);
+    List<Progetto> findByAdminId(Long id);
 }

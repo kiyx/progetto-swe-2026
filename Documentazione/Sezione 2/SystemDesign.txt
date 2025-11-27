@@ -35,7 +35,7 @@ Docker (Containerizzazione): Il backend è stato progettato per essere distribui
 che l'ambiente di esecuzione sia isolato e replicabile, eliminando problemi di compatibilità tra le macchine di sviluppo e 
 l'ambiente di produzione simulato.
 
-Supabase (Persistenza): Per la base di dati è stato scelto Supabase, utilizzato esclusivamente come fornitore di un 
+Neon (Persistenza): Per la base di dati è stato scelto Supabase, utilizzato esclusivamente come fornitore di un 
 database relazionale PostgreSQL. In conformità con i vincoli, non vengono utilizzati servizi MBaaS proprietari che sostituiscono
 la logica applicativa. L'interazione avviene tramite connessioni JDBC standard gestite dal Backend SpringBoot, garantendo
 che la logica rimanga interamente sotto il controllo del codice sorgente sviluppato. 

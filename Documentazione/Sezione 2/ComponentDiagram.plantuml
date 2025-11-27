@@ -82,7 +82,7 @@ node "Server Host (Docker Container)" as serverNode {
     interface "Port 8080\n(REST API)" as api
 }
 
-cloud "<$cloud>\nSupabase (Cloud)" as cloud {
+cloud "<$cloud>\nNeon (Cloud)" as cloud {
     database "<$postgresql>\nPostgreSQL" as db
 }
 

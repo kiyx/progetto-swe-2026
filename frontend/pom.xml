@@ -7,7 +7,7 @@
     <groupId>dev.parthenodevs.bugboard</groupId>
     <artifactId>frontend</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>BugBoard26 Client</name>
+    <name>BugBoard26 Frontend</name>
 
     <properties>
         <!-- Imposto Java 21  -->

@@ -2,10 +2,13 @@ package dev.parthenodevs.bugboard.backend.repository;
 
 import dev.parthenodevs.bugboard.backend.model.Utente;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import java.util.*;
 
+@SuppressWarnings("NullableProblems")
+@Repository
 public interface UtenteRepository extends JpaRepository<Utente, Long>
 {
-    List<Utente> findByEmail(String email);
-
+    Optional<Utente> findById(Long id);
+    boolean existsByEmail(String email);
 }

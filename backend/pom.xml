@@ -13,7 +13,7 @@
     <groupId>dev.parthenodevs.bugboard</groupId>
     <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>backend</name>
+    <name>BugBoard26 Backend</name>
     <description>backend</description>
 
     <properties>

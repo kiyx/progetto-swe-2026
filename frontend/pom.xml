@@ -10,8 +10,8 @@
     <name>BugBoard26 Client</name>
 
     <properties>
-        <!-- Imposto Java 25  -->
-        <java.version>25</java.version>
+        <!-- Imposto Java 21  -->
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Versioni allineate -->
@@ -88,16 +88,14 @@
 
     <build>
         <plugins>
-            <!-- Compilatore impostato su Java 25 -->
+            <!-- Compilatore impostato su Java 21 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>25</source>
-                    <target>25</target>
-                    <!-- Abilita feature preview se necessario -->
-                    <compilerArgs>--enable-preview</compilerArgs>
+                    <source>21</source>
+                    <target>21</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

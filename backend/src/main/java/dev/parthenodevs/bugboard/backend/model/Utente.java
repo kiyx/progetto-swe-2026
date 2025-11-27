@@ -2,6 +2,7 @@ package dev.parthenodevs.bugboard.backend.model;
 
 import java.util.*;
 import com.fasterxml.jackson.annotation.*;
+import dev.parthenodevs.bugboard.backend.exception.InvalidFieldException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -58,26 +59,29 @@ public class Utente
     public Utente(String email, String nome, String cognome, String password, Boolean isAdmin)
     {
         if(email == null || email.isBlank())
-            throw new IllegalArgumentException("Email obbligatoria");
+            throw new InvalidFieldException("L'email è un campo obbligatorio");
         if(nome == null || nome.isBlank())
-            throw new IllegalArgumentException("Nome obbligatorio");
+            throw new InvalidFieldException("Il nome è un campo obbligatorio");
         if(cognome == null || cognome.isBlank())
-            throw new IllegalArgumentException("Cognome obbligatorio");
+            throw new InvalidFieldException("Il cognome è un campo obbligatorio");
         if(password == null || password.isBlank())
-            throw new IllegalArgumentException("Password obbligatoria");
+            throw new InvalidFieldException("La password è obbligatoria");
+
+        this.email = email;
+        this.nome = nome;
+        this.cognome = cognome;
+        this.password = password;
         this.isAdmin = isAdmin != null && isAdmin;
     }
 
     public void addIssue(Issue issue)
     {
         this.assignedIssues.add(issue);
-        //issue.getAssegnatari().add(this);
     }
 
     public void removeIssue(Issue issue)
     {
         this.assignedIssues.remove(issue);
-        //issue.getAssegnatari().remove(this);
     }
 
     public void addTeam(Team team)

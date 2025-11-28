@@ -15,6 +15,6 @@ public class UtenteResponseDTO
 
     public String getNomeCompleto()
     {
-        return nome + " "  + cognome;
+        return nome + " " + cognome;
     }
 }

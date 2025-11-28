@@ -6,7 +6,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProgettoRequestDTO
+public class CreateProgettoRequestDTO
 {
     @NotBlank(message = "Il nome del progetto è obbligatorio")
     private String nome;

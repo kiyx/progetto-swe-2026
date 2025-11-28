@@ -1,0 +1,21 @@
+package dev.parthenodevs.bugboard.backend.dto.response;
+
+import dev.parthenodevs.bugboard.backend.model.enums.StatoProgetto;
+import lombok.*;
+
+@Data
+@Builder
+public class ProgettoResponseDTO
+{
+    private Long id;
+    private String nome;
+    private StatoProgetto stato;
+
+    private Long idTeam;
+    private String nomeTeam;
+
+    private Long idAdmin;
+    private String nomeAdmin;
+
+    private int issuesTotali;
+}

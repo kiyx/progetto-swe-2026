@@ -2,6 +2,7 @@ package dev.parthenodevs.bugboard.backend.mapper;
 
 import dev.parthenodevs.bugboard.backend.dto.request.CreateTeamRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.request.RegisterRequestDTO;
+import dev.parthenodevs.bugboard.backend.dto.request.UpdateTeamRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.TeamResponseDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.UtenteResponseDTO;
 import dev.parthenodevs.bugboard.backend.exception.InvalidFieldException;
@@ -43,4 +44,13 @@ public class TeamMapper
                 .build();
     }
 
+    public void update (Team entity, UpdateTeamRequestDTO request)
+    {
+        if(entity == null || request == null)
+            return;
+
+        if(!request.getNome().equals(entity.getNome()))
+            entity.setNome(request.getNome());
+
+    }
 }

@@ -13,7 +13,6 @@ public class UtenteMapper
         if(utente == null)
             return null;
 
-
         return UtenteResponseDTO.builder()
                                 .id(utente.getId())
                                 .nome(utente.getNome())

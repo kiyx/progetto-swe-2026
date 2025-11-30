@@ -8,11 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 public class UpdateUtenteRequestDTO
 {
-    @NotBlank(message = "Il nome è obbligatorio")
     @Size(min = 2, max = 100)
     private String nome;
 
-    @NotBlank(message = "Il cognome è obbligatorio")
     @Size(min = 2, max = 100)
     private String cognome;
 

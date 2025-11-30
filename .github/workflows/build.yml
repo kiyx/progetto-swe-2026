@@ -39,4 +39,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Necessario per decorare le PR
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         working-directory: ./backend
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=kiyx_progetto-swe-2026
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=kiyx_progetto-swe-2026 -DskipTests

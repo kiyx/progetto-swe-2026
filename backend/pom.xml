@@ -17,6 +17,7 @@
     <description>backend</description>
 
     <properties>
+        <sonar.organization>kiyx</sonar.organization>
         <java.version>21</java.version>
     </properties>
 

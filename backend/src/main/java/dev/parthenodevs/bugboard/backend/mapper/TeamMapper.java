@@ -1,22 +1,12 @@
 package dev.parthenodevs.bugboard.backend.mapper;
 
 import dev.parthenodevs.bugboard.backend.dto.request.CreateTeamRequestDTO;
-import dev.parthenodevs.bugboard.backend.dto.request.RegisterRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.request.UpdateTeamRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.TeamResponseDTO;
-import dev.parthenodevs.bugboard.backend.dto.response.UtenteResponseDTO;
-import dev.parthenodevs.bugboard.backend.exception.InvalidFieldException;
-import dev.parthenodevs.bugboard.backend.model.Progetto;
 import dev.parthenodevs.bugboard.backend.model.Team;
 import dev.parthenodevs.bugboard.backend.model.Utente;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Component
 public class TeamMapper
@@ -29,7 +19,10 @@ public class TeamMapper
         return TeamResponseDTO.builder()
                 .id(team.getId())
                 .nome(team.getNome())
-                .nomeAdmin(team.getAdmin().getNome())
+                .idAdmin(team.getAdmin().getId())
+                .nomeAdmin(team.getAdmin().getNome() + " " + team.getAdmin().getCognome())
+                .numeroMembri(team.getMembri() != null ? team.getMembri().size() : 0)
+                .numeroProgetti(team.getProgetti() != null ? team.getProgetti().size() : 0)
                 .build();
     }
 
@@ -49,8 +42,7 @@ public class TeamMapper
         if(entity == null || request == null)
             return;
 
-        if(!request.getNome().equals(entity.getNome()))
+        if(request.getNome() != null && !request.getNome().isBlank())
             entity.setNome(request.getNome());
-
     }
 }

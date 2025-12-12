@@ -1,9 +1,11 @@
 package dev.parthenodevs.bugboard.backend.model;
 
 import dev.parthenodevs.bugboard.backend.exception.InvalidFieldException;
-import dev.parthenodevs.bugboard.backend.model.enums.StatoProgetto;
+import dev.parthenodevs.bugboard.backend.dto.enums.StatoProgetto;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.*;
+import org.hibernate.type.*;
 
 @Entity
 @Table(name = "Progetto", schema = "bugboard26")
@@ -21,6 +23,7 @@ public class Progetto
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private StatoProgetto stato;
 
     @ToString.Exclude

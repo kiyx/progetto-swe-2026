@@ -1,9 +1,13 @@
 package dev.parthenodevs.bugboard.backend.model;
 
+import dev.parthenodevs.bugboard.backend.dto.enums.StatoIssue;
+import dev.parthenodevs.bugboard.backend.dto.enums.TipoIssue;
+import dev.parthenodevs.bugboard.backend.dto.enums.TipoPriorita;
 import dev.parthenodevs.bugboard.backend.exception.InvalidFieldException;
-import dev.parthenodevs.bugboard.backend.model.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.*;
+import org.hibernate.type.*;
 
 @Entity
 @Table(name = "Issue", schema = "bugboard26")
@@ -24,10 +28,12 @@ public class Issue
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private TipoIssue tipo;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private StatoIssue stato = StatoIssue.TODO;
 
     @Column(name="isarchiviato", nullable = false)
@@ -36,6 +42,7 @@ public class Issue
     private String immagine;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private TipoPriorita priorita;
 
     @ToString.Exclude

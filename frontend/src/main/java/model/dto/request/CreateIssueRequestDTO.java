@@ -1,9 +1,12 @@
-package dev.parthenodevs.bugboard.backend.dto.request;
+package model.dto.request;
 
-import dev.parthenodevs.bugboard.backend.dto.enums.TipoIssue;
-import dev.parthenodevs.bugboard.backend.dto.enums.TipoPriorita;
-import jakarta.validation.constraints.*;
-import lombok.*;
+import model.dto.enums.TipoIssue;
+import model.dto.enums.TipoPriorita;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor

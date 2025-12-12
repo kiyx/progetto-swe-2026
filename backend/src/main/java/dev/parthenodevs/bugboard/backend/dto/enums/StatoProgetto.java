@@ -1,4 +1,4 @@
-package dev.parthenodevs.bugboard.backend.model.enums;
+package dev.parthenodevs.bugboard.backend.dto.enums;
 
 public enum StatoProgetto
 {

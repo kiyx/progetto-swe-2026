@@ -1,10 +1,10 @@
 ---------------------- Vincoli derivanti dalla ristrutturazione ---------------------- 
 
 -- Se isAdmin == false allora Utente non può formare un team
-CREATE OR REPLACE FUNCTION check_team_creation_permission()
+CREATE OR REPLACE FUNCTION bugboard26.check_team_creation_permission()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM Utente WHERE IdUtente = NEW.IdAdmin AND isAdmin = TRUE) THEN
+    IF NOT EXISTS (SELECT 1 FROM bugboard26.Utente WHERE IdUtente = NEW.IdAdmin AND isAdmin = TRUE) THEN
         RAISE EXCEPTION 'Operazione non consentita: solo gli utenti con privilegi di amministratore possono creare un team.';
     END IF;
     RETURN NEW;
@@ -13,15 +13,15 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_check_team_creation_permission
-BEFORE INSERT OR UPDATE ON Team
+BEFORE INSERT OR UPDATE ON bugboard26.Team
 FOR EACH ROW
-EXECUTE FUNCTION check_team_creation_permission();
+EXECUTE FUNCTION bugboard26.check_team_creation_permission();
 
 -- Se isAdmin == false allora Utente non può assegnare un progetto a un team
-CREATE OR REPLACE FUNCTION check_project_assignment_permission()
+CREATE OR REPLACE FUNCTION bugboard26.check_project_assignment_permission()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM Utente WHERE IdUtente = NEW.IdAdmin AND isAdmin = TRUE) THEN
+    IF NOT EXISTS (SELECT 1 FROM bugboard26.Utente WHERE IdUtente = NEW.IdAdmin AND isAdmin = TRUE) THEN
         RAISE EXCEPTION 'Operazione non consentita: solo gli utenti con privilegi di amministratore possono assegnare un progetto a un team.';
     END IF;
     RETURN NEW;
@@ -29,28 +29,28 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_check_project_assignment_permission
-BEFORE INSERT OR UPDATE ON Progetto
+BEFORE INSERT OR UPDATE ON bugboard26.Progetto
 FOR EACH ROW
-EXECUTE FUNCTION check_project_assignment_permission();
+EXECUTE FUNCTION bugboard26.check_project_assignment_permission();
 
 ---------------------- Fine vincoli derivanti dalla ristrutturazione ---------------------- 
 
 ---------------------- Vincoli di coerenza aggiuntivi ---------------------- 
 
 -- Una issue può essere assegnata solo a utenti che fanno parte del team associato al progetto della issue
-CREATE OR REPLACE FUNCTION check_assignee_is_in_team()
+CREATE OR REPLACE FUNCTION bugboard26.check_assignee_is_in_team()
 RETURNS TRIGGER AS $$
 DECLARE
     team_id BIGINT;
 BEGIN
     SELECT P.IdTeam INTO team_id
-    FROM Issue I
-    JOIN Progetto P ON P.IdProgetto = I.IdProgetto
+    FROM bugboard26.Issue I
+    JOIN bugboard26.Progetto P ON P.IdProgetto = I.IdProgetto
     WHERE I.IdIssue = NEW.IdIssue;
 
     IF NOT EXISTS (
         SELECT 1
-        FROM Partecipanti P
+        FROM bugboard26.Partecipanti P
         WHERE P.IdUtente = NEW.IdUtente AND P.IdTeam = team_id
     ) THEN
         RAISE EXCEPTION 'Operazione non consentita: l''utente assegnato non fa parte del team associato al progetto della issue.';
@@ -61,18 +61,18 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_check_assignee_is_in_team
-BEFORE INSERT ON Assegnazioni
+BEFORE INSERT ON bugboard26.Assegnazioni
 FOR EACH ROW
-EXECUTE FUNCTION check_assignee_is_in_team();
+EXECUTE FUNCTION bugboard26.check_assignee_is_in_team();
 
 -- Non è possibile aprire issues su progetti conclusi
-CREATE OR REPLACE FUNCTION check_project_status_before_issue()
+CREATE OR REPLACE FUNCTION bugboard26.check_project_status_before_issue()
 RETURNS TRIGGER AS $$
 DECLARE
-    project_status Stato_Progetto;
+    project_status bugboard26.Stato_Progetto;
 BEGIN
     SELECT Stato INTO project_status
-    FROM Progetto
+    FROM bugboard26.Progetto
     WHERE IdProgetto = NEW.IdProgetto;
 
     IF project_status = 'CONCLUSO' THEN
@@ -83,18 +83,18 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_check_project_status_before_issue
-BEFORE INSERT ON Issue
+BEFORE INSERT ON bugboard26.Issue
 FOR EACH ROW
-EXECUTE FUNCTION check_project_status_before_issue();
+EXECUTE FUNCTION bugboard26.check_project_status_before_issue();
 
 -- Non è possibile segnare la issue come Risolta se non è stata assegnata a nessun utente
-CREATE OR REPLACE FUNCTION check_resolved_issue_has_assignee()
+CREATE OR REPLACE FUNCTION bugboard26.check_resolved_issue_has_assignee()
 RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.Stato = 'RISOLTA' THEN
         IF NOT EXISTS (
             SELECT 1
-            FROM Assegnazioni
+            FROM bugboard26.Assegnazioni
             WHERE IdIssue = NEW.IdIssue
         ) THEN
             RAISE EXCEPTION 'Operazione non consentita: una issue non può essere marcata come Risolta se non è stata assegnata a nessun utente.';
@@ -105,12 +105,12 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_check_resolved_issue_has_assignee
-BEFORE INSERT OR UPDATE ON Issue
+BEFORE INSERT OR UPDATE ON bugboard26.Issue
 FOR EACH ROW
-EXECUTE FUNCTION check_resolved_issue_has_assignee();
+EXECUTE FUNCTION bugboard26.check_resolved_issue_has_assignee();
 
 -- Non è possibile modificare un bug archiviato
-CREATE OR REPLACE FUNCTION prevent_modification_of_archived_issues()
+CREATE OR REPLACE FUNCTION bugboard26.prevent_modification_of_archived_issues()
 RETURNS TRIGGER AS $$
 BEGIN
     IF OLD.IsArchiviato = TRUE THEN
@@ -124,13 +124,13 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_prevent_modification_of_archived_issues
-BEFORE UPDATE ON Issue
+BEFORE UPDATE ON bugboard26.Issue
 FOR EACH ROW
 WHEN (OLD.Tipo = 'BUG')
-EXECUTE FUNCTION prevent_modification_of_archived_issues();
+EXECUTE FUNCTION bugboard26.prevent_modification_of_archived_issues();
 
 -- Non è possibile archiviare una issue che non è di tipo bug
-CREATE OR REPLACE FUNCTION prevent_archiving_non_bug_issues()
+CREATE OR REPLACE FUNCTION bugboard26.prevent_archiving_non_bug_issues()
 RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.IsArchiviato = TRUE AND OLD.Tipo <> 'BUG' THEN
@@ -141,12 +141,12 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_prevent_archiving_non_bug_issues
-BEFORE UPDATE ON Issue
+BEFORE UPDATE ON bugboard26.Issue
 FOR EACH ROW
-EXECUTE FUNCTION prevent_archiving_non_bug_issues();
+EXECUTE FUNCTION bugboard26.prevent_archiving_non_bug_issues();
 
 -- Non è possibile modificare i campi Tipo, Priorità, IdProgetto, IdUtente di una issue
-CREATE OR REPLACE FUNCTION prevent_issue_field_modification()
+CREATE OR REPLACE FUNCTION bugboard26.prevent_issue_field_modification()
 RETURNS TRIGGER AS $$
 BEGIN
     IF OLD.Tipo IS DISTINCT FROM NEW.Tipo THEN
@@ -163,12 +163,12 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_prevent_issue_field_modification
-BEFORE UPDATE ON Issue
+BEFORE UPDATE ON bugboard26.Issue
 FOR EACH ROW
-EXECUTE FUNCTION prevent_issue_field_modification();
+EXECUTE FUNCTION bugboard26.prevent_issue_field_modification();
 
 -- Non è possibile spostare un progetto da un team a un altro
-CREATE OR REPLACE FUNCTION prevent_project_team_change()
+CREATE OR REPLACE FUNCTION bugboard26.prevent_project_team_change()
 RETURNS TRIGGER AS $$
 BEGIN
     IF OLD.IdTeam <> NEW.IdTeam THEN
@@ -179,12 +179,12 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_prevent_project_team_change
-BEFORE UPDATE ON Progetto
+BEFORE UPDATE ON bugboard26.Progetto
 FOR EACH ROW
-EXECUTE FUNCTION prevent_project_team_change();
+EXECUTE FUNCTION bugboard26.prevent_project_team_change();
 
 -- Non è possibile demotare un admin 
-CREATE OR REPLACE FUNCTION prevent_admin_demotion()
+CREATE OR REPLACE FUNCTION bugboard26.prevent_admin_demotion()
 RETURNS TRIGGER AS $$
 BEGIN
     IF OLD.isAdmin = TRUE AND NEW.isAdmin = FALSE THEN
@@ -195,18 +195,18 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_prevent_admin_demotion
-BEFORE UPDATE ON Utente
+BEFORE UPDATE ON bugboard26.Utente
 FOR EACH ROW
-EXECUTE FUNCTION prevent_admin_demotion();
+EXECUTE FUNCTION bugboard26.prevent_admin_demotion();
 
 -- Non è possibile rimuovere un utente con issue attive da un team
-CREATE OR REPLACE FUNCTION prevent_removal_of_user_with_active_issues()
+CREATE OR REPLACE FUNCTION bugboard26.prevent_removal_of_user_with_active_issues()
 RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (
-                SELECT 1 FROM Assegnazioni A
-                JOIN Issue I ON A.IdIssue = I.IdIssue
-                JOIN Progetto P ON I.IdProgetto = P.IdProgetto
+                SELECT 1 FROM bugboard26.Assegnazioni A
+                JOIN bugboard26.Issue I ON A.IdIssue = I.IdIssue
+                JOIN bugboard26.Progetto P ON I.IdProgetto = P.IdProgetto
                 WHERE A.IdUtente = OLD.IdUtente
                   AND P.IdTeam = OLD.IdTeam
                   AND I.Stato <> 'RISOLTA'
@@ -219,8 +219,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER trg_prevent_removal_of_user_with_active_issues
-BEFORE DELETE ON Partecipanti
+BEFORE DELETE ON bugboard26.Partecipanti
 FOR EACH ROW
-EXECUTE FUNCTION prevent_removal_of_user_with_active_issues();
+EXECUTE FUNCTION bugboard26.prevent_removal_of_user_with_active_issues();
 
 ---------------------- Fine vincoli di coerenza aggiuntivi ---------------------- 

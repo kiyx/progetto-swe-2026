@@ -1,8 +1,8 @@
-package dev.parthenodevs.bugboard.backend.dto.response;
+package model.dto.response;
 
-import dev.parthenodevs.bugboard.backend.dto.enums.StatoIssue;
-import dev.parthenodevs.bugboard.backend.dto.enums.TipoIssue;
-import dev.parthenodevs.bugboard.backend.dto.enums.TipoPriorita;
+import model.dto.enums.StatoIssue;
+import model.dto.enums.TipoIssue;
+import model.dto.enums.TipoPriorita;
 import lombok.*;
 
 @Data

@@ -1,7 +1,7 @@
-package dev.parthenodevs.bugboard.backend.dto.request;
+package model.dto.request;
 
-import dev.parthenodevs.bugboard.backend.dto.enums.StatoProgetto;
-import jakarta.validation.constraints.*;
+import model.dto.enums.StatoProgetto;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Data

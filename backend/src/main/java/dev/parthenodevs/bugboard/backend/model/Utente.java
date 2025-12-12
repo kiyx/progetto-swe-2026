@@ -30,7 +30,7 @@ public class Utente
     @JsonIgnore
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "isadmin")
     private Boolean isAdmin = false;
 
     @Setter(AccessLevel.NONE)

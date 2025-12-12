@@ -1,6 +1,6 @@
-package dev.parthenodevs.bugboard.backend.dto.request;
+package model.dto.request;
 
-import dev.parthenodevs.bugboard.backend.dto.enums.StatoProgetto;
+import model.dto.enums.StatoProgetto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 

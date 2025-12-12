@@ -1,4 +1,4 @@
-package dev.parthenodevs.bugboard.backend.model.enums;
+package model.dto.enums;
 
 public enum TipoIssue
 {

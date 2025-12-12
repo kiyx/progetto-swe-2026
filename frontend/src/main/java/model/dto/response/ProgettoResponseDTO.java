@@ -1,6 +1,6 @@
-package dev.parthenodevs.bugboard.backend.dto.response;
+package model.dto.response;
 
-import dev.parthenodevs.bugboard.backend.dto.enums.StatoProgetto;
+import model.dto.enums.StatoProgetto;
 import lombok.*;
 
 @Data

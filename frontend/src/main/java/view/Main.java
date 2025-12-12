@@ -2,27 +2,40 @@ package view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.fonts.inter.FlatInterFont;
-import controller.LoginController;
+import controller.NavigationController;
+import service.AuthService;
+
 import javax.swing.*;
 
-public class Main
-{
+public class Main {
     public static void main(String[] args)
     {
         FlatInterFont.install();
         FlatLightLaf.setup();
-
-        SwingUtilities.invokeLater(() ->
-        {
-            JFrame frame = new JFrame("BugBoard");
-            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            frame.setSize(1280, 800);
-            frame.setLocationRelativeTo(null);
-
-            LoginView view = new LoginView();
-            new LoginController(view);
-            frame.setContentPane(view);
-            frame.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            MainFrame mainFrame = new MainFrame();
+            AuthService mockAuth = new MockAuthService();
+            NavigationController navController = new NavigationController(mainFrame, mockAuth);
+            navController.start();
         });
+    }
+
+    static class MockAuthService extends AuthService
+    {
+
+        @Override
+        public boolean login(String email, String password)
+        {
+            System.out.println("[MOCK] Tentativo login: " + email);
+            if("test@bugboard26.it".equals(email) && "password1234".equals(password)) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void clearSession() {
+            System.out.println("[MOCK] Sessione pulita (Logout).");
+        }
     }
 }

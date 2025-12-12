@@ -6,9 +6,10 @@ import org.jdesktop.swingx.*;
 import org.kordamp.ikonli.materialdesign2.*;
 import org.kordamp.ikonli.swing.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.io.Serial;
+import java.awt.event.*;
+import java.io.*;
 
 public class LoginView extends JXPanel
 {
@@ -89,17 +90,51 @@ public class LoginView extends JXPanel
 
     public String getEmail()
     {
-        String userPart = emailField.getText().trim();
-        if(userPart.endsWith(EMAIL_DOMAIN))
-            return userPart;
-
-        return userPart + EMAIL_DOMAIN;
+        return emailField.getText().trim();
     }
 
-    public String getPassword() { return new String(passwordField.getPassword()); }
-    public void addLoginListener(ActionListener l) { loginButton.addActionListener(l); }
+    public String getEmailDomain()
+    {
+        return EMAIL_DOMAIN;
+    }
 
-    public void showLoading(boolean loading)
+    public String getPassword()
+    {
+        return new String(passwordField.getPassword());
+    }
+
+    public void setEmailError(boolean hasError, String errorMessage)
+    {
+        emailField.putClientProperty(FlatClientProperties.OUTLINE, hasError ? "error" : null);
+        if(hasError)
+            showErrorMessage(errorMessage);
+    }
+
+    public void setPasswordError(boolean hasError, String errorMessage)
+    {
+        passwordField.putClientProperty(FlatClientProperties.OUTLINE, hasError ? "error" : null);
+        if(hasError)
+            showErrorMessage(errorMessage);
+    }
+
+    public void showErrorMessage(String msg)
+    {
+        errorLabel.setText(msg);
+        errorLabel.setVisible(true);
+    }
+
+    public void clearErrorMessage()
+    {
+        errorLabel.setVisible(false);
+        errorLabel.setText(" ");
+    }
+
+    public void setLoginButtonEnabled(boolean enabled)
+    {
+        loginButton.setEnabled(enabled);
+    }
+
+    public void showLoadingState(boolean loading)
     {
         loginButton.setEnabled(!loading);
         emailField.setEnabled(!loading);
@@ -107,19 +142,21 @@ public class LoginView extends JXPanel
         loginButton.setText(loading ? "AUTENTICAZIONE..." : "ACCEDI");
     }
 
-    public void setError(String msg)
+    public void addInputListener(DocumentListener l)
     {
-        errorLabel.setText(msg);
-        errorLabel.setVisible(true);
-        emailField.putClientProperty(FlatClientProperties.OUTLINE, "error");
-        passwordField.putClientProperty(FlatClientProperties.OUTLINE, "error");
+        emailField.getDocument().addDocumentListener(l);
+        passwordField.getDocument().addDocumentListener(l);
     }
 
-    public void clearError()
+    public void addLoginActionListener(ActionListener l)
     {
-        errorLabel.setVisible(false);
-        errorLabel.setText(" ");
-        emailField.putClientProperty(FlatClientProperties.OUTLINE, null);
-        passwordField.putClientProperty(FlatClientProperties.OUTLINE, null);
+        loginButton.addActionListener(l);
+    }
+
+    @Override
+    public synchronized void addFocusListener(FocusListener l)
+    {
+        emailField.addFocusListener(l);
+        passwordField.addFocusListener(l);
     }
 }

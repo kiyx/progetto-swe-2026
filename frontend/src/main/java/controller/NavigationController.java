@@ -2,6 +2,7 @@ package controller;
 
 import service.AuthService;
 import service.NavigationService;
+import view.DashboardView;
 import view.LoginView;
 import view.MainFrame;
 
@@ -53,8 +54,8 @@ public class NavigationController implements NavigationService
         SwingUtilities.invokeLater(() ->
         {
             mainFrame.clearViews();
-
-            //mainFrame.addView(dashboardView, VIEW_DASHBOARD);
+            DashboardView dashboardView = new DashboardView();
+            mainFrame.addView(dashboardView, VIEW_DASHBOARD);
             mainFrame.showView(VIEW_DASHBOARD);
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);

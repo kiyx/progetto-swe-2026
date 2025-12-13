@@ -1,41 +1,42 @@
 package view;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.fonts.inter.FlatInterFont;
 import controller.NavigationController;
 import service.AuthService;
 
 import javax.swing.*;
+import java.net.http.*;
+import java.time.*;
+import java.util.logging.Logger; // Importa il logger
 
-public class Main {
+public class Main
+{
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args)
     {
+        // 1. Setup Grafica (FlatLaf)
         FlatInterFont.install();
         FlatLightLaf.setup();
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() ->
+        {
+            LOGGER.info("Avvio dell'applicazione BugBoard Frontend...");
+            HttpClient sharedClient = HttpClient.newBuilder()
+                    .version(HttpClient.Version.HTTP_1_1)
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .build();
+            ObjectMapper sharedMapper = new ObjectMapper();
+            AuthService authService = new AuthService(sharedClient, sharedMapper);
             MainFrame mainFrame = new MainFrame();
-            AuthService mockAuth = new MockAuthService();
-            NavigationController navController = new NavigationController(mainFrame, mockAuth);
+            NavigationController navController = new NavigationController(mainFrame, authService);
+
             navController.start();
+            mainFrame.setVisible(true);
         });
     }
-
-    static class MockAuthService extends AuthService
-    {
-
-        @Override
-        public boolean login(String email, String password)
-        {
-            System.out.println("[MOCK] Tentativo login: " + email);
-            if("test@bugboard26.it".equals(email) && "password1234".equals(password)) {
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public void clearSession() {
-            System.out.println("[MOCK] Sessione pulita (Logout).");
-        }
-    }
+    
 }

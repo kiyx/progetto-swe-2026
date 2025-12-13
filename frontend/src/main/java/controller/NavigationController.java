@@ -5,7 +5,6 @@ import service.NavigationService;
 import view.LoginView;
 import view.MainFrame;
 
-
 public class NavigationController implements NavigationService
 {
     private static final String VIEW_LOGIN = "LOGIN";
@@ -45,6 +44,7 @@ public class NavigationController implements NavigationService
 
     public void logout()
     {
-
+        authService.logout();
+        goToLogin();
     }
 }

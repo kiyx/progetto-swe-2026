@@ -8,8 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class AuthResponseDTO
 {
-    // Stringa token per JWT
-    private String accessToken;
+    private String jwtToken;
 
     @Builder.Default
     private String tokenType = "Bearer";

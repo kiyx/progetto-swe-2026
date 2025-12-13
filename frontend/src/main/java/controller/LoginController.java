@@ -6,10 +6,13 @@ import view.LoginView;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
+import java.util.logging.*;
 import java.util.regex.*;
+
 
 public class LoginController
 {
+    private static final Logger LOGGER = Logger.getLogger(LoginController.class.getName());
     private static final int EMAIL_MIN_LENGTH = 4;
     private static final int EMAIL_MAX_LENGTH = 50;
     private static final int PASSWORD_MIN_LENGTH = 8;
@@ -53,9 +56,36 @@ public class LoginController
         view.addLoginActionListener(this::handleLogin);
     }
 
-    private void handleLogin(ActionEvent actionEvent)
+    private void handleLogin(ActionEvent e)
     {
-        System.out.println("CIao");
+        String username = view.getEmail();
+        String password = view.getPassword();
+        String fullEmail = username + view.getEmailDomain();
+
+        LOGGER.info(() -> "Richiesta login avviata dall'interfaccia per: " + fullEmail);
+
+        view.showLoadingState(true);
+        view.clearErrorMessage();
+
+        new Thread(() ->
+        {
+            boolean success = authService.login(fullEmail, password);
+
+            SwingUtilities.invokeLater(() ->
+            {
+                if(success)
+                {
+                    LOGGER.info("Login confermato. Reindirizzamento alla Home.");
+                    navigationService.goToHome();
+                }
+                else
+                {
+                    LOGGER.warning("Login negato. Mostro errore all'utente.");
+                    view.showLoadingState(false);
+                    view.showErrorMessage("Credenziali non valide o errore di connessione.");
+            }
+            });
+        }).start();
     }
 
     private void validateInput()

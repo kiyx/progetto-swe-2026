@@ -54,14 +54,14 @@ public class JWTService
     // 2. ESTRAZIONE E VALIDAZIONE TOKEN
     // ====================================================================
 
-    public String extractUsername(String token)
+    public String extractEmail(String token)
     {
         return extractClaim(token, Claims::getSubject);
     }
 
     public boolean isTokenValid(String token, Utente utente)
     {
-        final String username = extractUsername(token);
+        final String username = extractEmail(token);
         return (username.equals(utente.getEmail()) && !isTokenExpired(token));
     }
 

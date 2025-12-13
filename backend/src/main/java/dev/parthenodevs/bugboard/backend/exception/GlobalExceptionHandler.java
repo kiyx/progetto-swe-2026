@@ -40,6 +40,34 @@ public class GlobalExceptionHandler
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorDTO> handleExpiredJwtException(ExpiredJwtException ex)
+    {
+        LOGGER.log(Level.WARNING, ex, () -> "Token JWT scaduto.");
+
+        ErrorDTO errorResponse = new ErrorDTO(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                "Token Scaduto",
+                "La sessione è scaduta. Effettuare nuovamente il login."
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(MalformedJwtException.class)
+    public ResponseEntity<ErrorDTO> handleInvalidJwtException(JwtException ex)
+    {
+        LOGGER.log(Level.WARNING, ex, () -> "Token JWT non valido.");
+
+        ErrorDTO errorResponse = new ErrorDTO(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                "Token Non Valido",
+                "Il token JWT non è valido o la sua firma è compromessa."
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ErrorDTO> handleJwtAuthenticationException(RuntimeException ex)
     {

@@ -3,6 +3,6 @@ package service;
 public interface NavigationService
 {
     void goToLogin();
-    void goToHome();
+    void goToDashboard();
     void logout();
 }

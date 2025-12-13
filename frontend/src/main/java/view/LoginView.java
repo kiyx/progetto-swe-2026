@@ -10,15 +10,21 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LoginView extends JXPanel
 {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private static final Logger LOGGER = Logger.getLogger(LoginView.class.getName());
     private static final Color PRIMARY_COLOR = new Color(25, 118, 210);
     private static final Color BG_COLOR = new Color(245, 247, 250);
     private static final int ICON_SIZE = 18;
+    private static final int LOGO_SIZE = 64;
+    private static final String LOGO_PATH = "/img/bug.png";
     private static final String FONT = "Segoe UI";
     private static final String EMAIL_DOMAIN = "@bugboard26.it";
 
@@ -31,10 +37,15 @@ public class LoginView extends JXPanel
     {
         setLayout(new MigLayout("fill, insets 0", "[center]", "[center]"));
         setBackground(BG_COLOR);
+        setDoubleBuffered(true);
+        setOpaque(false);
 
-        JXPanel card = new JXPanel(new MigLayout("wrap 1, insets 40 50 40 50, fillx, width 380!", "[fill]", "[]10[]30[]15[]20[]"));
+        JXPanel card = new JXPanel(new MigLayout("wrap 1, insets 40 50 40 50, fillx, w 350:400", "[fill]", "[]10[]10[]30[]15[]20[]"));
         card.putClientProperty(FlatClientProperties.STYLE, "arc: 20; background: #FFFFFF");
         card.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230), 1));
+        card.setDoubleBuffered(true);
+        
+        JXLabel logoLabel = createLogoLabel();
 
         JXLabel titleLabel = new JXLabel("BugBoard - Login");
         titleLabel.setFont(new Font(FONT, Font.BOLD, 32));
@@ -78,6 +89,7 @@ public class LoginView extends JXPanel
         errorLabel.setFont(new Font(FONT, Font.BOLD, 12));
         errorLabel.setVisible(false);
 
+        card.add(logoLabel, "center, gapbottom 10"); // Nuovo: Logo
         card.add(titleLabel, "center");
         card.add(subtitleLabel, "center, gapbottom 10");
         card.add(errorLabel, "h 20!");
@@ -87,7 +99,36 @@ public class LoginView extends JXPanel
 
         add(card);
     }
-
+    private JXLabel createLogoLabel()
+    {
+        JXLabel label = new JXLabel();
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        try
+        {
+            URL imageUrl = getClass().getResource(LOGO_PATH);
+            if (imageUrl != null)
+            {
+                ImageIcon icon = new ImageIcon(imageUrl);
+                Image img = icon.getImage().getScaledInstance(LOGO_SIZE, LOGO_SIZE, Image.SCALE_SMOOTH);
+                label.setIcon(new ImageIcon(img));
+                label.setPreferredSize(new Dimension(LOGO_SIZE, LOGO_SIZE));
+                LOGGER.info("Logo caricato con successo da: " + LOGO_PATH);
+            }
+            else
+            {
+                LOGGER.log(Level.WARNING, "Logo non trovato. Verificare il percorso nel classpath: {0}", LOGO_PATH);
+                label.setText("LOGO NON TROVATO");
+                label.setPreferredSize(new Dimension(LOGO_SIZE, 20));
+            }
+        }
+        catch (Exception e)
+        {
+            LOGGER.log(Level.SEVERE, "Errore CRITICO durante il caricamento del logo da " + LOGO_PATH, e);
+            label.setText("Errore Caricamento Logo");
+            label.setPreferredSize(new Dimension(LOGO_SIZE, 20));
+        }
+        return label;
+    }
     public String getEmail()
     {
         return emailField.getText().trim();

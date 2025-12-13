@@ -19,7 +19,6 @@ public class Main
 
     public static void main(String[] args)
     {
-        // 1. Setup Grafica (FlatLaf)
         FlatInterFont.install();
         FlatLightLaf.setup();
         SwingUtilities.invokeLater(() ->
@@ -35,8 +34,6 @@ public class Main
             NavigationController navController = new NavigationController(mainFrame, authService);
 
             navController.start();
-            mainFrame.setVisible(true);
         });
     }
-    
 }

@@ -5,10 +5,14 @@ import service.NavigationService;
 import view.LoginView;
 import view.MainFrame;
 
+import javax.swing.*;
+
 public class NavigationController implements NavigationService
 {
     private static final String VIEW_LOGIN = "LOGIN";
-    private static final String VIEW_HOMEPAGE = "HOMEPAGE";
+    private static final String VIEW_DASHBOARD = "DASHBOARD";
+    private static final String VIEW_TEAMS = "TEAMS";
+    private static final String VIEW_PROJECTS = "PROJECTS";
 
     private final MainFrame mainFrame;
     private final AuthService authService;
@@ -21,25 +25,39 @@ public class NavigationController implements NavigationService
 
     public void start()
     {
-        goToLogin();
-        mainFrame.setVisible(true);
+        SwingUtilities.invokeLater(this::goToLogin);
     }
 
     public void goToLogin()
     {
-        mainFrame.clearViews();
-        LoginView loginView = new LoginView();
+        SwingUtilities.invokeLater(() ->
+        {
+            mainFrame.clearViews();
+            LoginView loginView = new LoginView();
+            new LoginController(loginView, this.authService, this);
 
-        new LoginController(loginView, this.authService, this);
-        mainFrame.addView(loginView, VIEW_LOGIN);
-        mainFrame.showView(VIEW_LOGIN);
+            mainFrame.addView(loginView, VIEW_LOGIN);
+            mainFrame.showView(VIEW_LOGIN);
+            mainFrame.pack();
+            mainFrame.setLocationRelativeTo(null);
+
+            if(!mainFrame.isVisible())
+                mainFrame.setVisible(true);
+        });
     }
 
-    public void goToHome()
+    public void goToDashboard()
     {
-        mainFrame.clearViews();
+        SwingUtilities.invokeLater(() ->
+        {
+            mainFrame.clearViews();
 
-        
+
+            //mainFrame.addView(dashboardView, VIEW_DASHBOARD);
+            mainFrame.showView(VIEW_DASHBOARD);
+            mainFrame.pack();
+            mainFrame.setLocationRelativeTo(null);
+        });
     }
 
     public void logout()

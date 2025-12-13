@@ -23,14 +23,12 @@ public class DashboardView extends JXPanel
         setVisible(true);
     }
 
-    private void initComponents() {
+    private void initComponents()
+    {
 
-        // 1. Root Panel con MigLayout
         JXPanel rootPanel = new JXPanel(new MigLayout("fill, insets 0", "[grow]", "[][grow]"));
         rootPanel.setBackground(Color.WHITE);
 
-        // 2. Pannello per i filtri (Top)
-        // Usiamo MigLayout anche qui per coerenza
         JPanel topPanel = new JPanel(new MigLayout("fillx, insets 10", "[][grow]", "[]10[]"));
         topPanel.setBackground(Color.WHITE);
         topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
@@ -48,7 +46,6 @@ public class DashboardView extends JXPanel
         topPanel.add(statusFilter);
         topPanel.add(priorityFilter);
 
-        // 3. Tabella
         String[] columns = {"ID", "Titolo", "Progetto", "Tipo", "Stato", "Priorità"};
         Object[][] data = {
                 {"#101", "Bug Login", "App Mobile", "Bug", "Aperto", "Alta"},
@@ -59,12 +56,11 @@ public class DashboardView extends JXPanel
         JTable table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
 
-        // AGGIUNTA AL ROOT PANEL (La parte cruciale)
-        // Aggiungiamo i componenti seguendo le righe definite nel MigLayout del rootPanel [][grow]
         rootPanel.add(topPanel, "growx, wrap");
         rootPanel.add(scrollPane, "grow");
 
-        // Refresh finale
+        add(rootPanel, "grow");
+
         revalidate();
         repaint();
     }

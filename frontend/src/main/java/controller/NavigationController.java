@@ -57,6 +57,7 @@ public class NavigationController implements NavigationService
             DashboardView dashboardView = new DashboardView();
             mainFrame.addView(dashboardView, VIEW_DASHBOARD);
             mainFrame.showView(VIEW_DASHBOARD);
+
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);
         });

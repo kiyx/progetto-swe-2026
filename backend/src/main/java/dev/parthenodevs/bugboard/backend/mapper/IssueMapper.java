@@ -29,6 +29,7 @@ public class IssueMapper
                 .nomeAutore(issue.getAutore().getNome() + " " + issue.getAutore().getCognome())
                 .idProgetto(issue.getProgetto().getId())
                 .nomeProgetto(issue.getProgetto().getNome())
+                .nomeTeam(issue.getProgetto().getTeam().getNome())
                 .build();
     }
 

@@ -27,4 +27,6 @@ public class IssueResponseDTO
 
     private Long idProgetto;
     private String nomeProgetto;
+
+    private String nomeTeam;
 }

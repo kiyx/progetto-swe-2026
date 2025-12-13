@@ -1,5 +1,6 @@
 package model.dto.response;
 
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 @Data
@@ -14,6 +15,7 @@ public class UtenteResponseDTO
     private String cognome;
     private Boolean isAdmin;
 
+    @JsonIgnore
     public String getNomeCompleto()
     {
         return nome + " " + cognome;

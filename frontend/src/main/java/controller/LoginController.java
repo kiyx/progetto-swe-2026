@@ -82,7 +82,7 @@ public class LoginController
                 {
                     LOGGER.warning("Login negato. Mostro errore all'utente.");
                     view.showLoadingState(false);
-                    view.showErrorMessage("Credenziali non valide o errore di connessione.");
+                    view.showErrorMessage("Credenziali non valide");
             }
             });
         }).start();

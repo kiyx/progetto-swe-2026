@@ -38,6 +38,8 @@ public class NavigationController implements NavigationService
 
             mainFrame.addView(loginView, VIEW_LOGIN);
             mainFrame.showView(VIEW_LOGIN);
+            loginView.setAsDefaultFocus();
+
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);
 
@@ -51,7 +53,6 @@ public class NavigationController implements NavigationService
         SwingUtilities.invokeLater(() ->
         {
             mainFrame.clearViews();
-
 
             //mainFrame.addView(dashboardView, VIEW_DASHBOARD);
             mainFrame.showView(VIEW_DASHBOARD);

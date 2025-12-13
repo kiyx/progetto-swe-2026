@@ -10,9 +10,8 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.net.*;
+import java.util.logging.*;
 
 public class LoginView extends JXPanel
 {
@@ -44,7 +43,7 @@ public class LoginView extends JXPanel
         card.putClientProperty(FlatClientProperties.STYLE, "arc: 20; background: #FFFFFF");
         card.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230), 1));
         card.setDoubleBuffered(true);
-        
+
         JXLabel logoLabel = createLogoLabel();
 
         JXLabel titleLabel = new JXLabel("BugBoard - Login");
@@ -89,7 +88,7 @@ public class LoginView extends JXPanel
         errorLabel.setFont(new Font(FONT, Font.BOLD, 12));
         errorLabel.setVisible(false);
 
-        card.add(logoLabel, "center, gapbottom 10"); // Nuovo: Logo
+        card.add(logoLabel, "center, gapbottom 10");
         card.add(titleLabel, "center");
         card.add(subtitleLabel, "center, gapbottom 10");
         card.add(errorLabel, "h 20!");
@@ -106,7 +105,7 @@ public class LoginView extends JXPanel
         try
         {
             URL imageUrl = getClass().getResource(LOGO_PATH);
-            if (imageUrl != null)
+            if(imageUrl != null)
             {
                 ImageIcon icon = new ImageIcon(imageUrl);
                 Image img = icon.getImage().getScaledInstance(LOGO_SIZE, LOGO_SIZE, Image.SCALE_SMOOTH);
@@ -156,6 +155,13 @@ public class LoginView extends JXPanel
         passwordField.putClientProperty(FlatClientProperties.OUTLINE, hasError ? "error" : null);
         if(hasError)
             showErrorMessage(errorMessage);
+    }
+
+    public void setAsDefaultFocus()
+    {
+        JRootPane rootPane = SwingUtilities.getRootPane(this);
+        if(rootPane != null)
+            rootPane.setDefaultButton(loginButton);
     }
 
     public void showErrorMessage(String msg)

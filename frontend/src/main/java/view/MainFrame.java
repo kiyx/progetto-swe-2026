@@ -20,7 +20,6 @@ public class MainFrame extends JXFrame
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(MIN_DIMENSION);
-        //setLocationRelativeTo(null);
 
         try
         {

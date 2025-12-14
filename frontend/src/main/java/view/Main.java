@@ -1,17 +1,14 @@
 package view;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.formdev.flatlaf.FlatClientProperties;
-import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.fonts.inter.FlatInterFont;
 import controller.NavigationController;
+import com.fasterxml.jackson.databind.*;
+import com.formdev.flatlaf.*;
+import com.formdev.flatlaf.fonts.inter.*;
 import service.AuthService;
-
 import javax.swing.*;
 import java.net.http.*;
 import java.time.*;
-import java.util.logging.Logger; // Importa il logger
+import java.util.logging.*;
 
 public class Main
 {

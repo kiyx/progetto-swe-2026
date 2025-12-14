@@ -9,7 +9,6 @@ import java.awt.event.*;
 import java.util.logging.*;
 import java.util.regex.*;
 
-
 public class LoginController
 {
     private static final Logger LOGGER = Logger.getLogger(LoginController.class.getName());

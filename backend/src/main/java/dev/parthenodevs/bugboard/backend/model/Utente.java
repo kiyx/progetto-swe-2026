@@ -1,17 +1,26 @@
 package dev.parthenodevs.bugboard.backend.model;
 
+import java.io.*;
 import java.util.*;
 import com.fasterxml.jackson.annotation.*;
 import dev.parthenodevs.bugboard.backend.exception.InvalidFieldException;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.NonNull;
+import org.jspecify.annotations.*;
+import org.springframework.security.core.*;
+import org.springframework.security.core.authority.*;
+import org.springframework.security.core.userdetails.*;
 
 @Entity
 @Table(name = "Utente", schema = "bugboard26")
 @Data
 @NoArgsConstructor
-public class Utente
+public class Utente implements UserDetails
 {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idutente")
@@ -42,6 +51,7 @@ public class Utente
             joinColumns = @JoinColumn(name = "idutente"),
             inverseJoinColumns = @JoinColumn(name = "idissue")
     )
+    @SuppressWarnings("java:S1948")
     private Set<Issue> assignedIssues = new HashSet<>();
 
     @Setter(AccessLevel.NONE)
@@ -53,6 +63,7 @@ public class Utente
             joinColumns = @JoinColumn(name = "idutente"),
             inverseJoinColumns = @JoinColumn(name = "idteam")
     )
+    @SuppressWarnings("java:S1948")
     private Set<Team> assignedTeams = new HashSet<>();
 
     @Builder
@@ -94,5 +105,46 @@ public class Utente
     {
         this.assignedTeams.remove(team);
         team.getMembri().remove(this);
+    }
+
+    @Override
+    @NonNull
+    public Collection<? extends GrantedAuthority> getAuthorities()
+    {
+        if(Boolean.TRUE.equals(this.isAdmin))
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    @NonNull
+    public String getUsername()
+    {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled()
+    {
+        return true;
     }
 }

@@ -9,12 +9,18 @@ import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.type.*;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Entity
 @Table(name = "Issue", schema = "bugboard26")
 @Data
 @NoArgsConstructor
-public class Issue
+public class Issue implements Serializable
 {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "idissue")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,6 +59,7 @@ public class Issue
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idprogetto", nullable = false)
+    @SuppressWarnings("java:S1948")
     private Progetto progetto;
 
     @Builder

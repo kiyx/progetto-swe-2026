@@ -3,14 +3,19 @@ package dev.parthenodevs.bugboard.backend.model;
 import dev.parthenodevs.bugboard.backend.exception.InvalidFieldException;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.io.*;
 import java.util.*;
 
 @Entity
 @Table(name = "Team", schema = "bugboard26")
 @Data
 @NoArgsConstructor
-public class Team
+public class Team implements Serializable
 {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "idteam", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +37,7 @@ public class Team
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "team", cascade = CascadeType.REFRESH)
+    @SuppressWarnings("java:S1948")
     private Set<Progetto> progetti = new HashSet<>();
 
     @Builder

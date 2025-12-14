@@ -6,13 +6,18 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.type.*;
+import java.io.*;
+
 
 @Entity
 @Table(name = "Progetto", schema = "bugboard26")
 @Data
 @NoArgsConstructor
-public class Progetto
+public class Progetto implements Serializable
 {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idprogetto", nullable = false)
@@ -29,6 +34,7 @@ public class Progetto
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idteam", nullable = false)
+    @SuppressWarnings("java:S1948")
     private Team team;
 
     @ToString.Exclude

@@ -36,7 +36,7 @@ public class HeaderPanel extends JXPanel
         add(lblTitle, "gapleft 10");
 
         profileMenu = new JPopupMenu();
-        itemProfile = new JMenuItem("Il mio Profilo", FontIcon.of(MaterialDesignA.ACCOUNT_CIRCLE, 16, Color.GRAY));
+        itemProfile = new JMenuItem("Il Mio Profilo", FontIcon.of(MaterialDesignA.ACCOUNT_CIRCLE, 16, Color.GRAY));
         itemLogout = new JMenuItem("Logout", FontIcon.of(MaterialDesignL.LOGOUT, 16, Color.GRAY));
 
         profileMenu.add(itemProfile);

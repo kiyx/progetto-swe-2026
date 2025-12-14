@@ -1,7 +1,6 @@
 package dev.parthenodevs.bugboard.backend.mapper;
 
 import dev.parthenodevs.bugboard.backend.dto.request.RegisterRequestDTO;
-import dev.parthenodevs.bugboard.backend.dto.request.UpdateUtenteRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.UtenteResponseDTO;
 import dev.parthenodevs.bugboard.backend.model.Utente;
 import org.springframework.stereotype.Component;
@@ -35,22 +34,5 @@ public class UtenteMapper
                      .password(request.getPassword())
                      .isAdmin(request.getIsAdmin() != null && request.getIsAdmin())
                      .build();
-    }
-
-    public void update(Utente entity, UpdateUtenteRequestDTO request)
-    {
-        if(request == null || entity == null)
-            return;
-
-        if(request.getNome() != null && !request.getNome().isBlank())
-            entity.setNome(request.getNome());
-
-        if(request.getCognome() != null && !request.getCognome().isBlank())
-            entity.setCognome(request.getCognome());
-
-        if(request.getIsAdmin() != null)
-            entity.setIsAdmin(request.getIsAdmin());
-
-        // L'eventuale cambio di password verrà gestito nel service corrispondente
     }
 }

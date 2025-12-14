@@ -1,5 +1,6 @@
 package controller;
 
+import service.UtenteService;
 import view.*;
 import view.component.HeaderPanel;
 import view.component.SidebarPanel;
@@ -20,11 +21,13 @@ public class NavigationController implements NavigationService
     private MainLayoutView mainLayoutView;
     private final MainFrame mainFrame;
     private final AuthService authService;
+    private final UtenteService utenteService;
 
-    public NavigationController(MainFrame mainFrame, AuthService authService)
+    public NavigationController(MainFrame mainFrame, AuthService authService, UtenteService utenteService)
     {
         this.mainFrame = mainFrame;
         this.authService = authService;
+        this.utenteService = utenteService;
     }
 
     public void start()
@@ -52,7 +55,6 @@ public class NavigationController implements NavigationService
             sidebar.setIssuesAction(e -> goToIssues());
             sidebar.setTeamsAction(e -> goToTeams());
             sidebar.setProjectsAction(e -> goToProjects());
-
 
             mainFrame.addView(mainLayoutView, VIEW_APP_SHELL);
 
@@ -107,8 +109,9 @@ public class NavigationController implements NavigationService
             initMainLayoutIfNeeded();
             mainFrame.showView(VIEW_APP_SHELL);
 
-
             mainLayoutView.showContentView(INNER_ISSUES);
+            mainFrame.pack();
+            mainFrame.setLocationRelativeTo(null);
         });
     }
     
@@ -120,8 +123,9 @@ public class NavigationController implements NavigationService
             initMainLayoutIfNeeded();
             mainFrame.showView(VIEW_APP_SHELL);
 
-
             mainLayoutView.showContentView(INNER_TEAMS);
+            mainFrame.pack();
+            mainFrame.setLocationRelativeTo(null);
         });
     }
 
@@ -133,14 +137,22 @@ public class NavigationController implements NavigationService
             initMainLayoutIfNeeded();
             mainFrame.showView(VIEW_APP_SHELL);
 
-
             mainLayoutView.showContentView(INNER_PROJECTS);
+            mainFrame.pack();
+            mainFrame.setLocationRelativeTo(null);
         });
     }
 
     private void showProfileDialog()
     {
-        JOptionPane.showMessageDialog(mainFrame, "Qui aprirei il JDialog del profilo!");
+        var currentUser = authService.getCurrentUser();
+
+        if(currentUser != null)
+        {
+           UpdateProfileDialog dialog = new UpdateProfileDialog (mainFrame, currentUser);
+           new UtenteController(dialog, authService, utenteService);
+           dialog.setVisible(true);
+        }
     }
 
     @Override

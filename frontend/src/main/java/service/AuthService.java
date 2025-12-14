@@ -1,13 +1,12 @@
 package service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
-import lombok.*;
 import model.dto.request.LoginRequestDTO;
 import model.dto.response.AuthResponseDTO;
 import model.dto.response.UtenteResponseDTO;
-
-import java.io.IOException;
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
+import lombok.*;
+import java.io.*;
 import java.net.URI;
 import java.net.http.*;
 import java.util.logging.*;
@@ -60,24 +59,38 @@ public class AuthService
             }
             else
             {
-                LOGGER.warning(() -> "Login fallito. Status code: " + response.statusCode());
-                LOGGER.fine(() -> "Risposta server: " + response.body());
+                LOGGER.warning(() -> String.format("Login fallito per %s. Status: %d. Risposta Server: %s",
+                        email, response.statusCode(), response.body()));
                 return false;
             }
         }
         catch (JsonProcessingException e)
         {
-            LOGGER.log(Level.SEVERE, "Errore di parsing JSON durante il login", e);
+            LOGGER.log(Level.SEVERE, "Errore di serializzazione JSON durante il login", e);
             return false;
         }
-        catch (IOException | InterruptedException e)
+        catch (InterruptedException e)
         {
-            LOGGER.log(Level.SEVERE, "Errore di connessione con il backend", e);
-            if(e instanceof InterruptedException)
-                Thread.currentThread().interrupt();
-
+            LOGGER.log(Level.SEVERE, "Thread interrotto durante il login", e);
+            Thread.currentThread().interrupt();
             return false;
         }
+        catch (IOException e)
+        {
+            LOGGER.log(Level.SEVERE, "Errore di I/O (connessione backend) durante il login", e);
+            return false;
+        }
+    }
+
+    public void refreshLocalUser(UtenteResponseDTO newUser)
+    {
+        this.currentUser = newUser;
+        LOGGER.info("Cache utente locale aggiornata.");
+    }
+
+    public boolean isAuthenticated()
+    {
+        return this.jwtToken != null && this.currentUser != null;
     }
 
     public void logout()
@@ -86,10 +99,5 @@ public class AuthService
         this.jwtToken = null;
         this.currentUser = null;
         LOGGER.info(() -> "Logout effettuato per: " + userEmail);
-    }
-
-    public boolean isAuthenticated()
-    {
-        return this.jwtToken != null && this.currentUser != null;
     }
 }

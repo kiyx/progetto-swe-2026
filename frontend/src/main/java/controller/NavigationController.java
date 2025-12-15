@@ -63,7 +63,10 @@ public class NavigationController implements NavigationService
             mainLayoutView.addContentView(new DashboardView(), INNER_DASHBOARD);
             // mainLayoutView.addContentView(new IssuesView(), INNER_ISSUES);
             // mainLayoutView.addContentView(new ProjectsView(), INNER_PROJECTS);
-            mainLayoutView.addContentView(new TeamsView(), INNER_TEAMS);
+            
+            TeamsView teamsView = new TeamsView();
+            teamsView.addCreateListener(e->showCreateTeamDialog());
+            mainLayoutView.addContentView(teamsView, INNER_TEAMS);
         }
     }
 
@@ -129,6 +132,13 @@ public class NavigationController implements NavigationService
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);
         });
+    }
+
+    public void showCreateTeamDialog()
+    {
+        CreateTeamDialog dialog = new CreateTeamDialog(mainFrame);
+        new CreateTeamController();
+        dialog.setVisible(true);
     }
 
     @Override

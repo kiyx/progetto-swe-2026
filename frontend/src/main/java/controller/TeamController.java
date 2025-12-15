@@ -3,7 +3,7 @@ package controller;
 import model.dto.response.TeamResponseDTO;
 import service.TeamsService;
 import view.TeamsView;
-
+import view.CreateTeamDialog;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -32,7 +32,7 @@ public class TeamController
     private void initController()
     {
 
-        view.addCreateListener(e -> createNewTeam());
+
     }
 
     private void loadTeams()
@@ -48,8 +48,4 @@ public class TeamController
 
     }
 
-    private void createNewTeam()
-    {
-
-    }
 }

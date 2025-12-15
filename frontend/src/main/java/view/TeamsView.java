@@ -32,35 +32,28 @@ public class TeamsView extends JXPanel {
         setLayout(new MigLayout("fill, insets 20", "[grow]", "[][grow]"));
         setBackground(Color.WHITE);
 
-        // --- 1. Header Panel ---
         JPanel topPanel = new JPanel(new MigLayout("fillx, insets 0", "[]10[grow][]", "[]"));
         topPanel.setOpaque(false);
 
-        // Inizializzazione Label
         JLabel titleLabel = new JLabel("Gestione Team");
         titleLabel.putClientProperty(FlatClientProperties.STYLE, "font: bold +5");
 
-        // Inizializzazione SearchField
         searchField = new JTextField();
         searchField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Cerca Team...");
         searchField.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
 
-        // Inizializzazione Bottone Nuovo Team (IMPORTANTE: deve essere prima di topPanel.add)
         createTeamButton = new JButton("Nuovo Team");
         createTeamButton.setBackground(new Color(0, 100, 255)); // Blu acceso manuale
         createTeamButton.setForeground(Color.WHITE);
         createTeamButton.putClientProperty(FlatClientProperties.STYLE, "font: bold; arc: 10");
 
-        // Inizializzazione Bottone Aggiorna
         refreshButton = new JButton("Aggiorna");
 
-        // Aggiunta componenti al pannello (Se uno di questi è null, lancia NullPointerException)
         topPanel.add(titleLabel);
         topPanel.add(searchField, "growx");
         topPanel.add(createTeamButton);
         topPanel.add(refreshButton);
 
-        // --- 2. Tabella ---
         table = new JXTable(tableModel);
         sorter = new TableRowSorter<>(tableModel);
         table.setRowSorter(sorter);
@@ -70,8 +63,6 @@ public class TeamsView extends JXPanel {
         table.setShowGrid(false, true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Configurazione Larghezze Colonne
-        // Assicurati che TeamTableModel abbia le colonne corrette (ID, Nome, Aggiungi, Rimuovi)
         if (table.getColumnCount() >= 4) {
             table.getColumnModel().getColumn(TeamsTableModel.COL_ID).setMaxWidth(50);
             table.getColumnModel().getColumn(TeamsTableModel.COL_ADD_MEMBER).setMaxWidth(110);
@@ -82,7 +73,6 @@ public class TeamsView extends JXPanel {
         scrollPane.getViewport().setBackground(Color.WHITE);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
-        // Aggiunta pannelli principali alla View
         add(topPanel, "growx, wrap");
         add(scrollPane, "grow");
     }

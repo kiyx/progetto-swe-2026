@@ -1,7 +1,9 @@
 package dev.parthenodevs.bugboard.backend.service;
 
+import dev.parthenodevs.bugboard.backend.dto.request.RegisterRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.request.UpdateUtenteRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.UtenteResponseDTO;
+import dev.parthenodevs.bugboard.backend.exception.EmailAlreadyUsedException;
 import dev.parthenodevs.bugboard.backend.exception.InvalidFieldException;
 import dev.parthenodevs.bugboard.backend.exception.PasswordNotMatchingException;
 import dev.parthenodevs.bugboard.backend.exception.UserNotFoundException;
@@ -44,5 +46,25 @@ public class UtenteService
             throw new InvalidFieldException("La nuova password non può essere vuota.");
 
         return utenteMapper.toDto(utenteRepository.save(utente));
+    }
+
+    @Transactional
+    public UtenteResponseDTO registerUtente(RegisterRequestDTO request)
+    {
+        if(utenteRepository.existsByEmail(request.getEmail()))
+        {
+            throw new EmailAlreadyUsedException("L'indirizzo email " + request.getEmail() + " è già associato a un account.");
+        }
+
+        Utente nuovoUtente = new Utente();
+        nuovoUtente.setNome(request.getNome());
+        nuovoUtente.setCognome(request.getCognome());
+        nuovoUtente.setEmail(request.getEmail());
+
+        nuovoUtente.setPassword(passwordEncoder.encode(request.getPassword()));
+        nuovoUtente.setIsAdmin(request.getIsAdmin() != null && request.getIsAdmin());
+        
+        Utente utenteSalvato = utenteRepository.save(nuovoUtente);
+        return utenteMapper.toDto(utenteSalvato);
     }
 }

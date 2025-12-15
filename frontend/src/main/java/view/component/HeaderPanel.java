@@ -16,6 +16,7 @@ public class HeaderPanel extends JXPanel
     private final JPopupMenu profileMenu;
     private final JMenuItem itemLogout;
     private final JMenuItem itemProfile;
+    private JMenuItem itemCreateUser = null;
 
     public HeaderPanel(String username, boolean isAdmin)
     {
@@ -42,8 +43,8 @@ public class HeaderPanel extends JXPanel
         profileMenu.add(itemProfile);
         if(isAdmin)
         {
-            JMenuItem itemAdmin = new JMenuItem("Crea Utenza", FontIcon.of(MaterialDesignA.ACCOUNT_MULTIPLE_PLUS, 16, Color.GRAY));
-            profileMenu.add(itemAdmin);
+            itemCreateUser = new JMenuItem("Crea Utenza", FontIcon.of(MaterialDesignA.ACCOUNT_MULTIPLE_PLUS, 16, Color.GRAY));
+            profileMenu.add(itemCreateUser);
         }
         profileMenu.addSeparator();
         profileMenu.add(itemLogout);
@@ -70,8 +71,14 @@ public class HeaderPanel extends JXPanel
         itemLogout.addActionListener(action);
     }
 
-    public void setProfileEditAction(ActionListener action)
+    public void setEditPasswordAction(ActionListener action)
     {
         itemProfile.addActionListener(action);
+    }
+
+    public void setCreateUserAction(ActionListener action)
+    {
+        if(itemCreateUser != null)
+            itemCreateUser.addActionListener(action);
     }
 }

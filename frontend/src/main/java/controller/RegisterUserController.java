@@ -8,9 +8,9 @@ import javax.swing.*;
 
 public class RegisterUserController
 {
-
     private final RegisterUserDialog view;
     private final UtenteService utenteService;
+
     private static final String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$";
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
 
@@ -25,22 +25,22 @@ public class RegisterUserController
 
     private void handleRegistration()
     {
-        String email = view.getEmail();
         String nome = view.getNome();
         String cognome = view.getCognome();
+        String email = view.getEmail();
         String pwd = view.getPassword();
         String confirmPwd = view.getConfirmPassword();
-        boolean isAdmin = view.getIsAdmin();
+        boolean isAdmin = view.isAdmin();
 
-        if(email.isBlank() || nome.isBlank() || cognome.isBlank() || pwd.isBlank())
+        if(nome.isBlank() || cognome.isBlank() || email.isBlank() || pwd.isBlank())
         {
-            showError("Tutti i campi (eccetto Admin) sono obbligatori.");
+            showWarning("Tutti i campi sono obbligatori.");
             return;
         }
 
         if(!email.matches(EMAIL_REGEX))
         {
-            showError("Formato email non valido.");
+            showWarning("Inserisci un indirizzo email valido.");
             return;
         }
 
@@ -52,30 +52,31 @@ public class RegisterUserController
 
         if(!pwd.matches(PASSWORD_REGEX))
         {
-            JOptionPane.showMessageDialog(view, "La password deve contenere almeno 8 caratteri, inclusi lettere e numeri.", "Attenzione", JOptionPane.WARNING_MESSAGE);
+            showWarning("La password deve contenere almeno 8 caratteri, inclusi lettere e numeri.");
             return;
         }
 
         RegisterRequestDTO request = new RegisterRequestDTO(email, nome, cognome, pwd, isAdmin);
+        boolean success = utenteService.register(request);
 
-        try
+        if(success)
         {
-            boolean success = utenteService.register(request);
-            if(success)
-            {
-                JOptionPane.showMessageDialog(view, "Utente creato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
-                view.dispose();
-            }
-            else
-                showError("Impossibile creare l'utente. L'email potrebbe essere già in uso.");
-        } catch (Exception ex) {
-            showError("Errore Server: " + ex.getMessage());
+            JOptionPane.showMessageDialog(view, "Utente creato con successo!", "Operazione Completata", JOptionPane.INFORMATION_MESSAGE);
+            view.dispose();
+        }
+        else
+        {
+            showError("Errore durante la creazione. L'email potrebbe essere già in uso.");
         }
     }
 
-    private void showError(String message)
+    private void showWarning(String msg)
     {
-        JOptionPane.showMessageDialog(view, message, "Errore", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(view, msg, "Attenzione", JOptionPane.WARNING_MESSAGE);
     }
 
+    private void showError(String msg)
+    {
+        JOptionPane.showMessageDialog(view, msg, "Errore", JOptionPane.ERROR_MESSAGE);
+    }
 }

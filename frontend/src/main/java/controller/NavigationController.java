@@ -48,7 +48,9 @@ public class NavigationController implements NavigationService
             mainLayoutView = new MainLayoutView(header, sidebar);
 
             header.setToggleAction(e -> mainLayoutView.toggleSidebar());
-            header.setProfileEditAction(e -> showProfileDialog());
+            header.setEditPasswordAction(e -> showEditPasswordDialog());
+            if(isAdmin)
+                header.setCreateUserAction(e -> showRegisterUserDialog());
             header.setLogoutAction(e -> logout());
 
             sidebar.setDashboardAction(e -> goToDashboard());
@@ -143,7 +145,7 @@ public class NavigationController implements NavigationService
         });
     }
 
-    private void showProfileDialog()
+    private void showEditPasswordDialog()
     {
         var currentUser = authService.getCurrentUser();
 

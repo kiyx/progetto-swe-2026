@@ -1,7 +1,7 @@
 package view.component;
 
-import com.formdev.flatlaf.FlatClientProperties;
-import net.miginfocom.swing.MigLayout;
+import com.formdev.flatlaf.*;
+import net.miginfocom.swing.*;
 import org.jdesktop.swingx.*;
 import org.kordamp.ikonli.materialdesign2.*;
 import org.kordamp.ikonli.swing.*;

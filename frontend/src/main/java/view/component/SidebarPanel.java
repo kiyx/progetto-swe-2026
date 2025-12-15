@@ -17,7 +17,7 @@ public class SidebarPanel extends JXPanel
     private final JXButton btnProjects;
     private final JXButton btnTeams;
 
-    public SidebarPanel()
+    public SidebarPanel(boolean isAdmin)
     {
         setLayout(new MigLayout("wrap 1, insets 20 10 0 10, fillx", "[grow, fill]", "[]5[]5[]5[]"));
         setBackground(new Color(245, 247, 250));
@@ -26,13 +26,26 @@ public class SidebarPanel extends JXPanel
 
         btnDashboard = createNavButton("Dashboard", MaterialDesignV.VIEW_DASHBOARD);
         btnIssues = createNavButton("Issues", MaterialDesignA.ALERT_CIRCLE_OUTLINE);
+
         btnTeams = createNavButton("Team", MaterialDesignA.ACCOUNT_GROUP_OUTLINE);
         btnProjects = createNavButton("Progetti", MaterialDesignF.FOLDER_OUTLINE);
 
         add(btnDashboard);
         add(btnIssues);
-        add(btnTeams);
-        add(btnProjects);
+
+        if(isAdmin)
+        {
+            JSeparator separator = new JSeparator();
+            separator.setForeground(new Color(220, 220, 220));
+            add(separator, "gapy 10 10, growx");
+
+            JLabel lblAdmin = new JLabel("AMMINISTRAZIONE");
+            lblAdmin.putClientProperty(FlatClientProperties.STYLE, "font: bold small; foreground: #9E9E9E");
+            add(lblAdmin, "gapy 0 5");
+
+            add(btnTeams);
+            add(btnProjects);
+        }
     }
 
     private JXButton createNavButton(String text, Ikon icon)
@@ -49,10 +62,10 @@ public class SidebarPanel extends JXPanel
 
         btn.putClientProperty(FlatClientProperties.STYLE,
                 "arc: 10;" +
-                "margin: 10,15,10,15;" +
-                "borderWidth: 0;" +
-                "background: null;" +
-                "hoverBackground: #E0E0E0");
+                        "margin: 10,15,10,15;" +
+                        "borderWidth: 0;" +
+                        "background: null;" +
+                        "hoverBackground: #E0E0E0");
 
         return btn;
     }

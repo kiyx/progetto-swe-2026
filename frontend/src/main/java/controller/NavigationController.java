@@ -44,7 +44,7 @@ public class NavigationController implements NavigationService
             boolean isAdmin = (user != null) && user.getIsAdmin();
 
             HeaderPanel header = new HeaderPanel(username, isAdmin);
-            SidebarPanel sidebar = new SidebarPanel();
+            SidebarPanel sidebar = new SidebarPanel(isAdmin);
             mainLayoutView = new MainLayoutView(header, sidebar);
 
             header.setToggleAction(e -> mainLayoutView.toggleSidebar());

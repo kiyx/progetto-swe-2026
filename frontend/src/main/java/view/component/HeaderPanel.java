@@ -42,7 +42,7 @@ public class HeaderPanel extends JXPanel
         profileMenu.add(itemProfile);
         if(isAdmin)
         {
-            JMenuItem itemAdmin = new JMenuItem("Gestione Utenze", FontIcon.of(MaterialDesignA.ACCOUNT_MULTIPLE_PLUS, 16, Color.GRAY));
+            JMenuItem itemAdmin = new JMenuItem("Crea Utenza", FontIcon.of(MaterialDesignA.ACCOUNT_MULTIPLE_PLUS, 16, Color.GRAY));
             profileMenu.add(itemAdmin);
         }
         profileMenu.addSeparator();

@@ -75,4 +75,11 @@ public class UtenteService
         }
         return Optional.empty();
     }
+
+
+
+    public Optional<UtenteResponseDTO> register()
+    {
+
+    }
 }

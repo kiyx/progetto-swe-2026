@@ -4,19 +4,19 @@ import model.dto.request.UpdateUtenteRequestDTO;
 import model.dto.response.UtenteResponseDTO;
 import service.AuthService;
 import service.UtenteService;
-import view.UpdateProfileDialog;
+import view.UpdatePasswordDialog;
 
 import javax.swing.*;
-import java.util.Optional;
+import java.util.*;
 
-public class UtenteController
+public class UpdatePasswordController
 {
-    private final UpdateProfileDialog view;
+    private final UpdatePasswordDialog view;
     private final AuthService authService;
     private final UtenteService utenteService;
     private static final String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$";
 
-    public UtenteController(UpdateProfileDialog view, AuthService authService, UtenteService utenteService)
+    public UpdatePasswordController(UpdatePasswordDialog view, AuthService authService, UtenteService utenteService)
     {
         this.view = view;
         this.authService = authService;
@@ -74,4 +74,17 @@ public class UtenteController
         else
             JOptionPane.showMessageDialog(view, "Errore: La vecchia password non è corretta o errore server.", "Errore", JOptionPane.ERROR_MESSAGE);
     }
+
+    private void handleNewUserCreation()
+    {
+
+
+
+
+
+    }
+
+
+
+
 }

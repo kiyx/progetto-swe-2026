@@ -61,7 +61,7 @@ public class NavigationController implements NavigationService
             mainLayoutView.addContentView(new DashboardView(), INNER_DASHBOARD);
             // mainLayoutView.addContentView(new IssuesView(), INNER_ISSUES);
             // mainLayoutView.addContentView(new ProjectsView(), INNER_PROJECTS);
-            mainLayoutView.addContentView(new TeamsView(), INNER_TEAMS);
+            // mainLayoutView.addContentView(new TeamsView(), INNER_TEAMS);
         }
     }
 
@@ -114,7 +114,7 @@ public class NavigationController implements NavigationService
             mainFrame.setLocationRelativeTo(null);
         });
     }
-    
+
     @Override
     public void goToTeams()
     {
@@ -149,10 +149,24 @@ public class NavigationController implements NavigationService
 
         if(currentUser != null)
         {
-           UpdateProfileDialog dialog = new UpdateProfileDialog (mainFrame, currentUser);
-           new UtenteController(dialog, authService, utenteService);
-           dialog.setVisible(true);
+            UpdatePasswordDialog dialog = new UpdatePasswordDialog(mainFrame, currentUser);
+            new UpdatePasswordController(dialog, authService, utenteService);
+            dialog.setVisible(true);
         }
+    }
+
+    public void showRegisterUserDialog()
+    {
+        var currentUser = authService.getCurrentUser();
+        if(currentUser == null || !currentUser.getIsAdmin())
+        {
+            JOptionPane.showMessageDialog(mainFrame, "Azione non autorizzata", "Errore", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        RegisterUserDialog dialog = new RegisterUserDialog(mainFrame);
+        new RegisterUserController(dialog, utenteService);
+        dialog.setVisible(true);
     }
 
     @Override

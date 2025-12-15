@@ -1,9 +1,9 @@
 package view;
 
-import controller.NavigationController;
 import com.fasterxml.jackson.databind.*;
 import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.fonts.inter.*;
+import controller.NavigationController;
 import service.AuthService;
 import service.UtenteService;
 

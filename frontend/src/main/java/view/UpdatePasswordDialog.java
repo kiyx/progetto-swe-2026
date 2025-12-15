@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class UpdateProfileDialog extends JDialog
+public class UpdatePasswordDialog extends JDialog
 {
     private final JPasswordField txtOldPassword;
     private final JPasswordField txtPassword;
@@ -18,7 +18,7 @@ public class UpdateProfileDialog extends JDialog
     private final JXButton btnSave;
     private final JXButton btnCancel;
 
-    public UpdateProfileDialog(Frame owner, UtenteResponseDTO currentUser)
+    public UpdatePasswordDialog(Frame owner, UtenteResponseDTO currentUser)
     {
         super(owner, "Modifica Password", true);
 

@@ -63,7 +63,7 @@ public class NavigationController implements NavigationService
             mainLayoutView.addContentView(new DashboardView(), INNER_DASHBOARD);
             // mainLayoutView.addContentView(new IssuesView(), INNER_ISSUES);
             // mainLayoutView.addContentView(new ProjectsView(), INNER_PROJECTS);
-            // mainLayoutView.addContentView(new TeamsView(), INNER_TEAMS);
+            mainLayoutView.addContentView(new TeamsView(), INNER_TEAMS);
         }
     }
 

@@ -52,9 +52,7 @@ public class UtenteService
     public UtenteResponseDTO registerUtente(RegisterRequestDTO request)
     {
         if(utenteRepository.existsByEmail(request.getEmail()))
-        {
             throw new EmailAlreadyUsedException("L'indirizzo email " + request.getEmail() + " è già associato a un account.");
-        }
 
         Utente nuovoUtente = new Utente();
         nuovoUtente.setNome(request.getNome());
@@ -63,7 +61,7 @@ public class UtenteService
 
         nuovoUtente.setPassword(passwordEncoder.encode(request.getPassword()));
         nuovoUtente.setIsAdmin(request.getIsAdmin() != null && request.getIsAdmin());
-        
+
         Utente utenteSalvato = utenteRepository.save(nuovoUtente);
         return utenteMapper.toDto(utenteSalvato);
     }

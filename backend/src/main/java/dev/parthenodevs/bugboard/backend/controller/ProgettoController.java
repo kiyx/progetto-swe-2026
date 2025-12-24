@@ -7,7 +7,6 @@ import jakarta.validation.*;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.*;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -37,7 +36,14 @@ public class ProgettoController
         return ResponseEntity.status(HttpStatus.CREATED).body(newProject);
     }
 
-    @PostMapping("/{id}/concludi")
+    @PatchMapping("/{id}/attiva")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ProgettoResponseDTO> attivaProgetto(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(progettoService.attivaProgetto(id));
+    }
+
+    @PatchMapping("/{id}/concludi")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ProgettoResponseDTO> concludiProgetto(@PathVariable Long id)
     {

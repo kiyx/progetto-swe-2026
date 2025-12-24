@@ -13,12 +13,13 @@ import dev.parthenodevs.bugboard.backend.model.Utente;
 import dev.parthenodevs.bugboard.backend.repository.ProgettoRepository;
 import dev.parthenodevs.bugboard.backend.repository.TeamRepository;
 import dev.parthenodevs.bugboard.backend.repository.UtenteRepository;
-import jakarta.transaction.*;
-import org.springframework.security.core.context.*;
-import org.springframework.stereotype.*;
+import jakarta.transaction.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Objects;
-import java.util.logging.*;
+import java.util.logging.Logger;
 
 @Service
 public class ProgettoService
@@ -43,10 +44,7 @@ public class ProgettoService
 
     public List<ProgettoResponseDTO> getProgettiGestitiDaAdmin()
     {
-        String email = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-
-        Utente admin = utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato"));
+        Utente admin = getAdminLoggato();
 
         return progettoRepository.findAllByAdminIdOrderByIdDesc(admin.getId())
                 .stream()
@@ -57,59 +55,81 @@ public class ProgettoService
     @Transactional
     public ProgettoResponseDTO createProgetto(CreateProgettoRequestDTO request)
     {
-        logger.info(() -> "Tentativo creazione progetto: " + request.getNome());
+        logger.info(() -> "Creazione progetto: " + request.getNome());
 
-        String email = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-        Utente adminLoggato = utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Admin non trovato"));
+        Utente adminLoggato = getAdminLoggato();
 
         Team team = teamRepository.findById(request.getIdTeam())
-                .orElseThrow(() -> new ResourceNotFoundException("Team non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException("Team", "id", request.getIdTeam()));
 
         if(!team.getAdmin().getId().equals(adminLoggato.getId()))
-        {
-            logger.warning(() -> "Tentativo non autorizzato sul team: " + team.getNome());
             throw new UnauthorizedException("Non puoi creare progetti per un Team che non amministri.");
-        }
 
         if(request.getStato() == StatoProgetto.ATTIVO)
         {
             boolean esisteAttivo = progettoRepository.existsByTeamIdAndStato(team.getId(), StatoProgetto.ATTIVO);
-
             if(esisteAttivo)
-            {
-                logger.warning(() -> "Creazione bloccata: Il team " + team.getNome() + " ha già un progetto attivo.");
-                throw new BusinessLogicException("Il Team '" + team.getNome() + "' ha già un progetto ATTIVO. Concludilo manualmente prima di crearne uno nuovo.");
-            }
+                throw new BusinessLogicException("Il Team '" + team.getNome() + "' ha già un progetto ATTIVO.");
         }
 
         Progetto nuovoProgetto = progettoMapper.toEntity(request, team, adminLoggato);
-        Progetto salvato = progettoRepository.save(nuovoProgetto);
+        return progettoMapper.toDto(progettoRepository.save(nuovoProgetto));
+    }
 
-        logger.info(() -> "Progetto creato con successo: ID " + salvato.getId());
-        return progettoMapper.toDto(salvato);
+    @Transactional
+    public ProgettoResponseDTO attivaProgetto(Long idProgetto)
+    {
+        Progetto progetto = getProgettoIfAdmin(idProgetto);
+
+        if(progetto.getStato() == StatoProgetto.ATTIVO)
+            return progettoMapper.toDto(progetto);
+
+        boolean esisteAttivo = progettoRepository.existsByTeamIdAndStato(progetto.getTeam().getId(), StatoProgetto.ATTIVO);
+        if(esisteAttivo)
+            throw new BusinessLogicException("Esiste già un progetto ATTIVO nel team. Concludilo prima.");
+
+        progetto.setStato(StatoProgetto.ATTIVO);
+        logger.info(() -> "Progetto ID " + idProgetto + " attivato.");
+        return progettoMapper.toDto(progettoRepository.save(progetto));
     }
 
     @Transactional
     public ProgettoResponseDTO concludiProgetto(Long idProgetto)
     {
-        Progetto progetto = progettoRepository.findById(idProgetto)
-                .orElseThrow(() -> new ResourceNotFoundException("Progetto", "id", idProgetto));
-
-        String email = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-        Utente adminLoggato = utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Admin non trovato"));
-
-        if(!progetto.getTeam().getAdmin().getId().equals(adminLoggato.getId()))
-            throw new UnauthorizedException("Non puoi modificare un progetto di un team che non amministri.");
+        Progetto progetto = getProgettoIfAdmin(idProgetto);
 
         if(progetto.getStato() == StatoProgetto.CONCLUSO)
             return progettoMapper.toDto(progetto);
 
         progetto.setStato(StatoProgetto.CONCLUSO);
-        Progetto salvato = progettoRepository.save(progetto);
+        logger.info(() -> "Progetto ID " + idProgetto + " concluso.");
+        return progettoMapper.toDto(progettoRepository.save(progetto));
+    }
 
-        logger.info(() -> "Progetto ID " + idProgetto + " concluso manualmente.");
-        return progettoMapper.toDto(salvato);
+    private Utente getAdminLoggato()
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication == null || !authentication.isAuthenticated())
+            throw new UnauthorizedException("Utente non autenticato o sessione mancante.");
+
+        String email = authentication.getName();
+        if(email == null)
+            throw new UnauthorizedException("Identità utente non valida.");
+
+        return utenteRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Utente", "email", email));
+    }
+
+    private Progetto getProgettoIfAdmin(Long idProgetto)
+    {
+        Progetto progetto = progettoRepository.findById(idProgetto)
+                .orElseThrow(() -> new ResourceNotFoundException("Progetto", "id", idProgetto));
+
+        Utente adminLoggato = getAdminLoggato();
+
+        if(!progetto.getTeam().getAdmin().getId().equals(adminLoggato.getId()))
+            throw new UnauthorizedException("Non hai i permessi per modificare questo progetto.");
+        return progetto;
     }
 }

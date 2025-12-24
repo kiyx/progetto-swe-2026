@@ -47,6 +47,41 @@ public class ProjectsController
             logger.info("Aggiornamento manuale lista progetti...");
             loadData();
         });
+        view.setOnCloseProject(id ->
+        {
+            int confirm = JOptionPane.showConfirmDialog(mainFrame, "Sicuro di voler concludere?");
+            if(confirm == JOptionPane.YES_OPTION)
+            {
+                new Thread(() ->
+                {
+                    boolean success = projectsService.concludiProgetto(id);
+                    SwingUtilities.invokeLater(() ->
+                    {
+                        if(success)
+                        {
+                            JOptionPane.showMessageDialog(mainFrame, "Progetto concluso.");
+                            loadData();
+                        }
+                    });
+                }).start();
+            }
+        });
+        view.setOnActivateProject(id -> new Thread(() ->
+                                            {
+                                                boolean success = projectsService.attivaProgetto(id);
+                                                SwingUtilities.invokeLater(() ->
+                                                {
+                                                    if(success)
+                                                    {
+                                                        JOptionPane.showMessageDialog(mainFrame, "Progetto attivato!");
+                                                        loadData();
+                                                    }
+                                                    else
+                                                        JOptionPane.showMessageDialog(mainFrame,
+                                                                "Impossibile attivare: probabilmente esiste già un progetto attivo nel team.",
+                                                                "Errore", JOptionPane.ERROR_MESSAGE);
+                                                });
+                                            }).start());
 
         loadData();
     }

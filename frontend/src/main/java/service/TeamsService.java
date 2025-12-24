@@ -33,6 +33,44 @@ public class TeamsService
         this.authService = authService;
     }
 
+    public List<TeamResponseDTO> getTeamsManagedByAdmin()
+    {
+       LOGGER.info(() -> "[MOCK] Recupero lista Team finti...");
+
+        List<TeamResponseDTO> mockTeams = new ArrayList<>();
+
+        // Team 1
+        mockTeams.add(new TeamResponseDTO(
+                1L,                 // ID
+                "Team Backend",     // Nome
+                100L,               // ID Admin
+                "Admin User",       // Nome Admin
+                5,                  // N. Membri
+                2                   // N. Progetti
+        ));
+
+        // Team 2
+        mockTeams.add(new TeamResponseDTO(
+                2L,
+                "Team Frontend",
+                100L,
+                "Admin User",
+                3,
+                1
+        ));
+
+        // Team 3
+        mockTeams.add(new TeamResponseDTO(
+                3L,
+                "Team DevOps",
+                100L,
+                "Admin User",
+                2,
+                0
+        ));
+
+        return mockTeams;
+    }
     public List<TeamResponseDTO> getTeams ()
     {
         String token = authService.getJwtToken();

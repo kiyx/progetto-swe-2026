@@ -1,4 +1,4 @@
-package controller;
+package controller.utente;
 
 import model.dto.request.UpdateUtenteRequestDTO;
 import model.dto.response.UtenteResponseDTO;

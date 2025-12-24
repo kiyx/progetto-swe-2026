@@ -1,4 +1,4 @@
-package controller;
+package controller.utente;
 
 import model.dto.request.RegisterRequestDTO;
 import service.UtenteService;

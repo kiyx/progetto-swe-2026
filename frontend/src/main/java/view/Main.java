@@ -1,16 +1,18 @@
 package view;
 
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.fonts.inter.*;
 import controller.NavigationController;
 import service.AuthService;
+import service.ProjectsService;
+import service.TeamsService;
 import service.UtenteService;
 
 import javax.swing.*;
 import java.net.http.*;
 import java.time.*;
-import java.util.logging.*;
+import java.util.logging.Logger;
 
 public class Main
 {
@@ -20,6 +22,7 @@ public class Main
     {
         FlatInterFont.install();
         FlatLightLaf.setup();
+
         SwingUtilities.invokeLater(() ->
         {
             LOGGER.info("Avvio dell'applicazione BugBoard Frontend...");
@@ -30,11 +33,25 @@ public class Main
 
             ObjectMapper sharedMapper = new ObjectMapper();
             AuthService authService = new AuthService(sharedClient, sharedMapper);
-            UtenteService utenteService = new UtenteService(sharedClient, sharedMapper, authService);
-            MainFrame mainFrame = new MainFrame();
-            NavigationController navController = new NavigationController(mainFrame, authService, utenteService);
+            NavigationController navController = getNavigationController(sharedClient, sharedMapper, authService);
 
             navController.start();
         });
+    }
+
+    private static NavigationController getNavigationController(HttpClient sharedClient, ObjectMapper sharedMapper, AuthService authService)
+    {
+        UtenteService utenteService = new UtenteService(sharedClient, sharedMapper, authService);
+        ProjectsService projectsService = new ProjectsService(sharedClient, sharedMapper, authService);
+        TeamsService teamsService = new TeamsService(sharedClient, sharedMapper, authService);
+        MainFrame mainFrame = new MainFrame();
+
+        return new NavigationController(
+                mainFrame,
+                authService,
+                utenteService,
+                projectsService,
+                teamsService
+        );
     }
 }

@@ -36,4 +36,12 @@ public class ProgettoController
         ProgettoResponseDTO newProject = progettoService.createProgetto(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newProject);
     }
+
+    @PostMapping("/{id}/concludi")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ProgettoResponseDTO> concludiProgetto(@PathVariable Long id)
+    {
+        ProgettoResponseDTO progettoConcluso = progettoService.concludiProgetto(id);
+        return ResponseEntity.ok(progettoConcluso);
+    }
 }

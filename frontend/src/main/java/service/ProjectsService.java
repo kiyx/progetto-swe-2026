@@ -115,4 +115,43 @@ public class ProjectsService
 
         return false;
     }
+
+    public boolean concludiProgetto(Long idProgetto)
+    {
+        if(!authService.isAuthenticated())
+            return false;
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_URL + "/" + idProgetto + "/concludi"))
+                    .header("Authorization", "Bearer " + authService.getJwtToken())
+                    .method("PATCH", HttpRequest.BodyPublishers.noBody())
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                logger.info(() -> "Progetto " + idProgetto + " concluso.");
+                return true;
+            } else {
+                logger.warning(() -> "Errore chiusura progetto. Status: " + response.statusCode());
+                return false;
+            }
+        }
+        catch (JsonProcessingException e)
+        {
+            logger.log(Level.SEVERE, "Errore di serializzazione JSON durante conclusione progetto", e);
+        }
+        catch (InterruptedException e)
+        {
+            logger.log(Level.SEVERE, "Thread interrotto durante conclusione progetto", e);
+            Thread.currentThread().interrupt();
+        }
+        catch (IOException e)
+        {
+            logger.log(Level.SEVERE, "Errore di I/O (connessione backend) durante conclusione progetto", e);
+        }
+
+        return false;
+    }
 }

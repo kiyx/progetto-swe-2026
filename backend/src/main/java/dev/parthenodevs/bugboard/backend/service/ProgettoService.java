@@ -19,7 +19,6 @@ import org.springframework.stereotype.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.*;
-import java.util.stream.*;
 
 @Service
 public class ProgettoService
@@ -52,7 +51,7 @@ public class ProgettoService
         return progettoRepository.findAllByAdminIdOrderByIdDesc(admin.getId())
                 .stream()
                 .map(progettoMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -88,6 +87,29 @@ public class ProgettoService
         Progetto salvato = progettoRepository.save(nuovoProgetto);
 
         logger.info(() -> "Progetto creato con successo: ID " + salvato.getId());
+        return progettoMapper.toDto(salvato);
+    }
+
+    @Transactional
+    public ProgettoResponseDTO concludiProgetto(Long idProgetto)
+    {
+        Progetto progetto = progettoRepository.findById(idProgetto)
+                .orElseThrow(() -> new ResourceNotFoundException("Progetto", "id", idProgetto));
+
+        String email = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
+        Utente adminLoggato = utenteRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin non trovato"));
+
+        if(!progetto.getTeam().getAdmin().getId().equals(adminLoggato.getId()))
+            throw new UnauthorizedException("Non puoi modificare un progetto di un team che non amministri.");
+
+        if(progetto.getStato() == StatoProgetto.CONCLUSO)
+            return progettoMapper.toDto(progetto);
+
+        progetto.setStato(StatoProgetto.CONCLUSO);
+        Progetto salvato = progettoRepository.save(progetto);
+
+        logger.info(() -> "Progetto ID " + idProgetto + " concluso manualmente.");
         return progettoMapper.toDto(salvato);
     }
 }

@@ -1,11 +1,12 @@
 package controller;
 
-import service.UtenteService;
+import controller.projects.*;
+import controller.utente.*;
+import service.*;
 import view.*;
-import view.component.HeaderPanel;
-import view.component.SidebarPanel;
-import service.AuthService;
-import service.NavigationService;
+import view.component.*;
+import view.projects.*;
+
 import javax.swing.*;
 
 public class NavigationController implements NavigationService
@@ -20,16 +21,26 @@ public class NavigationController implements NavigationService
 
     private MainLayoutView mainLayoutView;
     private final MainFrame mainFrame;
+
     private final AuthService authService;
     private final UtenteService utenteService;
+    private final ProjectsService projectsService;
+    private final TeamsService teamsService;
 
-    public NavigationController(MainFrame mainFrame, AuthService authService, UtenteService utenteService)
+    public NavigationController(MainFrame mainFrame,
+                                AuthService authService,
+                                UtenteService utenteService,
+                                ProjectsService projectsService,
+                                TeamsService teamsService)
     {
         this.mainFrame = mainFrame;
         this.authService = authService;
         this.utenteService = utenteService;
+        this.projectsService = projectsService;
+        this.teamsService = teamsService;
     }
 
+    @Override
     public void start()
     {
         SwingUtilities.invokeLater(this::goToLogin);
@@ -49,9 +60,10 @@ public class NavigationController implements NavigationService
 
             header.setToggleAction(e -> mainLayoutView.toggleSidebar());
             header.setEditPasswordAction(e -> showEditPasswordDialog());
+            header.setLogoutAction(e -> logout());
+
             if(isAdmin)
                 header.setCreateUserAction(e -> showRegisterUserDialog());
-            header.setLogoutAction(e -> logout());
 
             sidebar.setDashboardAction(e -> goToDashboard());
             sidebar.setIssuesAction(e -> goToIssues());
@@ -61,12 +73,7 @@ public class NavigationController implements NavigationService
             mainFrame.addView(mainLayoutView, VIEW_APP_SHELL);
 
             mainLayoutView.addContentView(new DashboardView(), INNER_DASHBOARD);
-            // mainLayoutView.addContentView(new IssuesView(), INNER_ISSUES);
-            // mainLayoutView.addContentView(new ProjectsView(), INNER_PROJECTS);
-            
-            TeamsView teamsView = new TeamsView();
-            teamsView.addCreateListener(e->showCreateTeamDialog());
-            mainLayoutView.addContentView(teamsView, INNER_TEAMS);
+            mainLayoutView.addContentView(new TeamsView(), INNER_TEAMS);
         }
     }
 
@@ -87,6 +94,7 @@ public class NavigationController implements NavigationService
 
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);
+
             if(!mainFrame.isVisible())
                 mainFrame.setVisible(true);
         });
@@ -101,6 +109,7 @@ public class NavigationController implements NavigationService
 
             mainFrame.showView(VIEW_APP_SHELL);
             mainLayoutView.showContentView(INNER_DASHBOARD);
+
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);
         });
@@ -115,6 +124,7 @@ public class NavigationController implements NavigationService
             mainFrame.showView(VIEW_APP_SHELL);
 
             mainLayoutView.showContentView(INNER_ISSUES);
+
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);
         });
@@ -129,16 +139,10 @@ public class NavigationController implements NavigationService
             mainFrame.showView(VIEW_APP_SHELL);
 
             mainLayoutView.showContentView(INNER_TEAMS);
+
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);
         });
-    }
-
-    public void showCreateTeamDialog()
-    {
-        CreateTeamDialog dialog = new CreateTeamDialog(mainFrame);
-        new CreateTeamController();
-        dialog.setVisible(true);
     }
 
     @Override
@@ -147,9 +151,14 @@ public class NavigationController implements NavigationService
         SwingUtilities.invokeLater(() ->
         {
             initMainLayoutIfNeeded();
-            mainFrame.showView(VIEW_APP_SHELL);
 
+            ProjectsView projectsView = new ProjectsView();
+            new ProjectsController(projectsView, projectsService, teamsService, authService, mainFrame);
+
+            mainLayoutView.addContentView(projectsView, INNER_PROJECTS);
+            mainFrame.showView(VIEW_APP_SHELL);
             mainLayoutView.showContentView(INNER_PROJECTS);
+
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);
         });

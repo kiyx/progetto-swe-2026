@@ -88,7 +88,7 @@ public class GlobalExceptionHandler
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorDTO> handleResourceNotFound(ResourceNotFoundException ex)
     {
-        LOGGER.log(Level.INFO, "Risorsa non trovata: " + ex.getMessage());
+        LOGGER.log(Level.INFO, ()-> "Risorsa non trovata: " + ex.getMessage());
 
         ErrorDTO errorResponse = new ErrorDTO(
                 LocalDateTime.now(),

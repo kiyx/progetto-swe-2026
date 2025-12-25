@@ -10,13 +10,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-public class RepositoryIntegrationTest {
+class RepositoryIntegrationTest {
 
     @Autowired private UtenteRepository utenteRepository;
     @Autowired private TeamRepository teamRepository;
@@ -25,7 +24,7 @@ public class RepositoryIntegrationTest {
 
     @Test
     @DisplayName("1. Test Utente: Creazione, Modifica ed Eliminazione")
-    public void testUtenteLifecycle() {
+    void testUtenteLifecycle() {
         // --- CREATE ---
         Utente user = Utente.builder()
                 .nome("Test")
@@ -52,7 +51,7 @@ public class RepositoryIntegrationTest {
 
     @Test
     @DisplayName("2. Test Team e Membri (Relazione Many-to-Many)")
-    public void testTeamMembership() {
+    void testTeamMembership() {
         // Setup: Creo admin e due utenti
         Utente admin = creaUtente("Admin", "Boss", "admin@bb.it");
         Utente dev1 = creaUtente("Mario", "Rossi", "mario@bb.it");
@@ -89,7 +88,7 @@ public class RepositoryIntegrationTest {
 
     @Test
     @DisplayName("3. Test Progetto: Ciclo di vita e Stati")
-    public void testProgettoLifecycle() {
+    void testProgettoLifecycle() {
         Utente admin = creaUtente("Project", "Manager", "pm@bb.it");
         Team team = creaTeam("DevOps Team", admin);
 
@@ -118,13 +117,12 @@ public class RepositoryIntegrationTest {
 
     @Test
     @DisplayName("4. Test Issue: Assegnazione Utenti e Cambio Stato")
-    public void testIssueWorkflow() {
+    void testIssueWorkflow() {
         Utente dev = creaUtente("Dev", "Eloper", "dev@bb.it");
         Utente tester = creaUtente("QA", "Tester", "qa@bb.it");
         Team team = creaTeam("Product Team", dev);
         Progetto progetto = creaProgetto("App Mobile", StatoProgetto.ATTIVO, team, dev);
 
-        // --- CREATE ISSUE (TODO) ---
         Issue bug = Issue.builder()
                 .titolo("Crash all'avvio")
                 .descrizione("L'app crasha su Android 14")

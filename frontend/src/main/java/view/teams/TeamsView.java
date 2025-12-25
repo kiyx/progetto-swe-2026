@@ -82,7 +82,6 @@ public class TeamsView extends JXPanel {
     public JXTable getTable() { return table; }
     public TableRowSorter<TeamsTableModel> getSorter() { return sorter; }
     public String getSearchText() { return searchField.getText(); }
-
     public void addSearchListener(KeyListener k) { searchField.addKeyListener(k); }
     public void addRefreshListener(ActionListener l) { refreshButton.addActionListener(l); }
     public void addCreateListener(ActionListener l) { createTeamButton.addActionListener(l); }

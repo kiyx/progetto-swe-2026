@@ -1,8 +1,8 @@
-package controller.utente;
+package controller.user;
 
 import model.dto.request.RegisterRequestDTO;
 import service.UtenteService;
-import view.RegisterUserDialog;
+import view.user.RegisterUserDialog;
 
 import javax.swing.*;
 

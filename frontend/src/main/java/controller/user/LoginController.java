@@ -1,8 +1,8 @@
-package controller;
+package controller.user;
 
 import service.AuthService;
 import service.NavigationService;
-import view.LoginView;
+import view.user.LoginView;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;

@@ -9,7 +9,6 @@ import jakarta.servlet.http.*;
 import lombok.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.context.*;
-import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.filter.*;
 import java.io.*;
@@ -53,8 +52,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
             userEmail = jwtService.extractEmail(jwt);
             if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null)
             {
-                UserDetails userDetails = (UserDetails) utenteRepository.findByEmail(userEmail).orElse(null);
-                if(userDetails != null && jwtService.isTokenValid(jwt, (Utente) userDetails))
+                Utente userDetails = utenteRepository.findByEmail(userEmail).orElse(null);
+                if(userDetails != null && jwtService.isTokenValid(jwt, userDetails))
                 {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,

@@ -1,23 +1,12 @@
 package controller;
 
-import model.dto.enums.StatoIssue;
 import model.dto.response.IssueResponseDTO;
 import service.IssueService;
 import view.DashboardView;
-import view.component.IssueTableModel;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

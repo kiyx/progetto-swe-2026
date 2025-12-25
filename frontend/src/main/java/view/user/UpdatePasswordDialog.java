@@ -1,4 +1,4 @@
-package view;
+package view.user;
 
 import com.formdev.flatlaf.*;
 import model.dto.response.UtenteResponseDTO;

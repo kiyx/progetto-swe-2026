@@ -1,10 +1,10 @@
-package controller.utente;
+package controller.user;
 
 import model.dto.request.UpdateUtenteRequestDTO;
 import model.dto.response.UtenteResponseDTO;
 import service.AuthService;
 import service.UtenteService;
-import view.UpdatePasswordDialog;
+import view.user.UpdatePasswordDialog;
 
 import javax.swing.*;
 import java.util.*;
@@ -74,17 +74,4 @@ public class UpdatePasswordController
         else
             JOptionPane.showMessageDialog(view, "Errore: La vecchia password non è corretta o errore server.", "Errore", JOptionPane.ERROR_MESSAGE);
     }
-
-    private void handleNewUserCreation()
-    {
-
-
-
-
-
-    }
-
-
-
-
 }

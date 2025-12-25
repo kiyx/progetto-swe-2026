@@ -2,12 +2,15 @@ package controller;
 
 import controller.projects.*;
 import controller.teams.TeamController;
-import controller.utente.*;
+import controller.user.*;
 import service.*;
 import view.*;
 import view.component.*;
 import view.projects.*;
 import view.teams.TeamsView;
+import view.user.LoginView;
+import view.user.RegisterUserDialog;
+import view.user.UpdatePasswordDialog;
 
 import javax.swing.*;
 

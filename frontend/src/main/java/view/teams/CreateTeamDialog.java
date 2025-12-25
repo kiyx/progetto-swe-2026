@@ -1,13 +1,13 @@
 package view.teams;
 
-import com.formdev.flatlaf.FlatClientProperties;
-import net.miginfocom.swing.MigLayout;
-
+import com.formdev.flatlaf.*;
+import net.miginfocom.swing.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class CreateTeamDialog extends JDialog {
+public class CreateTeamDialog extends JDialog
+{
 
     private final JTextField nameField;
     private JButton confirmButton;
@@ -23,7 +23,8 @@ public class CreateTeamDialog extends JDialog {
         setResizable(false);
     }
 
-    private void initComponents() {
+    private void initComponents()
+    {
         setLayout(new MigLayout("fill, insets 20", "[300!]", "[]10[]20[]"));
 
         JLabel nameLabel = new JLabel("Nome del Team");
@@ -41,7 +42,7 @@ public class CreateTeamDialog extends JDialog {
         confirmButton.setBackground(new Color(0, 100, 255));
         confirmButton.setForeground(Color.WHITE);
         confirmButton.putClientProperty(FlatClientProperties.STYLE, "font: bold; arc: 10");
-
+        getRootPane().setDefaultButton(confirmButton);
         buttonPanel.add(confirmButton);
 
         add(buttonPanel, "growx");

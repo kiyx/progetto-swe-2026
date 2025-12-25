@@ -78,8 +78,9 @@ public class NavigationController implements NavigationService
             mainFrame.addView(mainLayoutView, VIEW_APP_SHELL);
 
             mainLayoutView.addContentView(new DashboardView(), INNER_DASHBOARD);
-            mainLayoutView.addContentView(new TeamsView(), INNER_TEAMS);
 
+            mainFrame.setSize(1280, 800);
+            mainFrame.setLocationRelativeTo(null);
         }
     }
 
@@ -115,9 +116,6 @@ public class NavigationController implements NavigationService
 
             mainFrame.showView(VIEW_APP_SHELL);
             mainLayoutView.showContentView(INNER_DASHBOARD);
-
-            mainFrame.pack();
-            mainFrame.setLocationRelativeTo(null);
         });
     }
 
@@ -130,9 +128,6 @@ public class NavigationController implements NavigationService
             mainFrame.showView(VIEW_APP_SHELL);
 
             mainLayoutView.showContentView(INNER_ISSUES);
-
-            mainFrame.pack();
-            mainFrame.setLocationRelativeTo(null);
         });
     }
 
@@ -145,13 +140,10 @@ public class NavigationController implements NavigationService
 
             TeamsView teamsView = new TeamsView();
             new TeamController(teamsView, teamsService, authService, mainFrame);
-
             mainLayoutView.addContentView(teamsView, INNER_TEAMS);
+
             mainFrame.showView(VIEW_APP_SHELL);
             mainLayoutView.showContentView(INNER_TEAMS);
-
-            mainFrame.pack();
-            mainFrame.setLocationRelativeTo(null);
         });
     }
 
@@ -166,11 +158,9 @@ public class NavigationController implements NavigationService
             new ProjectsController(projectsView, projectsService, teamsService, authService, mainFrame);
 
             mainLayoutView.addContentView(projectsView, INNER_PROJECTS);
+
             mainFrame.showView(VIEW_APP_SHELL);
             mainLayoutView.showContentView(INNER_PROJECTS);
-
-            mainFrame.pack();
-            mainFrame.setLocationRelativeTo(null);
         });
     }
 

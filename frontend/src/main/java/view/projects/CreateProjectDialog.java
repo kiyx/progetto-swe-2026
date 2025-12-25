@@ -67,7 +67,7 @@ public class CreateProjectDialog extends JDialog
         btnSave.setFocusPainted(false);
         btnSave.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnSave.putClientProperty(FlatClientProperties.STYLE, "arc: 10; borderWidth: 0");
-
+        getRootPane().setDefaultButton(btnSave);
         btnCancel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         btnPanel.add(btnCancel);

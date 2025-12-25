@@ -1,5 +1,8 @@
 package dev.parthenodevs.bugboard.backend.exception;
 
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.dao.DataIntegrityViolationException;
 import io.jsonwebtoken.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -125,5 +128,39 @@ public class GlobalExceptionHandler
         );
 
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDTO> handleValidationExceptions(MethodArgumentNotValidException ex)
+    {
+        String errorMessage = ex.getBindingResult().getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .filter(msg -> msg != null && !msg.isBlank())
+                .findFirst()
+                .orElse("Errore di validazione generico");
+
+        ErrorDTO errorResponse = new ErrorDTO(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Errore Validazione Dati",
+                errorMessage
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorDTO> handleDatabaseExceptions(DataIntegrityViolationException ex)
+    {
+        LOGGER.log(Level.WARNING, () -> "Violazione integrità dati: " + ex.getMessage());
+
+        ErrorDTO errorResponse = new ErrorDTO(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(), // 409 Conflict
+                "Dato Duplicato",
+                "Esiste già un elemento con questo nome (o vincolo violato)."
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 }

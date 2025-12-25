@@ -5,7 +5,6 @@ import dev.parthenodevs.bugboard.backend.dto.request.UpdateTeamRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.TeamResponseDTO;
 import dev.parthenodevs.bugboard.backend.model.Team;
 import dev.parthenodevs.bugboard.backend.model.Utente;
-import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
 @Component

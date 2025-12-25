@@ -3,7 +3,10 @@ package service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import model.dto.request.CreateTeamRequestDTO;
+import model.dto.request.RegisterRequestDTO;
 import model.dto.response.TeamResponseDTO;
+import model.dto.response.UtenteResponseDTO;
 
 import java.io.IOException;
 import java.net.URI;
@@ -33,45 +36,7 @@ public class TeamsService
         this.authService = authService;
     }
 
-    public List<TeamResponseDTO> getTeamsManagedByAdmin()
-    {
-       LOGGER.info(() -> "[MOCK] Recupero lista Team finti...");
-
-        List<TeamResponseDTO> mockTeams = new ArrayList<>();
-
-        // Team 1
-        mockTeams.add(new TeamResponseDTO(
-                1L,                 // ID
-                "Team Backend",     // Nome
-                100L,               // ID Admin
-                "Admin User",       // Nome Admin
-                5,                  // N. Membri
-                2                   // N. Progetti
-        ));
-
-        // Team 2
-        mockTeams.add(new TeamResponseDTO(
-                2L,
-                "Team Frontend",
-                100L,
-                "Admin User",
-                3,
-                1
-        ));
-
-        // Team 3
-        mockTeams.add(new TeamResponseDTO(
-                3L,
-                "Team DevOps",
-                100L,
-                "Admin User",
-                2,
-                0
-        ));
-
-        return mockTeams;
-    }
-    public List<TeamResponseDTO> getTeams ()
+    public List<TeamResponseDTO> getTeamsManagedByAdmin ()
     {
         String token = authService.getJwtToken();
         if(token == null)
@@ -116,5 +81,56 @@ public class TeamsService
             return new ArrayList<>();
         }
 
+    }
+
+    public boolean create(CreateTeamRequestDTO requestDTO)
+    {
+        if(!authService.isAuthenticated())
+        {
+            LOGGER.warning("Tentativo di creazione utenza fallito: utente non autenticato.");
+            return false;
+        }
+
+        try
+        {
+            LOGGER.info(() -> "Inizio creazione team:" + requestDTO.getNome());
+            String body = objectMapper.writeValueAsString(requestDTO);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_URL + "/create"))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + authService.getJwtToken())
+                    .POST(HttpRequest.BodyPublishers.ofString(body))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if(response.statusCode() == 200 || response.statusCode() == 201)
+            {
+                TeamResponseDTO newTeam = objectMapper.readValue(response.body(), TeamResponseDTO.class);
+                LOGGER.info(() -> "Nuovo team creato con successo: " + newTeam.getNome());
+                return true;
+            }
+            else
+            {
+                LOGGER.warning(() -> String.format("Errore create team. Status: %d. Risposta Server: %s",
+                        response.statusCode(), response.body()));
+            }
+        }
+        catch(JsonProcessingException e)
+        {
+            LOGGER.log(Level.SEVERE, "Errore di serializzazione JSON durante la creazione team", e);
+        }
+        catch (InterruptedException e)
+        {
+            LOGGER.log(Level.SEVERE, "Thread interrotto durante la creazione team", e);
+            Thread.currentThread().interrupt();
+        }
+        catch (IOException e)
+        {
+            LOGGER.log(Level.SEVERE, "Errore di I/O (connessione backend) durante la creazione team", e);
+        }
+
+        return false;
     }
 }

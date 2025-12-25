@@ -1,11 +1,13 @@
 package controller;
 
 import controller.projects.*;
+import controller.teams.TeamController;
 import controller.utente.*;
 import service.*;
 import view.*;
 import view.component.*;
 import view.projects.*;
+import view.teams.TeamsView;
 
 import javax.swing.*;
 
@@ -74,6 +76,7 @@ public class NavigationController implements NavigationService
 
             mainLayoutView.addContentView(new DashboardView(), INNER_DASHBOARD);
             mainLayoutView.addContentView(new TeamsView(), INNER_TEAMS);
+
         }
     }
 
@@ -136,8 +139,12 @@ public class NavigationController implements NavigationService
         SwingUtilities.invokeLater(() ->
         {
             initMainLayoutIfNeeded();
-            mainFrame.showView(VIEW_APP_SHELL);
 
+            TeamsView teamsView = new TeamsView();
+            new TeamController(teamsView, teamsService, authService, mainFrame);
+
+            mainLayoutView.addContentView(teamsView, INNER_TEAMS);
+            mainFrame.showView(VIEW_APP_SHELL);
             mainLayoutView.showContentView(INNER_TEAMS);
 
             mainFrame.pack();

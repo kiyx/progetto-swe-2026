@@ -1,4 +1,4 @@
-package view;
+package view.teams;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import net.miginfocom.swing.MigLayout;

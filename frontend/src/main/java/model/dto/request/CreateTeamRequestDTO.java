@@ -12,6 +12,4 @@ public class CreateTeamRequestDTO
     @Size(min = 2, max = 100, message = "Il nome deve avere una lunghezza compresa tra 2 e 100.")
     private String nome;
 
-    @NotBlank(message = "È necessario assegnare un admin al team")
-    private Long idAdmin;
 }

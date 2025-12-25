@@ -24,9 +24,9 @@ public class CreateTeamController
 
     private void handleRegistration()
     {
-        String nome = view.getName();
+        String nome = view.getTeamName();
 
-        if(nome.isBlank())
+        if(nome == null || nome.isBlank())
         {
             showWarning("Il nome del team è obbligatorio.");
             return;

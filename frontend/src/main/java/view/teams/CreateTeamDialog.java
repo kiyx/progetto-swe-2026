@@ -11,7 +11,6 @@ public class CreateTeamDialog extends JDialog {
 
     private final JTextField nameField;
     private JButton confirmButton;
-    private boolean confirmed = false;
 
     public CreateTeamDialog(Frame owner) {
         super(owner, "Nuovo Team", true);
@@ -51,7 +50,8 @@ public class CreateTeamDialog extends JDialog {
 
     public void setSaveAction(ActionListener l) { confirmButton.addActionListener(l); }
 
-    public String getTeamName() {
-        return confirmed ? nameField.getText().trim() : null;
+    public String getTeamName()
+    {
+        return nameField.getText().trim();
     }
 }

@@ -30,7 +30,7 @@ public class TeamController
         return ResponseEntity.ok(teamService.getTeamsGestitiDaAdmin());
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<TeamResponseDTO> createTeam (@Valid @RequestBody CreateTeamRequestDTO request)
     {

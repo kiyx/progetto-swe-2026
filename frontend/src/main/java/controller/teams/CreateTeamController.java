@@ -3,7 +3,6 @@ package controller.teams;
 import model.dto.request.CreateTeamRequestDTO;
 import service.TeamsService;
 import view.teams.CreateTeamDialog;
-import service.AuthService;
 
 import javax.swing.*;
 
@@ -11,14 +10,12 @@ public class CreateTeamController
 {
     private final CreateTeamDialog view;
     private final TeamsService teamsService;
-    private final AuthService authService;
 
-    public CreateTeamController(CreateTeamDialog view, TeamsService teamsService, AuthService authService)
+    public CreateTeamController(CreateTeamDialog view, TeamsService teamsService)
     {
         this.view = view;
         this.teamsService = teamsService;
 
-        this.authService = authService;
         this.view.setSaveAction(e -> handleRegistration());
     }
 

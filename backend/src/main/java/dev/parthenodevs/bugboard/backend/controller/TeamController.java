@@ -1,8 +1,6 @@
 package dev.parthenodevs.bugboard.backend.controller;
 
-import dev.parthenodevs.bugboard.backend.dto.request.CreateProgettoRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.request.CreateTeamRequestDTO;
-import dev.parthenodevs.bugboard.backend.dto.response.ProgettoResponseDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.TeamResponseDTO;
 import dev.parthenodevs.bugboard.backend.service.TeamService;
 import jakarta.validation.Valid;

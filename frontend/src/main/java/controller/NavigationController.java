@@ -134,7 +134,7 @@ public class NavigationController implements NavigationService
             initMainLayoutIfNeeded();
 
             TeamsView teamsView = new TeamsView();
-            new TeamController(teamsView, teamsService, authService, mainFrame);
+            new TeamController(teamsView, teamsService, mainFrame);
             mainLayoutView.addContentView(teamsView, INNER_TEAMS);
 
             mainFrame.showView(VIEW_APP_SHELL);

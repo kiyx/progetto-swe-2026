@@ -12,25 +12,21 @@ import java.awt.event.*;
 
 public class SidebarPanel extends JXPanel
 {
-    private final JXButton btnDashboard;
     private final JXButton btnIssues;
     private final JXButton btnProjects;
     private final JXButton btnTeams;
 
     public SidebarPanel(boolean isAdmin)
     {
-        setLayout(new MigLayout("wrap 1, insets 20 10 0 10, fillx", "[grow, fill]", "[]5[]5[]5[]"));
+        setLayout(new MigLayout("wrap 1, insets 20 10 0 10, fillx", "[grow, fill]", "[]5[]5[]"));
         setBackground(new Color(245, 247, 250));
         setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, new Color(230, 230, 230)));
         setPreferredSize(new Dimension(240, 0));
 
-        btnDashboard = createNavButton("Dashboard", MaterialDesignV.VIEW_DASHBOARD);
-        btnIssues = createNavButton("Issues", MaterialDesignA.ALERT_CIRCLE_OUTLINE);
 
+        btnIssues = createNavButton("Issues", MaterialDesignA.ALERT_CIRCLE_OUTLINE);
         btnTeams = createNavButton("Team", MaterialDesignA.ACCOUNT_GROUP_OUTLINE);
         btnProjects = createNavButton("Progetti", MaterialDesignF.FOLDER_OUTLINE);
-
-        add(btnDashboard);
         add(btnIssues);
 
         if(isAdmin)
@@ -70,7 +66,6 @@ public class SidebarPanel extends JXPanel
         return btn;
     }
 
-    public void setDashboardAction(ActionListener l) { btnDashboard.addActionListener(l); }
     public void setIssuesAction(ActionListener l) { btnIssues.addActionListener(l); }
     public void setProjectsAction(ActionListener l) { btnProjects.addActionListener(l); }
     public void setTeamsAction(ActionListener l) { btnTeams.addActionListener(l); }

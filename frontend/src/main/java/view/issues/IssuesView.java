@@ -1,31 +1,43 @@
 package view.issues;
 
-import com.formdev.flatlaf.*;
+import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.fonts.inter.FlatInterFont;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import model.dto.enums.StatoIssue;
 import model.dto.enums.TipoIssue;
 import model.dto.enums.TipoPriorita;
 import model.dto.response.IssueResponseDTO;
 import model.dto.response.UtenteResponseDTO;
-import net.miginfocom.swing.*;
-import org.jdesktop.swingx.*;
-import org.kordamp.ikonli.materialdesign2.*;
-import org.kordamp.ikonli.swing.*;
+import net.miginfocom.swing.MigLayout;
+import org.jdesktop.swingx.JXButton;
+import org.jdesktop.swingx.JXPanel;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignA;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignC;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignP;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignR;
+import org.kordamp.ikonli.swing.FontIcon;
+
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class IssuesView extends JXPanel
 {
     private final boolean isAdmin;
     private final DefaultTableModel modelMain;
     private final DefaultTableModel modelCreate;
+    private final DefaultTableModel modelArchive;
 
     @Getter private JTextField searchField;
     @Getter private JComboBox<TipoIssue> filterTipo;
@@ -74,21 +86,26 @@ public class IssuesView extends JXPanel
         String[] cols = {"ID", "Titolo", "Tipo", "Stato", "Priorità", "Progetto", "Team", "Azioni"};
 
         String tab1Title = isAdmin ? "Issue Segnalate" : "Assegnate a Me";
-        modelMain = new DefaultTableModel(cols, 0)
-        {
-            @Override public boolean isCellEditable(int row, int col) { return col == 7; }
-            @Override public Class<?> getColumnClass(int columnIndex) { return columnIndex == 0 ? Long.class : Object.class; }
-        };
+        modelMain = createModel(cols);
         tabbedPane.addTab(tab1Title, new JScrollPane(createTable(modelMain, true)));
 
-        modelCreate = new DefaultTableModel(cols, 0)
+        modelCreate = createModel(cols);
+        tabbedPane.addTab("Create da Me", new JScrollPane(createTable(modelCreate, false)));
+
+        modelArchive = createModel(cols);
+        if(isAdmin)
+            tabbedPane.addTab("Archivio", new JScrollPane(createTable(modelArchive, false)));
+
+        add(tabbedPane, "grow");
+    }
+
+    private DefaultTableModel createModel(String[] cols)
+    {
+        return new DefaultTableModel(cols, 0)
         {
             @Override public boolean isCellEditable(int row, int col) { return col == 7; }
             @Override public Class<?> getColumnClass(int columnIndex) { return columnIndex == 0 ? Long.class : Object.class; }
         };
-        tabbedPane.addTab("Create da Me", new JScrollPane(createTable(modelCreate, false)));
-
-        add(tabbedPane, "grow");
     }
 
     private JPanel createFilterPanel()
@@ -186,6 +203,7 @@ public class IssuesView extends JXPanel
 
     public void updateMainTab(List<IssueResponseDTO> issues) { updateModel(modelMain, issues); }
     public void updateCreateTab(List<IssueResponseDTO> issues) { updateModel(modelCreate, issues); }
+    public void updateArchiveTab(List<IssueResponseDTO> issues) { updateModel(modelArchive, issues); }
 
     private void updateModel(DefaultTableModel model, List<IssueResponseDTO> issues)
     {
@@ -214,7 +232,7 @@ public class IssuesView extends JXPanel
 
             btnEdit = new JButton(); styleBtn(btnEdit, "Modifica"); add(btnEdit);
             btnResolve = new JButton(); styleBtn(btnResolve, "Risolvi / PR"); add(btnResolve);
-            btnAssign = new JButton(); styleBtn(btnAssign, "Assegna a Membro"); add(btnAssign); // Added
+            btnAssign = new JButton(); styleBtn(btnAssign, "Assegna a Membro"); add(btnAssign);
             btnArchive = new JButton(); styleBtn(btnArchive, "Archivia Bug"); add(btnArchive);
         }
 
@@ -300,95 +318,48 @@ public class IssuesView extends JXPanel
 
         SwingUtilities.invokeLater(() ->
         {
-            JFrame frame = new JFrame("TEST Issues View (Admin Mode)");
+            JFrame frame = new JFrame("TEST Issues View (Admin Mode - 3 TABS)");
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             frame.setSize(1280, 800);
             frame.setLocationRelativeTo(null);
 
-            // 1. Init View come ADMIN (così vediamo il tasto Assegna e Archivia)
+            // 1. Init View come ADMIN
             IssuesView view = new IssuesView(true);
 
-            // 2. MOCK DATA: Issues
-            List<IssueResponseDTO> mockIssues = new ArrayList<>();
-            mockIssues.add(new IssueResponseDTO(
-                    1L, "Bug Login Frontend", "...", TipoIssue.BUG, StatoIssue.ASSEGNATA, false, null, TipoPriorita.ALTA,
-                    1L, "User", 1L, "Progetto A",
-                    10L, "Team Web" // <--- Aggiunto 10L
-            ));
+            // 2. MOCK DATA
+            List<IssueResponseDTO> allIssues = new ArrayList<>();
+            // Active
+            allIssues.add(new IssueResponseDTO(1L, "Bug Attivo 1", "...", TipoIssue.BUG, StatoIssue.ASSEGNATA, false, null, TipoPriorita.ALTA, 1L, "User", 1L, "Proj A", 10L, "Web"));
+            allIssues.add(new IssueResponseDTO(2L, "Task Attivo 2", "...", TipoIssue.DOCUMENTATION, StatoIssue.DA_ACCETTARE, false, null, TipoPriorita.MEDIA, 1L, "User", 1L, "Proj A", 11L, "Back"));
+            // Archived
+            allIssues.add(new IssueResponseDTO(3L, "Bug Archiviato 1", "...", TipoIssue.BUG, StatoIssue.RISOLTA, true, null, TipoPriorita.BASSA, 1L, "User", 1L, "Proj A", 10L, "Web"));
+            allIssues.add(new IssueResponseDTO(4L, "Bug Archiviato 2", "...", TipoIssue.BUG, StatoIssue.RISOLTA, true, null, TipoPriorita.ALTA, 1L, "User", 2L, "Mobile", 12L, "App"));
 
-            mockIssues.add(new IssueResponseDTO(
-                    2L, "Refactoring API", "...", TipoIssue.FEATURE, StatoIssue.DA_ACCETTARE, false, null, TipoPriorita.MEDIA,
-                    1L, "User", 1L, "Progetto A",
-                    11L, "Team Backend" // <--- Aggiunto 11L
-            ));
-
-            mockIssues.add(new IssueResponseDTO(
-                    3L, "Crash App Android", "...", TipoIssue.BUG, StatoIssue.DA_ACCETTARE, false, null, TipoPriorita.ALTA,
-                    1L, "User", 2L, "App Mobile",
-                    12L, "Team App" // <--- Aggiunto 12L
-            ));
-
-            mockIssues.add(new IssueResponseDTO(
-                    4L, "Documentazione", "...", TipoIssue.DOCUMENTATION, StatoIssue.RISOLTA, false, null, TipoPriorita.BASSA,
-                    1L, "User", 1L, "Progetto A",
-                    10L, "Team Web" // <--- Aggiunto 10L
-            ));
-            // 3. MOCK DATA: Utenti per assegnazione
-            List<UtenteResponseDTO> mockMembers = new ArrayList<>();
-            mockMembers.add(new UtenteResponseDTO(101L, "Mario", "Rossi", "mario@test.com", false));
-            mockMembers.add(new UtenteResponseDTO(102L, "Luigi", "Verdi", "luigi@test.com", false));
-            mockMembers.add(new UtenteResponseDTO(103L, "Anna", "Bianchi", "anna@test.com", true));
-
-            // Carica dati iniziali
-            view.updateMainTab(mockIssues);
-            view.updateCreateTab(mockIssues);
-
-            // 4. MOCK CONTROLLER: Filtri Live
-            view.setupFiltersListener(e -> {
-                String text = view.getSearchField().getText().trim().toLowerCase();
-                TipoIssue tipo = (TipoIssue) view.getFilterTipo().getSelectedItem();
-                StatoIssue stato = (StatoIssue) view.getFilterStato().getSelectedItem();
-                TipoPriorita priorita = (TipoPriorita) view.getFilterPriorita().getSelectedItem();
-
-                List<IssueResponseDTO> filtered = mockIssues.stream()
-                        .filter(i -> text.isEmpty() || i.getTitolo().toLowerCase().contains(text))
-                        .filter(i -> tipo == null || i.getTipo() == tipo)
-                        .filter(i -> stato == null || i.getStato() == stato)
-                        .filter(i -> priorita == null || i.getPriorita() == priorita)
-                        .toList();
-
-                view.updateMainTab(filtered);
-                view.updateCreateTab(filtered);
-            });
-
-            // 5. MOCK CONTROLLER: Reset
+            // 3. Simula Controller Logic (Split Data)
+            view.setupFiltersListener(e -> updateMockData(view, allIssues));
             view.setResetFilterAction(e -> {
                 view.getSearchField().setText("");
-                view.getFilterTipo().setSelectedIndex(0);
-                view.getFilterStato().setSelectedIndex(0);
-                view.getFilterPriorita().setSelectedIndex(0);
-                view.updateMainTab(mockIssues);
-                view.updateCreateTab(mockIssues);
+                updateMockData(view, allIssues);
             });
 
-            // 6. MOCK CONTROLLER: Assegnazione (Apre la Dialog reale)
-            view.setOnAssignIssue(id -> {
-                AssignIssueDialog dialog = new AssignIssueDialog(frame, mockMembers);
-                dialog.setVisible(true);
-
-                List<UtenteResponseDTO> selected = dialog.getSelectedUsers();
-                if (!selected.isEmpty()) {
-                    String names = selected.stream().map(u -> u.getNome() + " " + u.getCognome()).collect(Collectors.joining(", "));
-                    JOptionPane.showMessageDialog(frame, "Assegnato Issue " + id + " a: " + names);
-                }
-            });
-
-            // 7. Altre azioni
-            view.setOnArchiveIssue(id -> JOptionPane.showMessageDialog(frame, "Archivia ID: " + id));
-            view.setOnEditIssue(id -> JOptionPane.showMessageDialog(frame, "Modifica ID: " + id));
+            // Initial Load
+            updateMockData(view, allIssues);
 
             frame.add(view);
             frame.setVisible(true);
         });
+    }
+
+    private static void updateMockData(IssuesView view, List<IssueResponseDTO> allIssues)
+    {
+        String text = view.getSearchField().getText().toLowerCase();
+
+        List<IssueResponseDTO> filtered = allIssues.stream()
+                .filter(i -> i.getTitolo().toLowerCase().contains(text))
+                .toList();
+
+        view.updateMainTab(filtered.stream().filter(i -> !i.isArchiviato()).toList());
+        view.updateCreateTab(filtered.stream().filter(i -> !i.isArchiviato()).toList());
+        view.updateArchiveTab(filtered.stream().filter(IssueResponseDTO::isArchiviato).toList());
     }
 }

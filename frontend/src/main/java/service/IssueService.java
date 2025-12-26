@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.type.*;
 import com.fasterxml.jackson.databind.*;
 import model.dto.request.CreateIssueRequestDTO;
+import model.dto.request.UpdateIssueRequestDTO;
 import model.dto.response.IssueResponseDTO;
 import java.io.*;
 import java.net.*;
@@ -18,6 +19,8 @@ public class IssueService
     private static final String API_URL = "http://localhost:8080/api/issues";
     private static final String JWT_BEARER = "Bearer ";
     private static final String JWT_AUTH = "Authorization";
+    public static final String PATCH = "PATCH";
+    public static final String PUT = "PUT";
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -50,14 +53,19 @@ public class IssueService
         return executeWriteRequest(API_URL, "POST", requestDTO, "creazione issue");
     }
 
+    public boolean updateIssue(Long issueId, UpdateIssueRequestDTO requestDTO)
+    {
+        return executeWriteRequest(API_URL + "/" + issueId, PUT, requestDTO, "aggiornamento issue");
+    }
+
     public boolean resolveIssue(Long issueId)
     {
-        return executeWriteRequest(API_URL + "/" + issueId + "/resolve", "PATCH", null, "risoluzione issue");
+        return executeWriteRequest(API_URL + "/" + issueId + "/resolve", PATCH, null, "risoluzione issue");
     }
 
     public boolean archiveIssue(Long issueId)
     {
-        return executeWriteRequest(API_URL + "/" + issueId + "/archive", "PATCH", null, "archiviazione issue");
+        return executeWriteRequest(API_URL + "/" + issueId + "/archive", PATCH, null, "archiviazione issue");
     }
 
     public boolean assignIssue(Long issueId, List<Long> userIds)
@@ -66,10 +74,9 @@ public class IssueService
             return false;
 
         String idsParam = String.join(",", userIds.stream().map(String::valueOf).toArray(String[]::new));
-
         String url = API_URL + "/" + issueId + "/assign?userIds=" + idsParam;
 
-        return executeWriteRequest(url, "PATCH", null, "assegnazione multipla issue");
+        return executeWriteRequest(url, PATCH, null, "assegnazione multipla issue");
     }
 
     private List<IssueResponseDTO> executeListGetRequest(String url, String operationDescription)

@@ -41,11 +41,13 @@ public class HeaderPanel extends JXPanel
         itemLogout = new JMenuItem("Logout", FontIcon.of(MaterialDesignL.LOGOUT, 16, Color.GRAY));
 
         profileMenu.add(itemProfile);
+
         if(isAdmin)
         {
             itemCreateUser = new JMenuItem("Crea Utenza", FontIcon.of(MaterialDesignA.ACCOUNT_MULTIPLE_PLUS, 16, Color.GRAY));
             profileMenu.add(itemCreateUser);
         }
+
         profileMenu.addSeparator();
         profileMenu.add(itemLogout);
 

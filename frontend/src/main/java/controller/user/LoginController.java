@@ -75,7 +75,7 @@ public class LoginController
                 if(success)
                 {
                     LOGGER.info("Login confermato. Reindirizzamento alla Home.");
-                    navigationService.goToDashboard();
+                    navigationService.goToIssues();
                 }
                 else
                 {

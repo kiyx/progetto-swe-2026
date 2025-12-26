@@ -18,7 +18,6 @@ public class NavigationController implements NavigationService
     private static final String VIEW_LOGIN = "LOGIN";
     private static final String VIEW_APP_SHELL = "APP_SHELL";
 
-    private static final String INNER_DASHBOARD = "DASHBOARD";
     private static final String INNER_ISSUES = "ISSUES";
     private static final String INNER_TEAMS = "TEAMS";
     private static final String INNER_PROJECTS = "PROJECTS";
@@ -72,15 +71,11 @@ public class NavigationController implements NavigationService
             if(isAdmin)
                 header.setCreateUserAction(e -> showRegisterUserDialog());
 
-            sidebar.setDashboardAction(e -> goToDashboard());
             sidebar.setIssuesAction(e -> goToIssues());
             sidebar.setTeamsAction(e -> goToTeams());
             sidebar.setProjectsAction(e -> goToProjects());
 
             mainFrame.addView(mainLayoutView, VIEW_APP_SHELL);
-
-            mainLayoutView.addContentView(new DashboardView(), INNER_DASHBOARD);
-
             mainFrame.setSize(1280, 800);
             mainFrame.setLocationRelativeTo(null);
         }
@@ -110,18 +105,6 @@ public class NavigationController implements NavigationService
     }
 
     @Override
-    public void goToDashboard()
-    {
-        SwingUtilities.invokeLater(() ->
-        {
-            initMainLayoutIfNeeded();
-
-            mainFrame.showView(VIEW_APP_SHELL);
-            mainLayoutView.showContentView(INNER_DASHBOARD);
-        });
-    }
-
-    @Override
     public void goToIssues()
     {
         SwingUtilities.invokeLater(() ->
@@ -134,7 +117,7 @@ public class NavigationController implements NavigationService
                 isAdmin = user.getIsAdmin();
 
             IssuesView issuesView = new IssuesView(isAdmin);
-            new IssuesController(issuesView, issueService, teamsService, authService, mainFrame);
+            new IssuesController(issuesView, issueService, teamsService, projectsService, authService, mainFrame);
 
             mainLayoutView.addContentView(issuesView, INNER_ISSUES);
 

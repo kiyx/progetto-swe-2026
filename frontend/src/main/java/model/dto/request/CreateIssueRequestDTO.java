@@ -1,5 +1,6 @@
 package model.dto.request;
 
+import lombok.Builder;
 import model.dto.enums.TipoIssue;
 import model.dto.enums.TipoPriorita;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateIssueRequestDTO

@@ -25,8 +25,6 @@ public class TeamsService
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-
-
     private final AuthService authService;
 
     public TeamsService(HttpClient httpClient, ObjectMapper objectMapper, AuthService authService)
@@ -48,7 +46,7 @@ public class TeamsService
         try
         {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(API_URL+"/managed"))
+                    .uri(URI.create(API_URL + "/managed"))
                     .header("Content-Type", "application/json")
                     .header("Authorization", "Bearer " + token)
                     .GET()

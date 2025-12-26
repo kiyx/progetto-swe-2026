@@ -30,8 +30,8 @@ public class Main
 
             ObjectMapper sharedMapper = new ObjectMapper();
             AuthService authService = new AuthService(sharedClient, sharedMapper);
-            NavigationController navController = getNavigationController(sharedClient, sharedMapper, authService);
 
+            NavigationController navController = getNavigationController(sharedClient, sharedMapper, authService);
             navController.start();
         });
     }

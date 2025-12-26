@@ -29,18 +29,21 @@ public class NavigationController implements NavigationService
 
     private final AuthService authService;
     private final UtenteService utenteService;
+    private final IssueService issueService;
     private final ProjectsService projectsService;
     private final TeamsService teamsService;
 
     public NavigationController(MainFrame mainFrame,
                                 AuthService authService,
                                 UtenteService utenteService,
+                                IssueService issueService,
                                 ProjectsService projectsService,
                                 TeamsService teamsService)
     {
         this.mainFrame = mainFrame;
         this.authService = authService;
         this.utenteService = utenteService;
+        this.issueService = issueService;
         this.projectsService = projectsService;
         this.teamsService = teamsService;
     }
@@ -125,8 +128,18 @@ public class NavigationController implements NavigationService
         SwingUtilities.invokeLater(() ->
         {
             initMainLayoutIfNeeded();
-            mainFrame.showView(VIEW_APP_SHELL);
 
+            boolean isAdmin = false;
+            var user = authService.getCurrentUser();
+            if(user != null)
+                isAdmin = user.getIsAdmin();
+
+            IssuesView issuesView = new IssuesView(isAdmin);
+            new IssuesController(issuesView, issueService, authService, mainFrame);
+
+            mainLayoutView.addContentView(issuesView, INNER_ISSUES);
+
+            mainFrame.showView(VIEW_APP_SHELL);
             mainLayoutView.showContentView(INNER_ISSUES);
         });
     }

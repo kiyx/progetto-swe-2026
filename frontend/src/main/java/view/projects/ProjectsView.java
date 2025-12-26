@@ -65,7 +65,10 @@ public class ProjectsView extends JXPanel
 
         DefaultTableCellRenderer center = new DefaultTableCellRenderer();
         center.setHorizontalAlignment(SwingConstants.CENTER);
-        table.getColumnModel().getColumn(0).setCellRenderer(center);
+        table.getColumnModel().getColumn(0).setMinWidth(0);
+        table.getColumnModel().getColumn(0).setMaxWidth(0);
+        table.getColumnModel().getColumn(0).setPreferredWidth(0);
+        table.getColumnModel().getColumn(0).setResizable(false);
         table.getColumnModel().getColumn(3).setCellRenderer(center);
         table.getColumnModel().getColumn(4).setCellRenderer(center);
         table.getColumnModel().getColumn(5).setCellRenderer(new ActionsRenderer());

@@ -22,6 +22,7 @@ public class Main
         SwingUtilities.invokeLater(() ->
         {
             LOGGER.info("Avvio dell'applicazione BugBoard Frontend...");
+
             HttpClient sharedClient = HttpClient.newBuilder()
                     .version(HttpClient.Version.HTTP_1_1)
                     .connectTimeout(Duration.ofSeconds(10))
@@ -40,12 +41,15 @@ public class Main
         UtenteService utenteService = new UtenteService(sharedClient, sharedMapper, authService);
         ProjectsService projectsService = new ProjectsService(sharedClient, sharedMapper, authService);
         TeamsService teamsService = new TeamsService(sharedClient, sharedMapper, authService);
+        IssueService issueService = new IssueService(sharedClient, sharedMapper, authService);
+
         MainFrame mainFrame = new MainFrame();
 
         return new NavigationController(
                 mainFrame,
                 authService,
                 utenteService,
+                issueService,
                 projectsService,
                 teamsService
         );

@@ -1,6 +1,7 @@
 package view.teams;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import lombok.Getter;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
@@ -13,22 +14,27 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 
-public class TeamsView extends JXPanel {
+public class TeamsView extends JXPanel
+{
 
     private final TeamsTableModel tableModel;
-    private JXTable table;
+
+    @Getter
     private transient TableRowSorter<TeamsTableModel> sorter;
 
     private JTextField searchField;
     private JButton createTeamButton;
     private JButton refreshButton;
 
-    public TeamsView() {
+    public TeamsView()
+    {
         this.tableModel = new TeamsTableModel();
         initComponents();
     }
 
-    private void initComponents() {
+    private void initComponents()
+    {
+        JXTable table;
         setLayout(new MigLayout("fill, insets 20", "[grow]", "[][grow]"));
         setBackground(Color.WHITE);
 
@@ -43,7 +49,7 @@ public class TeamsView extends JXPanel {
         searchField.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
 
         createTeamButton = new JButton("Nuovo Team");
-        createTeamButton.setBackground(new Color(0, 100, 255)); // Blu acceso manuale
+        createTeamButton.setBackground(new Color(0, 100, 255));
         createTeamButton.setForeground(Color.WHITE);
         createTeamButton.putClientProperty(FlatClientProperties.STYLE, "font: bold; arc: 10");
 
@@ -63,11 +69,17 @@ public class TeamsView extends JXPanel {
         table.setShowGrid(false, true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        if (table.getColumnCount() >= 4) {
+        if(table.getColumnCount() >= 4)
+        {
             table.getColumnModel().getColumn(TeamsTableModel.COL_ID).setMaxWidth(50);
             table.getColumnModel().getColumn(TeamsTableModel.COL_ADD_MEMBER).setMaxWidth(110);
             table.getColumnModel().getColumn(TeamsTableModel.COL_REMOVE_MEMBER).setMaxWidth(110);
         }
+
+        table.getColumnModel().getColumn(0).setMinWidth(0);
+        table.getColumnModel().getColumn(0).setMaxWidth(0);
+        table.getColumnModel().getColumn(0).setPreferredWidth(0);
+        table.getColumnModel().getColumn(0).setResizable(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.getViewport().setBackground(Color.WHITE);
@@ -77,10 +89,7 @@ public class TeamsView extends JXPanel {
         add(scrollPane, "grow");
     }
 
-    // --- Metodi Accessori ---
     public TeamsTableModel getModel() { return tableModel; }
-    public JXTable getTable() { return table; }
-    public TableRowSorter<TeamsTableModel> getSorter() { return sorter; }
     public String getSearchText() { return searchField.getText(); }
     public void addSearchListener(KeyListener k) { searchField.addKeyListener(k); }
     public void addRefreshListener(ActionListener l) { refreshButton.addActionListener(l); }

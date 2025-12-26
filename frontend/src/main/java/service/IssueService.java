@@ -3,6 +3,7 @@ package service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import model.dto.request.CreateIssueRequestDTO;
 import model.dto.response.IssueResponseDTO;
 
 import java.io.IOException;
@@ -10,20 +11,20 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class IssueService
 {
-    private static final Logger LOGGER = Logger.getLogger(IssueService.class.getName());
-    private static final String API_URL = "http://localhost:8080/issue";
+    private static final Logger logger = Logger.getLogger(IssueService.class.getName());
+    private static final String API_URL = "http://localhost:8080/api/issues";
+    private static final String JWT_BEARER = "Bearer ";
+    private static final String JWT_AUTH = "Authorization";
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-
-
     private final AuthService authService;
 
     public IssueService(HttpClient httpClient, ObjectMapper objectMapper, AuthService authService)
@@ -33,52 +34,133 @@ public class IssueService
         this.authService = authService;
     }
 
-    public List<IssueResponseDTO> getIssues ()
-    {
-        String token = authService.getJwtToken();
-        if(token == null)
-        {
-            LOGGER.warning("Utente non loggato. Richiesta non effettuata.");
-            return new ArrayList<>();
-        }
+    // --- METODI PUBBLICI (Delegati ai metodi privati generici) ---
 
+    public List<IssueResponseDTO> getAllIssues()
+    {
+        return executeListGetRequest(API_URL, "recupero globale issues");
+    }
+
+    public List<IssueResponseDTO> getIssuesAssignedTo(Long userId)
+    {
+        return executeListGetRequest(API_URL + "/assignee/" + userId, "recupero issues assegnate");
+    }
+
+    public List<IssueResponseDTO> getIssuesCreatedBy(Long userId)
+    {
+        return executeListGetRequest(API_URL + "/author/" + userId, "recupero issues create");
+    }
+
+    public boolean createIssue(CreateIssueRequestDTO requestDTO)
+    {
+        return executeWriteRequest(API_URL, "POST", requestDTO, "creazione issue");
+    }
+
+    public boolean resolveIssue(Long issueId)
+    {
+        return executeWriteRequest(API_URL + "/" + issueId + "/resolve", "PATCH", null, "risoluzione issue");
+    }
+
+    public boolean archiveIssue(Long issueId)
+    {
+        return executeWriteRequest(API_URL + "/" + issueId + "/archive", "PATCH", null, "archiviazione issue");
+    }
+
+
+    private List<IssueResponseDTO> executeListGetRequest(String url, String operationDescription)
+    {
+        if(!authService.isAuthenticated())
+        {
+            logger.warning(() -> "Tentativo di " + operationDescription + " senza autenticazione.");
+            return Collections.emptyList();
+        }
 
         try
         {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(API_URL+"/assigned"))
-                    .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + token)
+                    .uri(URI.create(url))
+                    .header(JWT_AUTH, JWT_BEARER + authService.getJwtToken())
                     .GET()
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if(response.statusCode() == 200)
+                return objectMapper.readValue(response.body(), new TypeReference<>() {});
+            else
+                logger.warning(() -> "Errore durante " + operationDescription + ". Status: " + response.statusCode());
+        }
+        catch(Exception e)
+        {
+            handleException(e, operationDescription);
+        }
+
+        return Collections.emptyList();
+    }
+
+    private boolean executeWriteRequest(String url, String method, Object bodyPayload, String operationDescription)
+    {
+        if(!authService.isAuthenticated())
+        {
+            logger.warning(() -> "Tentativo di " + operationDescription + " senza autenticazione.");
+            return false;
+        }
+
+        try
+        {
+            HttpRequest.Builder builder = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header(JWT_AUTH, JWT_BEARER + authService.getJwtToken());
+
+            HttpRequest.BodyPublisher publisher;
+
+            if(bodyPayload != null)
             {
-                LOGGER.info("Request delle issue avvenuta correttamente.");
-                return objectMapper.readValue(response.body(), new TypeReference<>(){});
+                String json = objectMapper.writeValueAsString(bodyPayload);
+                publisher = HttpRequest.BodyPublishers.ofString(json);
+                builder.header("Content-Type", "application/json");
+            }
+            else
+                publisher = HttpRequest.BodyPublishers.noBody();
+
+            builder.method(method, publisher);
+
+            HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+
+            if(response.statusCode() >= 200 && response.statusCode() < 300)
+            {
+                logger.info(() -> "Operazione riuscita: " + operationDescription);
+                return true;
             }
             else
             {
-                LOGGER.warning(() -> "Request fallito. Status code: " + response.statusCode());
-                LOGGER.fine(() -> "Risposta server: " + response.body());
-                return new ArrayList<>();
+                logger.warning(() -> "Fallimento operazione " + operationDescription + ". Status: " + response.statusCode());
+                return false;
             }
         }
-        catch(JsonProcessingException e)
+        catch(Exception e)
         {
-            LOGGER.log(Level.SEVERE, "Errore di parsing JSON durante il getter delle issue", e);
-            return new ArrayList<>();
-        }
-        catch (IOException | InterruptedException e)
-        {
-            LOGGER.log(Level.SEVERE, "Errore IOException durante il getter delle issue", e);
-            if(e instanceof InterruptedException)
-                Thread.currentThread().interrupt();
-            return new ArrayList<>();
+            handleException(e, operationDescription);
         }
 
+        return false;
     }
 
+    private void handleException(Exception e, String context)
+    {
+        switch (e)
+        {
+            case InterruptedException interruptedException ->
+            {
+                logger.log(Level.SEVERE, e, () -> "Thread interrotto durante: " + context);
+                Thread.currentThread().interrupt();
+            }
+
+            case JsonProcessingException jsonProcessingException -> logger.log(Level.SEVERE, e, () -> "Errore JSON durante: " + context);
+
+            case IOException ioException -> logger.log(Level.SEVERE, e, () -> "Errore I/O Backend durante: " + context);
+
+            case null, default -> logger.log(Level.SEVERE, e, () -> "Errore generico durante: " + context);
+        }
+    }
 }

@@ -1,20 +1,16 @@
 package service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.type.*;
+import com.fasterxml.jackson.databind.*;
 import model.dto.request.CreateIssueRequestDTO;
 import model.dto.response.IssueResponseDTO;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.Collections;
+import java.io.*;
+import java.net.*;
+import java.net.http.*;
+import java.util.*;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 public class IssueService
 {
@@ -33,8 +29,6 @@ public class IssueService
         this.objectMapper = objectMapper;
         this.authService = authService;
     }
-
-    // --- METODI PUBBLICI (Delegati ai metodi privati generici) ---
 
     public List<IssueResponseDTO> getAllIssues()
     {
@@ -66,6 +60,17 @@ public class IssueService
         return executeWriteRequest(API_URL + "/" + issueId + "/archive", "PATCH", null, "archiviazione issue");
     }
 
+    public boolean assignIssue(Long issueId, List<Long> userIds)
+    {
+        if(!authService.isAuthenticated() || userIds == null || userIds.isEmpty())
+            return false;
+
+        String idsParam = String.join(",", userIds.stream().map(String::valueOf).toArray(String[]::new));
+
+        String url = API_URL + "/" + issueId + "/assign?userIds=" + idsParam;
+
+        return executeWriteRequest(url, "PATCH", null, "assegnazione multipla issue");
+    }
 
     private List<IssueResponseDTO> executeListGetRequest(String url, String operationDescription)
     {
@@ -155,7 +160,6 @@ public class IssueService
                 logger.log(Level.SEVERE, e, () -> "Thread interrotto durante: " + context);
                 Thread.currentThread().interrupt();
             }
-
             case JsonProcessingException jsonProcessingException -> logger.log(Level.SEVERE, e, () -> "Errore JSON durante: " + context);
 
             case IOException ioException -> logger.log(Level.SEVERE, e, () -> "Errore I/O Backend durante: " + context);

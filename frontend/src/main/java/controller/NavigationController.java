@@ -1,17 +1,16 @@
 package controller;
 
+import controller.issues.*;
 import controller.projects.*;
-import controller.teams.TeamController;
+import controller.teams.*;
 import controller.user.*;
 import service.*;
 import view.*;
 import view.component.*;
+import view.issues.*;
 import view.projects.*;
-import view.teams.TeamsView;
-import view.user.LoginView;
-import view.user.RegisterUserDialog;
-import view.user.UpdatePasswordDialog;
-
+import view.teams.*;
+import view.user.*;
 import javax.swing.*;
 
 public class NavigationController implements NavigationService
@@ -135,7 +134,7 @@ public class NavigationController implements NavigationService
                 isAdmin = user.getIsAdmin();
 
             IssuesView issuesView = new IssuesView(isAdmin);
-            new IssuesController(issuesView, issueService, authService, mainFrame);
+            new IssuesController(issuesView, issueService, teamsService, authService, mainFrame);
 
             mainLayoutView.addContentView(issuesView, INNER_ISSUES);
 

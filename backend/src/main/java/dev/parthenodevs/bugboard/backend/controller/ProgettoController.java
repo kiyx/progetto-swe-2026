@@ -21,11 +21,11 @@ public class ProgettoController
         this.progettoService = progettoService;
     }
 
-    @GetMapping("/admin")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<ProgettoResponseDTO>> getProgettiGestiti()
+    @GetMapping("/miei")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<ProgettoResponseDTO>> getMieiProgetti()
     {
-        return ResponseEntity.ok(progettoService.getProgettiGestitiDaAdmin());
+        return ResponseEntity.ok(progettoService.getProgettiAccessibili());
     }
 
     @PostMapping

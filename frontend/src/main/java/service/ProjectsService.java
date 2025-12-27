@@ -29,7 +29,7 @@ public class ProjectsService
         this.authService = authService;
     }
 
-    public List<ProgettoResponseDTO> getProgettiGestiti()
+    public List<ProgettoResponseDTO> getProgettiAccessibili()
     {
         if(authService.isNotAuthenticated())
         {
@@ -40,7 +40,7 @@ public class ProjectsService
         try
         {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(API_URL + "/admin"))
+                    .uri(URI.create(API_URL + "/miei"))
                     .header(JWT_AUTH, JWT_BEARER + authService.getJwtToken())
                     .GET()
                     .build();

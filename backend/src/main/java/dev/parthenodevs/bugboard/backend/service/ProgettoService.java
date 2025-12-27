@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 @Service
@@ -42,12 +43,15 @@ public class ProgettoService
         this.progettoMapper = progettoMapper;
     }
 
-    public List<ProgettoResponseDTO> getProgettiGestitiDaAdmin()
+    public List<ProgettoResponseDTO> getProgettiAccessibili()
     {
-        Utente admin = getAdminLoggato();
+        String email = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
+        Utente utente = utenteRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato"));
 
-        return progettoRepository.findAllByAdminIdOrderByIdDesc(admin.getId())
-                .stream()
+        List<Progetto> progetti = progettoRepository.findProgettiAccessibiliOrderByIdDesc(utente.getId());
+
+        return progetti.stream()
                 .map(progettoMapper::toDto)
                 .toList();
     }

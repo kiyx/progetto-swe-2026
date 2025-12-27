@@ -10,9 +10,9 @@ import java.net.http.*;
 import java.time.*;
 import java.util.logging.*;
 
-public class Main
+public class FrontendApplication
 {
-    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FrontendApplication.class.getName());
 
     public static void main(String[] args)
     {

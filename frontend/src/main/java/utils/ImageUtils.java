@@ -1,6 +1,7 @@
 package utils;
 
 import javax.swing.*;
+import javax.swing.table.*;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.*;
@@ -51,5 +52,25 @@ public class ImageUtils
         ImageIcon originalIcon = new ImageIcon(file.getAbsolutePath());
         Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
         return new ImageIcon(scaledImage);
+    }
+
+    static class ImageCellRenderer extends DefaultTableCellRenderer
+    {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+        {
+            super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setIcon(null);
+
+            if(value instanceof String base64 && !base64.isBlank())
+            {
+                ImageIcon icon = utils.ImageUtils.decodeBase64ToIcon(base64, 40, 40);
+                setIcon(icon);
+            }
+            else
+                setText("-");
+            return this;
+        }
     }
 }

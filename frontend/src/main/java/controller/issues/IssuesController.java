@@ -254,7 +254,7 @@ public class IssuesController
 
         new Thread(() ->
         {
-            List<ProgettoResponseDTO> progetti = projectsService.getProgettiGestiti();
+            List<ProgettoResponseDTO> progetti = projectsService.getProgettiAccessibili();
 
             SwingUtilities.invokeLater(() ->
             {
@@ -308,7 +308,7 @@ public class IssuesController
 
         new Thread(() ->
         {
-            List<ProgettoResponseDTO> progetti = projectsService.getProgettiGestiti();
+            List<ProgettoResponseDTO> progetti = projectsService.getProgettiAccessibili();
             SwingUtilities.invokeLater(() ->
             {
                 IssueFormDialog dialog = new IssueFormDialog(mainFrame, progetti, issue);

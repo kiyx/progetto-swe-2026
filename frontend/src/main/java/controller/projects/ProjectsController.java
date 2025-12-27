@@ -93,7 +93,7 @@ public class ProjectsController
             logger.info(() -> "Avvio recupero progetti dal Backend...");
             try
             {
-                var progetti = projectsService.getProgettiGestiti();
+                var progetti = projectsService.getProgettiAccessibili();
 
                 SwingUtilities.invokeLater(() ->
                 {

@@ -168,7 +168,16 @@ public class TeamsView extends JXPanel {
             btn.setPreferredSize(new Dimension(32, 32));
             return btn;
         }
+
+        public Long getIdSelectedTeam()
+        {
+            if(currentTeam!=null)
+                return currentTeam.getId();
+            else
+                return null;
+        }
     }
+
 
     private static class ActionsRenderer implements TableCellRenderer {
         private final ActionsPanel panel;
@@ -201,4 +210,6 @@ public class TeamsView extends JXPanel {
         @Override
         public boolean isCellEditable(EventObject e) { return true; }
     }
+
+
 }

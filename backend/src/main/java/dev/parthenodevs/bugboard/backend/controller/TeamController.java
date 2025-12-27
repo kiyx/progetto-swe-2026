@@ -2,6 +2,7 @@ package dev.parthenodevs.bugboard.backend.controller;
 
 import dev.parthenodevs.bugboard.backend.dto.request.CreateTeamRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.TeamResponseDTO;
+import dev.parthenodevs.bugboard.backend.dto.response.UtenteResponseDTO;
 import dev.parthenodevs.bugboard.backend.service.TeamService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,18 @@ public class TeamController
     public ResponseEntity<List<TeamResponseDTO>> getTeamsGestiti()
     {
         return ResponseEntity.ok(teamService.getTeamsGestitiDaAdmin());
+    }
+
+    @GetMapping("/member/{id}")
+    public ResponseEntity<List<UtenteResponseDTO>> getMembri(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(teamService.getTeamsMembers(id));
+    }
+
+    @GetMapping("/notmember/{id}")
+    public ResponseEntity<List<UtenteResponseDTO>> getNotMembri(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(teamService.getTeamsNotMembers(id));
     }
 
     @PostMapping("/create")

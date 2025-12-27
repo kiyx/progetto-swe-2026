@@ -1,7 +1,10 @@
 package controller.teams;
 
+import controller.projects.CreateProjectController;
 import model.dto.response.TeamResponseDTO;
+import model.dto.response.UtenteResponseDTO;
 import service.TeamsService;
+import view.projects.CreateProjectDialog;
 import view.teams.*;
 
 import javax.swing.*;
@@ -76,41 +79,93 @@ public class TeamController
         LOGGER.info(() -> "Preparazione apertura dialog aggiunta membro al team...");
 
         new Thread(() ->
+        {
+            try
+            {
+                List<UtenteResponseDTO> utenti = teamsService.getTeamsNotMembers(team.getId());
+
                 SwingUtilities.invokeLater(() ->
                 {
+                    if(utenti.isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(mainFrame,
+                                "Non esistono utenti disponibili per l'aggiunta.\n",
+                                "Nessun utente Disponibile da aggiungere al team",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
 
-                    //AddMembroDialog dialog = new AddMembroDialog(mainFrame);
+                    AddMembroDialog dialog = new AddMembroDialog(mainFrame, utenti);
                     //new UpdateTeamController(dialog, teamsService);
-
-                    //dialog.setVisible(true);
-                })).start();
+                    dialog.setVisible(true);
+                });
+            }
+            catch (Exception e)
+            {
+                LOGGER.log(Level.SEVERE, "Errore recupero utenti per dialog addmembri", e);
+            }
+        }).start();
     }
 
     private void onRemoveMember(TeamResponseDTO team) {
         LOGGER.info(() -> "Preparazione apertura dialog rimozione membro dal team...");
 
         new Thread(() ->
+        {
+            try
+            {
+                List<UtenteResponseDTO> utenti = teamsService.getTeamsMembers(team.getId());
+
                 SwingUtilities.invokeLater(() ->
                 {
+                    if(utenti.isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(mainFrame,
+                                "Non esistono utenti disponibili per la rimozione.\nDevi aggiungere almeno un utente al server e al team.",
+                                "Nessun utente Disponibile",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
 
-                    //DeleteMembroDialog dialog = new DeleteMembroDialog(mainFrame);
+                    DeleteMembroDialog dialog = new DeleteMembroDialog(mainFrame, utenti);
                     //new UpdateTeamController(dialog, teamsService);
-
-                    //dialog.setVisible(true);
-                })).start();
+                    dialog.setVisible(true);
+                });
+            }
+            catch (Exception e)
+            {
+                LOGGER.log(Level.SEVERE, "Errore recupero utenti per dialog deletemembri", e);
+            }
+        }).start();
     }
 
     private void onViewMembers(TeamResponseDTO team) {
-        LOGGER.info(() -> "Visualizzazione lista membri team " + team.getId());
         new Thread(() ->
+        {
+            try
+            {
+                List<UtenteResponseDTO> utenti = teamsService.getTeamsMembers(team.getId());
+
                 SwingUtilities.invokeLater(() ->
                 {
+                    if(utenti.isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(mainFrame,
+                                "Non esistono utenti disponibili.\nDevi aggiungere almeno un utente al server.",
+                                "Nessun utente Disponibile",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
 
-                    //ShowMembriDialog dialog = new ShowMembriDialog(mainFrame);
-                    //new UpdateTeamController(dialog, teamsService);
-
-                    //dialog.setVisible(true);
-                })).start();
+                    ShowMembriDialog dialog = new ShowMembriDialog(mainFrame, utenti);
+                    dialog.setVisible(true);
+                });
+            }
+            catch (Exception e)
+            {
+                LOGGER.log(Level.SEVERE, "Errore recupero utenti per dialog ShowMembri", e);
+            }
+        }).start();
     }
 
     private void openCreateDialog()

@@ -81,6 +81,100 @@ public class TeamsService
 
     }
 
+    public List<UtenteResponseDTO> getTeamsNotMembers (Long id)
+    {
+        String token = authService.getJwtToken();
+        if(token == null)
+        {
+            LOGGER.warning("Utente non loggato. Richiesta non effettuata.");
+            return new ArrayList<>();
+        }
+
+        try
+        {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_URL + "/notmember" + "/" + id))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + token)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if(response.statusCode() == 200)
+            {
+                LOGGER.info("Request dei membri avvenuta correttamente.");
+                return objectMapper.readValue(response.body(), new TypeReference<>(){});
+            }
+            else
+            {
+                LOGGER.warning(() -> "Request fallito. Status code: " + response.statusCode());
+                LOGGER.fine(() -> "Risposta server: " + response.body());
+                return new ArrayList<>();
+            }
+        }
+        catch(JsonProcessingException e)
+        {
+            LOGGER.log(Level.SEVERE, "Errore di parsing JSON durante il getter dei membri", e);
+            return new ArrayList<>();
+        }
+        catch (IOException | InterruptedException e)
+        {
+            LOGGER.log(Level.SEVERE, "Errore IOException durante il getter dei membri", e);
+            if(e instanceof InterruptedException)
+                Thread.currentThread().interrupt();
+            return new ArrayList<>();
+        }
+
+    }
+
+    public List<UtenteResponseDTO> getTeamsMembers (Long id)
+    {
+        String token = authService.getJwtToken();
+        if(token == null)
+        {
+            LOGGER.warning("Utente non loggato. Richiesta non effettuata.");
+            return new ArrayList<>();
+        }
+
+        try
+        {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_URL + "/member" + "/" + id))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + token)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if(response.statusCode() == 200)
+            {
+                LOGGER.info("Request dei membri avvenuta correttamente.");
+                return objectMapper.readValue(response.body(), new TypeReference<>(){});
+            }
+            else
+            {
+                LOGGER.warning(() -> "Request fallito. Status code: " + response.statusCode());
+                LOGGER.fine(() -> "Risposta server: " + response.body());
+                return new ArrayList<>();
+            }
+        }
+        catch(JsonProcessingException e)
+        {
+            LOGGER.log(Level.SEVERE, "Errore di parsing JSON durante il getter dei membri", e);
+            return new ArrayList<>();
+        }
+        catch (IOException | InterruptedException e)
+        {
+            LOGGER.log(Level.SEVERE, "Errore IOException durante il getter dei membri", e);
+            if(e instanceof InterruptedException)
+                Thread.currentThread().interrupt();
+            return new ArrayList<>();
+        }
+
+    }
+
     public boolean create(CreateTeamRequestDTO requestDTO)
     {
         if(!authService.isAuthenticated())

@@ -31,7 +31,7 @@ public class ProjectsService
 
     public List<ProgettoResponseDTO> getProgettiGestiti()
     {
-        if(!authService.isAuthenticated())
+        if(authService.isNotAuthenticated())
         {
             logger.warning(() -> "Tentativo di recupero progetti senza autenticazione.");
             return Collections.emptyList();
@@ -71,7 +71,7 @@ public class ProjectsService
 
     public boolean createProgetto(CreateProgettoRequestDTO requestDTO)
     {
-        if(!authService.isAuthenticated())
+        if(authService.isNotAuthenticated())
         {
             logger.warning(() -> "Tentativo di creazione senza autenticazione.");
             return false;
@@ -120,7 +120,7 @@ public class ProjectsService
 
     public boolean attivaProgetto(Long idProgetto)
     {
-        if(!authService.isAuthenticated())
+        if(authService.isNotAuthenticated())
             return false;
 
         try
@@ -157,7 +157,7 @@ public class ProjectsService
 
     public boolean concludiProgetto(Long idProgetto)
     {
-        if(!authService.isAuthenticated())
+        if(authService.isNotAuthenticated())
             return false;
 
         try

@@ -1,15 +1,12 @@
 package view.issues;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.fonts.inter.FlatInterFont;
 import lombok.Getter;
 import lombok.Setter;
 import model.dto.enums.StatoIssue;
 import model.dto.enums.TipoIssue;
 import model.dto.enums.TipoPriorita;
 import model.dto.response.IssueResponseDTO;
-import model.dto.response.UtenteResponseDTO;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXPanel;
@@ -26,14 +23,14 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class IssuesView extends JXPanel
 {
+    public enum TabType { MAIN, CREATED, ARCHIVE }
+
     private final boolean isAdmin;
     private final DefaultTableModel modelMain;
     private final DefaultTableModel modelCreate;
@@ -87,14 +84,14 @@ public class IssuesView extends JXPanel
 
         String tab1Title = isAdmin ? "Issue Segnalate" : "Assegnate a Me";
         modelMain = createModel(cols);
-        tabbedPane.addTab(tab1Title, new JScrollPane(createTable(modelMain, true)));
+        tabbedPane.addTab(tab1Title, new JScrollPane(createTable(modelMain, TabType.MAIN)));
 
         modelCreate = createModel(cols);
-        tabbedPane.addTab("Create da Me", new JScrollPane(createTable(modelCreate, false)));
+        tabbedPane.addTab("Create da Me", new JScrollPane(createTable(modelCreate, TabType.CREATED)));
 
         modelArchive = createModel(cols);
         if(isAdmin)
-            tabbedPane.addTab("Archivio", new JScrollPane(createTable(modelArchive, false)));
+            tabbedPane.addTab("Archivio", new JScrollPane(createTable(modelArchive, TabType.ARCHIVE)));
 
         add(tabbedPane, "grow");
     }
@@ -106,6 +103,33 @@ public class IssuesView extends JXPanel
             @Override public boolean isCellEditable(int row, int col) { return col == 7; }
             @Override public Class<?> getColumnClass(int columnIndex) { return columnIndex == 0 ? Long.class : Object.class; }
         };
+    }
+
+    private JTable createTable(DefaultTableModel model, TabType tabType)
+    {
+        JTable t = new JTable(model);
+        t.setRowHeight(45);
+        t.getTableHeader().putClientProperty(FlatClientProperties.STYLE, "font: bold");
+        t.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        t.setShowVerticalLines(false);
+        t.setAutoCreateRowSorter(true);
+
+        t.getColumnModel().getColumn(0).setMinWidth(0);
+        t.getColumnModel().getColumn(0).setMaxWidth(0);
+        t.getColumnModel().getColumn(0).setPreferredWidth(0);
+
+        DefaultTableCellRenderer center = new DefaultTableCellRenderer();
+        center.setHorizontalAlignment(SwingConstants.CENTER);
+        t.getColumnModel().getColumn(2).setCellRenderer(center);
+        t.getColumnModel().getColumn(3).setCellRenderer(center);
+        t.getColumnModel().getColumn(4).setCellRenderer(center);
+
+        t.getColumnModel().getColumn(7).setCellRenderer(new ActionsRenderer(tabType));
+        t.getColumnModel().getColumn(7).setCellEditor(new ActionsEditor(tabType));
+        t.getColumnModel().getColumn(7).setMinWidth(160);
+        t.getColumnModel().getColumn(7).setMaxWidth(160);
+
+        return t;
     }
 
     private JPanel createFilterPanel()
@@ -164,33 +188,6 @@ public class IssuesView extends JXPanel
         filterPriorita.addActionListener(l);
     }
 
-    private JTable createTable(DefaultTableModel model, boolean isMainTab)
-    {
-        JTable t = new JTable(model);
-        t.setRowHeight(45);
-        t.getTableHeader().putClientProperty(FlatClientProperties.STYLE, "font: bold");
-        t.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        t.setShowVerticalLines(false);
-        t.setAutoCreateRowSorter(true);
-
-        t.getColumnModel().getColumn(0).setMinWidth(0);
-        t.getColumnModel().getColumn(0).setMaxWidth(0);
-        t.getColumnModel().getColumn(0).setPreferredWidth(0);
-
-        DefaultTableCellRenderer center = new DefaultTableCellRenderer();
-        center.setHorizontalAlignment(SwingConstants.CENTER);
-        t.getColumnModel().getColumn(2).setCellRenderer(center);
-        t.getColumnModel().getColumn(3).setCellRenderer(center);
-        t.getColumnModel().getColumn(4).setCellRenderer(center);
-
-        t.getColumnModel().getColumn(7).setCellRenderer(new ActionsRenderer(isMainTab));
-        t.getColumnModel().getColumn(7).setCellEditor(new ActionsEditor(isMainTab));
-        t.getColumnModel().getColumn(7).setMinWidth(160);
-        t.getColumnModel().getColumn(7).setMaxWidth(160);
-
-        return t;
-    }
-
     private JXButton createIconButton()
     {
         JXButton btn = new JXButton();
@@ -222,12 +219,12 @@ public class IssuesView extends JXPanel
         public final JButton btnResolve;
         public final JButton btnArchive;
         public final JButton btnAssign;
-        private final boolean isMainTab;
+        private final TabType tabType;
 
-        public ActionsPanel(boolean isMainTab)
+        public ActionsPanel(TabType tabType)
         {
             super(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            this.isMainTab = isMainTab;
+            this.tabType = tabType;
             setOpaque(true);
 
             btnEdit = new JButton(); styleBtn(btnEdit, "Modifica"); add(btnEdit);
@@ -260,16 +257,16 @@ public class IssuesView extends JXPanel
             boolean isBug = (tipo == TipoIssue.BUG);
             boolean isResolved = (stato == StatoIssue.RISOLTA);
 
-            btnEdit.setVisible(!isMainTab);
-            btnResolve.setVisible(!isAdmin && isMainTab && !isResolved);
-            btnArchive.setVisible(isAdmin && isMainTab && isBug);
-            btnAssign.setVisible(isAdmin && isMainTab && !isResolved);
+            btnEdit.setVisible(tabType == TabType.CREATED && !isResolved);
+            btnResolve.setVisible(!isResolved && (tabType == TabType.CREATED || tabType == TabType.MAIN));
+            btnAssign.setVisible(!isResolved && isAdmin && tabType == TabType.MAIN);
+            btnArchive.setVisible(isAdmin && tabType == TabType.MAIN && isBug);
         }
     }
 
     class ActionsRenderer extends ActionsPanel implements TableCellRenderer
     {
-        public ActionsRenderer(boolean main) { super(main); }
+        public ActionsRenderer(TabType type) { super(type); }
         @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSel, boolean hasFocus, int row, int col)
         {
             setBackground(isSel ? table.getSelectionBackground() : Color.WHITE);
@@ -286,9 +283,9 @@ public class IssuesView extends JXPanel
         private final ActionsPanel panel;
         private Long currentId;
 
-        public ActionsEditor(boolean main)
+        public ActionsEditor(TabType type)
         {
-            panel = new ActionsPanel(main);
+            panel = new ActionsPanel(type);
             panel.btnEdit.addActionListener(e -> { fireEditingStopped(); if(onEditIssue!=null) onEditIssue.accept(currentId); });
             panel.btnResolve.addActionListener(e -> { fireEditingStopped(); if(onResolveIssue!=null) onResolveIssue.accept(currentId); });
             panel.btnArchive.addActionListener(e -> { fireEditingStopped(); if(onArchiveIssue!=null) onArchiveIssue.accept(currentId); });
@@ -308,58 +305,5 @@ public class IssuesView extends JXPanel
         }
         @Override public Object getCellEditorValue() { return ""; }
         @Override public boolean isCellEditable(EventObject e) { return true; }
-    }
-
-    public static void main(String[] args)
-    {
-        FlatInterFont.install();
-        FlatLightLaf.setup();
-        UIManager.put("defaultFont", new Font(FlatInterFont.FAMILY, Font.PLAIN, 13));
-
-        SwingUtilities.invokeLater(() ->
-        {
-            JFrame frame = new JFrame("TEST Issues View (Admin Mode - 3 TABS)");
-            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            frame.setSize(1280, 800);
-            frame.setLocationRelativeTo(null);
-
-            // 1. Init View come ADMIN
-            IssuesView view = new IssuesView(true);
-
-            // 2. MOCK DATA
-            List<IssueResponseDTO> allIssues = new ArrayList<>();
-            // Active
-            allIssues.add(new IssueResponseDTO(1L, "Bug Attivo 1", "...", TipoIssue.BUG, StatoIssue.ASSEGNATA, false, null, TipoPriorita.ALTA, 1L, "User", 1L, "Proj A", 10L, "Web"));
-            allIssues.add(new IssueResponseDTO(2L, "Task Attivo 2", "...", TipoIssue.DOCUMENTATION, StatoIssue.DA_ACCETTARE, false, null, TipoPriorita.MEDIA, 1L, "User", 1L, "Proj A", 11L, "Back"));
-            // Archived
-            allIssues.add(new IssueResponseDTO(3L, "Bug Archiviato 1", "...", TipoIssue.BUG, StatoIssue.RISOLTA, true, null, TipoPriorita.BASSA, 1L, "User", 1L, "Proj A", 10L, "Web"));
-            allIssues.add(new IssueResponseDTO(4L, "Bug Archiviato 2", "...", TipoIssue.BUG, StatoIssue.RISOLTA, true, null, TipoPriorita.ALTA, 1L, "User", 2L, "Mobile", 12L, "App"));
-
-            // 3. Simula Controller Logic (Split Data)
-            view.setupFiltersListener(e -> updateMockData(view, allIssues));
-            view.setResetFilterAction(e -> {
-                view.getSearchField().setText("");
-                updateMockData(view, allIssues);
-            });
-
-            // Initial Load
-            updateMockData(view, allIssues);
-
-            frame.add(view);
-            frame.setVisible(true);
-        });
-    }
-
-    private static void updateMockData(IssuesView view, List<IssueResponseDTO> allIssues)
-    {
-        String text = view.getSearchField().getText().toLowerCase();
-
-        List<IssueResponseDTO> filtered = allIssues.stream()
-                .filter(i -> i.getTitolo().toLowerCase().contains(text))
-                .toList();
-
-        view.updateMainTab(filtered.stream().filter(i -> !i.isArchiviato()).toList());
-        view.updateCreateTab(filtered.stream().filter(i -> !i.isArchiviato()).toList());
-        view.updateArchiveTab(filtered.stream().filter(IssueResponseDTO::isArchiviato).toList());
     }
 }

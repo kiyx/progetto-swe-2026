@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/teams")
+@SuppressWarnings("NullableProblems")
 public class TeamController
 {
     private final TeamService teamService;

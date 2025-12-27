@@ -114,7 +114,7 @@ public class TeamController
         {
             try
             {
-                List<UtenteResponseDTO> utenti = teamsService.getTeamsMembers(team.getId());
+                List<UtenteResponseDTO> utenti = teamsService.getTeamMembers(team.getId());
 
                 SwingUtilities.invokeLater(() ->
                 {
@@ -144,7 +144,7 @@ public class TeamController
         {
             try
             {
-                List<UtenteResponseDTO> utenti = teamsService.getTeamsMembers(team.getId());
+                List<UtenteResponseDTO> utenti = teamsService.getTeamMembers(team.getId());
 
                 SwingUtilities.invokeLater(() ->
                 {

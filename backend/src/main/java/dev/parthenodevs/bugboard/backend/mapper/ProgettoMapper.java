@@ -21,14 +21,13 @@ public class ProgettoMapper
                                   .nome(progetto.getNome())
                                   .stato(progetto.getStato())
 
-                                  // Info Team
                                   .idTeam(progetto.getTeam().getId())
                                   .nomeTeam(progetto.getTeam().getNome())
 
-                                  // Info Admin
                                   .idAdmin(progetto.getAdmin().getId())
                                   .nomeAdmin(progetto.getAdmin().getNome() + " " + progetto.getAdmin().getCognome())
 
+                                  .issuesTotali(progetto.getIssues().size())
                                   .build();
     }
 

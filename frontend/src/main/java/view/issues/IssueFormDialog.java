@@ -42,7 +42,10 @@ public class IssueFormDialog extends JDialog
         buildLayout(issueToEdit == null ? "Crea Nuova Segnalazione" : "Modifica Segnalazione");
 
         if(issueToEdit != null)
+        {
             loadIssueData(issueToEdit);
+            cmbProgetto.setEnabled(false);
+        }
 
         pack();
         setLocationRelativeTo(owner);
@@ -240,7 +243,7 @@ public class IssueFormDialog extends JDialog
 
     private void removeImage()
     {
-        this.currentBase64Image = null;
+        this.currentBase64Image = "";
         lblImagePreview.setIcon(null);
         lblImagePreview.setText("Nessuna Immagine");
     }

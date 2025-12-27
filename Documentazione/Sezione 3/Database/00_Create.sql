@@ -55,7 +55,7 @@ CREATE TABLE Issue
     Tipo Tipo_Issue NOT NULL,
     Stato Stato_Issue NOT NULL DEFAULT 'TODO',
     IsArchiviato BOOLEAN DEFAULT FALSE,
-    Immagine VARCHAR(255),
+    Immagine TEXT,
     Priorita Tipo_Priorita,
     IdUtente BIGINT NOT NULL,
     IdProgetto BIGINT NOT NULL,

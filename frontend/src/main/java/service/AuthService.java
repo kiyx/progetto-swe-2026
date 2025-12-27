@@ -93,6 +93,11 @@ public class AuthService
         return this.jwtToken != null && this.currentUser != null;
     }
 
+    public boolean isNotAuthenticated()
+    {
+        return !isAuthenticated();
+    }
+
     public void logout()
     {
         String userEmail = (currentUser != null) ? currentUser.getEmail() : "Nessuno";

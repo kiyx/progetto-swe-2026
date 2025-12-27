@@ -20,10 +20,8 @@ public class UpdateIssueRequestDTO
 
     private TipoIssue tipo;
     private StatoIssue stato;
-    private boolean isArchiviato;
+    private Boolean isArchiviato;
 
     private TipoPriorita priorita;
-
-    @Size(max = 255, message = "L'immagine deve essere una stringa di max 255")
     private String immagine;
 }

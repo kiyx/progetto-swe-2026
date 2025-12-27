@@ -14,4 +14,5 @@ public interface IssueRepository extends JpaRepository<Issue, Long>
     List<Issue> findByProgettoId(Long progettoId);
     @Query("SELECT i FROM Issue i WHERE i.progetto.id = :progettoId AND i.tipo = 'BUG' AND i.isArchiviato = false")
     List<Issue> findByProgettoAndTipoIsBugAndArchiviatoIsFalse(@Param("progettoId") Long progettoId);
+    List<Issue> findByAutore_Id(Long idAutore);
 }

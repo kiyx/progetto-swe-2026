@@ -29,7 +29,7 @@ public class UtenteService
 
     public Optional<UtenteResponseDTO> updateMe(UpdateUtenteRequestDTO requestDTO)
     {
-        if(!authService.isAuthenticated())
+        if(authService.isNotAuthenticated())
         {
             LOGGER.warning("Tentativo di aggiornamento password fallito: utente non autenticato.");
             return Optional.empty();
@@ -79,7 +79,7 @@ public class UtenteService
 
     public boolean register(RegisterRequestDTO requestDTO)
     {
-        if(!authService.isAuthenticated())
+        if(authService.isNotAuthenticated())
         {
             LOGGER.warning("Tentativo di creazione utenza fallito: utente non autenticato.");
             return false;

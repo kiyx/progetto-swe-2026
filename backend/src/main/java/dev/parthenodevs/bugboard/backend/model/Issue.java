@@ -8,9 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.type.*;
-
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
+import java.util.*;
 
 @Entity
 @Table(name = "Issue", schema = "bugboard26")
@@ -45,6 +44,7 @@ public class Issue implements Serializable
     @Column(name="isarchiviato", nullable = false)
     private boolean isArchiviato;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String immagine;
 
     @Enumerated(EnumType.STRING)
@@ -59,11 +59,15 @@ public class Issue implements Serializable
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idprogetto", nullable = false)
-    @SuppressWarnings("java:S1948")
     private Progetto progetto;
 
+    @ManyToMany(mappedBy = "assignedIssues", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Utente> assegnatari = new HashSet<>();
+
     @Builder
-    public Issue(String titolo, String descrizione, TipoIssue tipo, StatoIssue stato, Utente autore, Progetto progetto, TipoPriorita priorita, String immagine)
+    public Issue(String titolo, String descrizione, TipoIssue tipo, StatoIssue stato, Utente autore, Progetto progetto, TipoPriorita priorita, String immagine, Boolean isArchiviato)
     {
         if(titolo == null || titolo.isBlank())
             throw new InvalidFieldException("Titolo obbligatorio");
@@ -82,7 +86,7 @@ public class Issue implements Serializable
         this.stato = (stato != null) ? stato : StatoIssue.TODO;
         this.autore = autore;
         this.progetto = progetto;
-        this.isArchiviato = false;
+        this.isArchiviato = Boolean.TRUE.equals(isArchiviato);
         this.priorita = priorita;
         this.immagine = immagine;
     }

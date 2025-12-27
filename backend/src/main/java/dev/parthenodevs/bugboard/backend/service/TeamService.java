@@ -51,6 +51,9 @@ public class TeamService
 
         Team teamSalvato = teamRepository.save(nuovoTeam);
 
+        adminLoggato.addTeam(teamSalvato);
+        utenteRepository.save(adminLoggato);
+
         logger.info(() -> String.format("Team salvato con successo. ID: %d, Nome: %s, Admin: %s",
                 teamSalvato.getId(), teamSalvato.getNome(), teamSalvato.getAdmin().getNome()));
 

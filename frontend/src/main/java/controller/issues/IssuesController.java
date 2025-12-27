@@ -192,7 +192,7 @@ public class IssuesController
             return;
         }
 
-        /*new Thread(() ->
+        new Thread(() ->
         {
             try
             {
@@ -226,7 +226,7 @@ public class IssuesController
                     autoRefreshTimer.restart();
                 });
             }
-        }).start();*/
+        }).start();
     }
 
     private void performAssign(Long issueId, List<Long> userIds)
@@ -285,9 +285,7 @@ public class IssuesController
                     loadData(false);
                 }
                 else
-                {
                     JOptionPane.showMessageDialog(mainFrame, "Errore creazione", MSG_ERROR, JOptionPane.ERROR_MESSAGE);
-                }
                 autoRefreshTimer.restart();
             });
         }).start();

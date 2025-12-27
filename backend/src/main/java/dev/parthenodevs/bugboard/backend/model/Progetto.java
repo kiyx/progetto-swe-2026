@@ -7,6 +7,8 @@ import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.type.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -41,6 +43,10 @@ public class Progetto implements Serializable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idadmin", nullable = false)
     private Utente admin;
+
+    @OneToMany(mappedBy = "progetto", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<Issue> issues = new ArrayList<>();
 
     @Builder
     public Progetto(String nome, StatoProgetto stato, Team team, Utente admin)

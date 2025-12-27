@@ -47,10 +47,11 @@ public class IssueMapper
                 .progetto(progetto)
                 .tipo(request.getTipo())
                 .titolo(request.getTitolo())
+                .isArchiviato(Boolean.TRUE.equals(request.getIsArchiviato()))
                 .build();
     }
 
-    public void update(Issue entity, UpdateIssueRequestDTO  request)
+    public void update(Issue entity, UpdateIssueRequestDTO request)
     {
         if(entity == null || request == null)
             return;
@@ -67,12 +68,12 @@ public class IssueMapper
         if(request.getStato() != null)
             entity.setStato(request.getStato());
 
-        entity.setArchiviato(request.isArchiviato());
+        if(request.getIsArchiviato() != null && request.getIsArchiviato() != entity.isArchiviato())
+            entity.setArchiviato(request.getIsArchiviato());
 
-        if(request.getPriorita() != null)
-            entity.setPriorita(request.getPriorita());
+        entity.setPriorita(request.getPriorita());
 
-        if(request.getImmagine()!= null &&  !request.getImmagine().isBlank())
-            entity.setImmagine(request.getImmagine());
+        if(request.getImmagine() != null)
+            entity.setImmagine(request.getImmagine().isBlank() ? null : request.getImmagine());
     }
 }

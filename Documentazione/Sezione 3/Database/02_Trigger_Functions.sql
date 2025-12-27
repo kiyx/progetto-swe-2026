@@ -149,11 +149,7 @@ EXECUTE FUNCTION bugboard26.prevent_archiving_non_bug_issues();
 CREATE OR REPLACE FUNCTION bugboard26.prevent_issue_field_modification()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF OLD.Tipo IS DISTINCT FROM NEW.Tipo THEN
-        RAISE EXCEPTION 'Operazione non consentita: non è possibile modificare il campo Tipo di una issue.';
-    ELSIF OLD.Priorita IS DISTINCT FROM NEW.Priorita THEN
-        RAISE EXCEPTION 'Operazione non consentita: non è possibile modificare il campo Priorità di una issue.';
-    ELSIF OLD.IdProgetto IS DISTINCT FROM NEW.IdProgetto THEN
+    IF OLD.IdProgetto IS DISTINCT FROM NEW.IdProgetto THEN
         RAISE EXCEPTION 'Operazione non consentita: non è possibile modificare il campo IdProgetto di una issue.';
     ELSIF OLD.IdUtente IS DISTINCT FROM NEW.IdUtente THEN
         RAISE EXCEPTION 'Operazione non consentita: non è possibile modificare il campo IdUtente di una issue.';

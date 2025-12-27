@@ -70,7 +70,7 @@ public class IssueService
 
     public boolean assignIssue(Long issueId, List<Long> userIds)
     {
-        if(!authService.isAuthenticated() || userIds == null || userIds.isEmpty())
+        if(authService.isNotAuthenticated() || userIds == null || userIds.isEmpty())
             return false;
 
         String idsParam = String.join(",", userIds.stream().map(String::valueOf).toArray(String[]::new));
@@ -81,7 +81,7 @@ public class IssueService
 
     private List<IssueResponseDTO> executeListGetRequest(String url, String operationDescription)
     {
-        if(!authService.isAuthenticated())
+        if(authService.isNotAuthenticated())
         {
             logger.warning(() -> "Tentativo di " + operationDescription + " senza autenticazione.");
             return Collections.emptyList();
@@ -112,7 +112,7 @@ public class IssueService
 
     private boolean executeWriteRequest(String url, String method, Object bodyPayload, String operationDescription)
     {
-        if(!authService.isAuthenticated())
+        if(authService.isNotAuthenticated())
         {
             logger.warning(() -> "Tentativo di " + operationDescription + " senza autenticazione.");
             return false;
@@ -162,14 +162,14 @@ public class IssueService
     {
         switch (e)
         {
-            case InterruptedException interruptedException ->
+            case InterruptedException ignored ->
             {
                 logger.log(Level.SEVERE, e, () -> "Thread interrotto durante: " + context);
                 Thread.currentThread().interrupt();
             }
-            case JsonProcessingException jsonProcessingException -> logger.log(Level.SEVERE, e, () -> "Errore JSON durante: " + context);
+            case JsonProcessingException ignored -> logger.log(Level.SEVERE, e, () -> "Errore JSON durante: " + context);
 
-            case IOException ioException -> logger.log(Level.SEVERE, e, () -> "Errore I/O Backend durante: " + context);
+            case IOException ignored -> logger.log(Level.SEVERE, e, () -> "Errore I/O Backend durante: " + context);
 
             case null, default -> logger.log(Level.SEVERE, e, () -> "Errore generico durante: " + context);
         }

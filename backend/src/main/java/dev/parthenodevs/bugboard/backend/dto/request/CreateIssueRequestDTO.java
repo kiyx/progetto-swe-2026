@@ -8,6 +8,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CreateIssueRequestDTO
 {
     @NotBlank(message = "Il titolo è obbligatorio.")
@@ -21,17 +22,11 @@ public class CreateIssueRequestDTO
     @NotBlank(message = "Il tipo issue è obbligatorio.")
     private TipoIssue tipo;
 
-    @NotBlank(message = "Inserire se la issue è stata archiviata è obbligatorio.")
-    private boolean isArchiviato;
+    private Boolean isArchiviato;
 
     private TipoPriorita priorita;
-
-    @Size(max = 255, message = "L'immagine deve essere una stringa di max 255")
     private String immagine;
 
-    @NotBlank(message = "Il progetto è obbligatorio\"")
+    @NotNull(message = "Il progetto è obbligatorio")
     private Long idProgetto;
-
-    @NotBlank(message = "L'autore è obbligatorio")
-    private Long idAutore;
 }

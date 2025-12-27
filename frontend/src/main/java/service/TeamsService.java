@@ -128,7 +128,7 @@ public class TeamsService
 
     }
 
-    public List<UtenteResponseDTO> getTeamsMembers (Long id)
+    public List<UtenteResponseDTO> getTeamMembers(Long id)
     {
         String token = authService.getJwtToken();
         if(token == null)
@@ -177,7 +177,7 @@ public class TeamsService
 
     public boolean create(CreateTeamRequestDTO requestDTO)
     {
-        if(!authService.isAuthenticated())
+        if(authService.isNotAuthenticated())
         {
             LOGGER.warning("Tentativo di creazione utenza fallito: utente non autenticato.");
             return false;

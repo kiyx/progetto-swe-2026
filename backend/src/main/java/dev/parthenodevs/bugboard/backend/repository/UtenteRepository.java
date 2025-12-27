@@ -1,6 +1,6 @@
 package dev.parthenodevs.bugboard.backend.repository;
 
-import dev.parthenodevs.bugboard.backend.model.Team;
+import dev.parthenodevs.bugboard.backend.model.Issue;
 import dev.parthenodevs.bugboard.backend.model.Utente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +18,6 @@ public interface UtenteRepository extends JpaRepository<Utente, Long>
 
     @Query("SELECT u FROM Utente u WHERE u.id NOT IN (SELECT m.id FROM Team t JOIN t.membri m WHERE t.id = :teamId)")
     List<Utente> findUsersNotInTeam(@Param("teamId") Long teamId);
+
+    List<Utente> findByAssignedIssuesContaining(Issue issue);
 }

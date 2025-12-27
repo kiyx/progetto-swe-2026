@@ -1,10 +1,8 @@
 package controller.teams;
 
-import controller.projects.CreateProjectController;
 import model.dto.response.TeamResponseDTO;
 import model.dto.response.UtenteResponseDTO;
 import service.TeamsService;
-import view.projects.CreateProjectDialog;
 import view.teams.*;
 
 import javax.swing.*;

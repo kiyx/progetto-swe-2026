@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.dto.request.CreateTeamRequestDTO;
-import model.dto.request.RegisterRequestDTO;
 import model.dto.response.TeamResponseDTO;
 import model.dto.response.UtenteResponseDTO;
 
@@ -22,6 +21,13 @@ public class TeamsService
 {
     private static final Logger LOGGER = Logger.getLogger(TeamsService.class.getName());
     private static final String API_URL = "http://localhost:8080/teams";
+    public static final String RICHIESTA_NON_EFFETTUATA = "Utente non loggato. Richiesta non effettuata.";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String APPLICATION_JSON = "application/json";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER = "Bearer ";
+    public static final String REQUEST_FALLITO_STATUS_CODE = "Request fallito. Status code: ";
+    public static final String RISPOSTA_SERVER = "Risposta server: ";
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -39,7 +45,7 @@ public class TeamsService
         String token = authService.getJwtToken();
         if(token == null)
         {
-            LOGGER.warning("Utente non loggato. Richiesta non effettuata.");
+            LOGGER.warning(RICHIESTA_NON_EFFETTUATA);
             return new ArrayList<>();
         }
 
@@ -47,8 +53,8 @@ public class TeamsService
         {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(API_URL + "/managed"))
-                    .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + token)
+                    .header(CONTENT_TYPE, APPLICATION_JSON)
+                    .header(AUTHORIZATION, BEARER + token)
                     .GET()
                     .build();
 
@@ -61,8 +67,8 @@ public class TeamsService
             }
             else
             {
-                LOGGER.warning(() -> "Request fallito. Status code: " + response.statusCode());
-                LOGGER.fine(() -> "Risposta server: " + response.body());
+                LOGGER.warning(() -> REQUEST_FALLITO_STATUS_CODE + response.statusCode());
+                LOGGER.fine(() -> RISPOSTA_SERVER + response.body());
                 return new ArrayList<>();
             }
         }
@@ -86,7 +92,7 @@ public class TeamsService
         String token = authService.getJwtToken();
         if(token == null)
         {
-            LOGGER.warning("Utente non loggato. Richiesta non effettuata.");
+            LOGGER.warning(RICHIESTA_NON_EFFETTUATA);
             return new ArrayList<>();
         }
 
@@ -94,24 +100,12 @@ public class TeamsService
         {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(API_URL + "/notmember" + "/" + id))
-                    .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + token)
+                    .header(CONTENT_TYPE, APPLICATION_JSON)
+                    .header(AUTHORIZATION, BEARER + token)
                     .GET()
                     .build();
 
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if(response.statusCode() == 200)
-            {
-                LOGGER.info("Request dei membri avvenuta correttamente.");
-                return objectMapper.readValue(response.body(), new TypeReference<>(){});
-            }
-            else
-            {
-                LOGGER.warning(() -> "Request fallito. Status code: " + response.statusCode());
-                LOGGER.fine(() -> "Risposta server: " + response.body());
-                return new ArrayList<>();
-            }
+            return getUtenteResponseDTOS(request);
         }
         catch(JsonProcessingException e)
         {
@@ -128,12 +122,28 @@ public class TeamsService
 
     }
 
+    private List<UtenteResponseDTO> getUtenteResponseDTOS(HttpRequest request) throws IOException, InterruptedException {
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if(response.statusCode() == 200)
+        {
+            LOGGER.info("Request dei membri avvenuta correttamente.");
+            return objectMapper.readValue(response.body(), new TypeReference<>(){});
+        }
+        else
+        {
+            LOGGER.warning(() -> REQUEST_FALLITO_STATUS_CODE + response.statusCode());
+            LOGGER.fine(() -> RISPOSTA_SERVER + response.body());
+            return new ArrayList<>();
+        }
+    }
+
     public List<UtenteResponseDTO> getTeamMembers(Long id)
     {
         String token = authService.getJwtToken();
         if(token == null)
         {
-            LOGGER.warning("Utente non loggato. Richiesta non effettuata.");
+            LOGGER.warning(RICHIESTA_NON_EFFETTUATA);
             return new ArrayList<>();
         }
 
@@ -141,24 +151,12 @@ public class TeamsService
         {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(API_URL + "/member" + "/" + id))
-                    .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + token)
+                    .header(CONTENT_TYPE, APPLICATION_JSON)
+                    .header(AUTHORIZATION, BEARER + token)
                     .GET()
                     .build();
 
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if(response.statusCode() == 200)
-            {
-                LOGGER.info("Request dei membri avvenuta correttamente.");
-                return objectMapper.readValue(response.body(), new TypeReference<>(){});
-            }
-            else
-            {
-                LOGGER.warning(() -> "Request fallito. Status code: " + response.statusCode());
-                LOGGER.fine(() -> "Risposta server: " + response.body());
-                return new ArrayList<>();
-            }
+            return getUtenteResponseDTOS(request);
         }
         catch(JsonProcessingException e)
         {
@@ -190,8 +188,8 @@ public class TeamsService
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(API_URL + "/create"))
-                    .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + authService.getJwtToken())
+                    .header(CONTENT_TYPE, APPLICATION_JSON)
+                    .header(AUTHORIZATION, BEARER + authService.getJwtToken())
                     .POST(HttpRequest.BodyPublishers.ofString(body))
                     .build();
 

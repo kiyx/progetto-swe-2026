@@ -4,14 +4,12 @@ import dev.parthenodevs.bugboard.backend.dto.request.CreateTeamRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.TeamResponseDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.UtenteResponseDTO;
 import dev.parthenodevs.bugboard.backend.service.TeamService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.validation.*;
+import org.springframework.http.*;
+import org.springframework.security.access.prepost.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/teams")
@@ -31,13 +29,13 @@ public class TeamController
         return ResponseEntity.ok(teamService.getTeamsGestitiDaAdmin());
     }
 
-    @GetMapping("/member/{id}")
+    @GetMapping("/{id}/members")
     public ResponseEntity<List<UtenteResponseDTO>> getMembri(@PathVariable Long id)
     {
         return ResponseEntity.ok(teamService.getTeamsMembers(id));
     }
 
-    @GetMapping("/notmember/{id}")
+    @GetMapping("/{id}/non-members")
     public ResponseEntity<List<UtenteResponseDTO>> getNotMembri(@PathVariable Long id)
     {
         return ResponseEntity.ok(teamService.getTeamsNotMembers(id));
@@ -45,7 +43,7 @@ public class TeamController
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<TeamResponseDTO> createTeam (@Valid @RequestBody CreateTeamRequestDTO request)
+    public ResponseEntity<TeamResponseDTO> createTeam(@Valid @RequestBody CreateTeamRequestDTO request)
     {
         TeamResponseDTO newTeam = teamService.createNewTeam(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTeam);

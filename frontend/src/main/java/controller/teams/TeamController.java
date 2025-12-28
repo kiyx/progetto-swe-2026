@@ -1,19 +1,13 @@
 package controller.teams;
 
-import model.dto.response.IssueResponseDTO;
 import model.dto.response.TeamResponseDTO;
 import model.dto.response.UtenteResponseDTO;
 import service.TeamsService;
-import view.issues.AssignIssueDialog;
 import view.teams.*;
-
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static view.issues.IssueFormDialog.MSG_ERROR;
+import java.util.logging.*;
 
 public class TeamController
 {
@@ -32,9 +26,9 @@ public class TeamController
         initController();
         loadTeams();
     }
+
     private void initController()
     {
-
         view.setTableActions(
                 this::onAddMember,
                 this::onRemoveMember,
@@ -44,124 +38,145 @@ public class TeamController
         view.addCreateListener(e -> openCreateDialog());
         view.addRefreshListener(e ->
         {
-            LOGGER.info("Aggiornamento manuale lista teams...");
+            LOGGER.info("Richiesta aggiornamento manuale lista team.");
             loadTeams();
         });
-
-        loadTeams();
-
     }
 
     private void loadTeams()
     {
         new Thread(() ->
         {
-            LOGGER.info(() -> "Avvio recupero progetti dal Backend...");
-            try{
+            try
+            {
                 List<TeamResponseDTO> teams = teamsService.getTeamsManagedByAdmin();
-                DefaultTableModel model = view.getModel();
 
-                model.setRowCount(0);
+                SwingUtilities.invokeLater(() ->
+                {
+                    DefaultTableModel model = view.getModel();
+                    model.setRowCount(0);
 
-                if (teams != null) {
-                    for (TeamResponseDTO team : teams) {
-                        model.addRow(new Object[]{
-                                team.getId(),
-                                team.getNome(),
-                                team
-                        });
+                    if(teams != null)
+                    {
+                        for(TeamResponseDTO team : teams)
+                        {
+                            model.addRow(new Object[]{
+                                    team.getId(),
+                                    team.getNome(),
+                                    team
+                            });
+                        }
                     }
-                }
+                });
             }
             catch(Exception e)
             {
-                LOGGER.log(Level.SEVERE, "Errore nel load Team", e);
+                LOGGER.log(Level.SEVERE, "Errore durante il caricamento dei team", e);
             }
         }).start();
     }
 
-
-    private void onAddMember(TeamResponseDTO team) {
-        LOGGER.info(() -> "Preparazione apertura dialog aggiunta membro al team...");
+    private void onViewMembers(TeamResponseDTO team)
+    {
+        LOGGER.info(() -> "Recupero membri per il team ID: " + team.getId());
 
         new Thread(() ->
         {
             try
             {
-                List<UtenteResponseDTO> utenti = teamsService.getTeamsNotMembers(team.getId());
+                List<UtenteResponseDTO> membri = teamsService.getTeamMembers(team.getId());
 
                 SwingUtilities.invokeLater(() ->
                 {
-                    if(utenti.isEmpty())
+                    if(membri.isEmpty())
                     {
-                        JOptionPane.showMessageDialog(mainFrame,
-                                "Non esistono utenti disponibili per l'aggiunta.\n",
-                                "Nessun utente Disponibile da aggiungere al team",
-                                JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(mainFrame, "Nessun membro presente nel team.", "Info", JOptionPane.INFORMATION_MESSAGE);
                         return;
                     }
 
-                    AddMembroDialog dialog = new AddMembroDialog(mainFrame, utenti);
+                    ShowMembriDialog dialog = new ShowMembriDialog(mainFrame, membri);
                     dialog.setVisible(true);
-                    List<UtenteResponseDTO> selectedUsers = dialog.getSelectedUsers();
+                });
+            }
+            catch(Exception e)
+            {
+                LOGGER.log(Level.SEVERE, "Errore fetch membri", e);
+                showError("Errore di rete durante il recupero dei membri.");
+            }
+        }).start();
+    }
 
-                    if(!selectedUsers.isEmpty())
+    private void onAddMember(TeamResponseDTO team)
+    {
+        LOGGER.info(() -> "Apertura dialog Aggiungi Membro per Team ID: " + team.getId());
+
+        new Thread(() ->
+        {
+            try
+            {
+                List<UtenteResponseDTO> utentiDisponibili = teamsService.getTeamsNotMembers(team.getId());
+
+                SwingUtilities.invokeLater(() ->
+                {
+                    if(utentiDisponibili.isEmpty())
                     {
-                        List<Long> ids = selectedUsers.stream()
-                                .map(UtenteResponseDTO::getId)
-                                .toList();
+                        JOptionPane.showMessageDialog(mainFrame, "Nessun utente disponibile da aggiungere.");
+                        return;
+                    }
+
+                    AddMembroDialog dialog = new AddMembroDialog(mainFrame, utentiDisponibili);
+                    dialog.setVisible(true);
+
+                    List<UtenteResponseDTO> selected = dialog.getSelectedUsers();
+                    if(!selected.isEmpty())
+                    {
+                        List<Long> ids = selected.stream().map(UtenteResponseDTO::getId).toList();
                         performAddMembri(team.getId(), ids);
                     }
                 });
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                LOGGER.log(Level.SEVERE, "Errore recupero utenti per dialog addmembri", e);
+                LOGGER.log(Level.SEVERE, "Errore fetch utenti disponibili", e);
             }
         }).start();
     }
 
-    private void onRemoveMember(TeamResponseDTO team) {
-        LOGGER.info(() -> "Preparazione apertura dialog rimozione membro dal team...");
+    private void onRemoveMember(TeamResponseDTO team)
+    {
+        LOGGER.info(() -> "Apertura dialog Rimuovi Membro per Team ID: " + team.getId());
 
         new Thread(() ->
         {
             try
             {
-                List<UtenteResponseDTO> utenti = teamsService.getTeamMembers(team.getId());
+                List<UtenteResponseDTO> membriAttuali = teamsService.getTeamMembers(team.getId());
 
                 SwingUtilities.invokeLater(() ->
                 {
-                    if(utenti.isEmpty())
+                    if(membriAttuali.isEmpty())
                     {
-                        JOptionPane.showMessageDialog(mainFrame,
-                                "Non esistono utenti disponibili per la rimozione.\nDevi aggiungere almeno un utente al server e al team.",
-                                "Nessun utente Disponibile",
-                                JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(mainFrame, "Nessun membro da rimuovere.");
                         return;
                     }
 
-                    DeleteMembroDialog dialog = new DeleteMembroDialog(mainFrame, utenti);
+                    DeleteMembroDialog dialog = new DeleteMembroDialog(mainFrame, membriAttuali);
                     dialog.setVisible(true);
 
-                    List<UtenteResponseDTO> selectedUsers = dialog.getSelectedUsers();
-
-                    if(!selectedUsers.isEmpty())
+                    List<UtenteResponseDTO> selected = dialog.getSelectedUsers();
+                    if (!selected.isEmpty())
                     {
-                        List<Long> ids = selectedUsers.stream()
-                                .map(UtenteResponseDTO::getId)
-                                .toList();
+                        List<Long> ids = selected.stream().map(UtenteResponseDTO::getId).toList();
                         performRemoveMembri(team.getId(), ids);
                     }
                 });
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                LOGGER.log(Level.SEVERE, "Errore recupero utenti per dialog deletemembri", e);
+                LOGGER.log(Level.SEVERE, "Errore fetch membri per rimozione", e);
             }
         }).start();
     }
-
 
     private void performAddMembri(Long teamId, List<Long> userIds)
     {
@@ -172,11 +187,11 @@ public class TeamController
             {
                 if(success)
                 {
-                    JOptionPane.showMessageDialog(mainFrame, "Aggiunti i membri al team!");
+                    JOptionPane.showMessageDialog(mainFrame, "Membri aggiunti con successo!");
                     loadTeams();
                 }
                 else
-                    JOptionPane.showMessageDialog(mainFrame, "Errore durante l'aggiunta.", MSG_ERROR, JOptionPane.ERROR_MESSAGE);
+                    showError("Errore durante l'aggiunta dei membri.");
             });
         }).start();
     }
@@ -190,58 +205,24 @@ public class TeamController
             {
                 if(success)
                 {
-                    JOptionPane.showMessageDialog(mainFrame, "Eliminati i membri selezionati dal team!");
+                    JOptionPane.showMessageDialog(mainFrame, "Membri rimossi con successo!");
                     loadTeams();
                 }
                 else
-                    JOptionPane.showMessageDialog(mainFrame, "Errore durante l'eliminazione.", MSG_ERROR, JOptionPane.ERROR_MESSAGE);
+                    showError("Errore durante la rimozione dei membri.");
             });
-        }).start();
-    }
-
-
-    private void onViewMembers(TeamResponseDTO team) {
-        new Thread(() ->
-        {
-            try
-            {
-                List<UtenteResponseDTO> utenti = teamsService.getTeamMembers(team.getId());
-
-                SwingUtilities.invokeLater(() ->
-                {
-                    if(utenti.isEmpty())
-                    {
-                        JOptionPane.showMessageDialog(mainFrame,
-                                "Non esistono utenti disponibili.\nDevi aggiungere almeno un utente al server.",
-                                "Nessun utente Disponibile",
-                                JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    ShowMembriDialog dialog = new ShowMembriDialog(mainFrame, utenti);
-                    dialog.setVisible(true);
-                });
-            }
-            catch (Exception e)
-            {
-                LOGGER.log(Level.SEVERE, "Errore recupero utenti per dialog ShowMembri", e);
-            }
         }).start();
     }
 
     private void openCreateDialog()
     {
-        LOGGER.info(() -> "Preparazione apertura dialog creazione...");
-
-        new Thread(() ->
-                SwingUtilities.invokeLater(() ->
-                {
-
-                    CreateTeamDialog dialog = new CreateTeamDialog(mainFrame);
-                    new CreateTeamController(dialog, teamsService, this::loadTeams);
-
-                    dialog.setVisible(true);
-                })).start();
+        CreateTeamDialog dialog = new CreateTeamDialog(mainFrame);
+        new CreateTeamController(dialog, teamsService, this::loadTeams);
+        dialog.setVisible(true);
     }
 
+    private void showError(String msg)
+    {
+        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(mainFrame, msg, "Errore", JOptionPane.ERROR_MESSAGE));
+    }
 }

@@ -1,51 +1,43 @@
 package view.teams;
 
-import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.*;
 import model.dto.response.UtenteResponseDTO;
-import net.miginfocom.swing.MigLayout;
-
+import net.miginfocom.swing.*;
+import utils.UtenteListRenderer;
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class ShowMembriDialog extends JDialog
 {
-    private final JList<UtenteResponseDTO> userList;
-
-    public ShowMembriDialog(Frame owner, java.util.List<UtenteResponseDTO> members)
+    public ShowMembriDialog(Frame owner, List<UtenteResponseDTO> members)
     {
-        super(owner, "Membri del team", true);
+        super(owner, "Membri del Team", true);
 
-        setLayout(new MigLayout("fill, insets 20", "[400!]", "[]10[grow]20[]"));
+        setLayout(new MigLayout("fill, insets 20", "[400!]", "[]10[grow]10[]"));
         setResizable(false);
         setModal(true);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        userList = new JList<>();
+        JLabel title = new JLabel("Elenco Membri Attuali");
+        title.putClientProperty(FlatClientProperties.STYLE, "font: bold +2");
+        add(title, "wrap");
+
         DefaultListModel<UtenteResponseDTO> listModel = new DefaultListModel<>();
         if(members != null)
             members.forEach(listModel::addElement);
 
-        userList.setModel(listModel);
-        userList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-        userList.setCellRenderer(new DefaultListCellRenderer()
-        {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus)
-            {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if(value instanceof UtenteResponseDTO u)
-                {
-                    setText(u.getNome() + " " + u.getCognome() + " (" + u.getEmail() + ")");
-                    setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                }
-                return this;
-            }
-        });
+        JList<UtenteResponseDTO> userList = new JList<>(listModel);
+        userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        userList.setCellRenderer(new UtenteListRenderer());
 
         JScrollPane scrollPane = new JScrollPane(userList);
         scrollPane.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
+        add(scrollPane, "grow, h 250!, wrap");
 
-        add(scrollPane, "grow, h 200!, wrap");
+        JButton btnClose = new JButton("Chiudi");
+        btnClose.addActionListener(e -> dispose());
+        add(btnClose, "right");
 
         pack();
         setLocationRelativeTo(owner);

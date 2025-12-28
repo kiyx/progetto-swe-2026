@@ -4,18 +4,20 @@ import com.formdev.flatlaf.*;
 import net.miginfocom.swing.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class CreateTeamDialog extends JDialog
 {
-
     private final JTextField nameField;
-    private JButton confirmButton;
+    private final JButton confirmButton;
 
-    public CreateTeamDialog(Frame owner) {
+    public CreateTeamDialog(Frame owner)
+    {
         super(owner, "Nuovo Team", true);
 
         nameField = new JTextField();
+        confirmButton = new JButton("Crea Team");
+
         initComponents();
 
         pack();
@@ -33,23 +35,25 @@ public class CreateTeamDialog extends JDialog
         nameField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Es. Frontend Devs...");
         nameField.putClientProperty(FlatClientProperties.STYLE, "arc: 10");
 
-        add(nameLabel, "wrap");
-        add(nameField, "growx, h 35!, wrap");
-
         JPanel buttonPanel = new JPanel(new MigLayout("insets 0, align right"));
 
-        confirmButton = new JButton("Crea Team");
         confirmButton.setBackground(new Color(0, 100, 255));
         confirmButton.setForeground(Color.WHITE);
         confirmButton.putClientProperty(FlatClientProperties.STYLE, "font: bold; arc: 10");
+        confirmButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         getRootPane().setDefaultButton(confirmButton);
         buttonPanel.add(confirmButton);
 
+        add(nameLabel, "wrap");
+        add(nameField, "growx, h 35!, wrap");
         add(buttonPanel, "growx");
-
     }
 
-    public void setSaveAction(ActionListener l) { confirmButton.addActionListener(l); }
+    public void setSaveAction(ActionListener l)
+    {
+        confirmButton.addActionListener(l);
+    }
 
     public String getTeamName()
     {

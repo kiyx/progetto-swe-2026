@@ -1,29 +1,21 @@
 package view.teams;
 
-import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.*;
 import model.dto.response.TeamResponseDTO;
-import net.miginfocom.swing.MigLayout;
-import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.kordamp.ikonli.materialdesign2.MaterialDesignA;
-import org.kordamp.ikonli.materialdesign2.MaterialDesignF;
-import org.kordamp.ikonli.materialdesign2.MaterialDesignP;
-import org.kordamp.ikonli.materialdesign2.MaterialDesignR;
-import org.kordamp.ikonli.swing.FontIcon;
-
+import net.miginfocom.swing.*;
+import org.jdesktop.swingx.*;
+import org.jdesktop.swingx.decorator.*;
+import org.kordamp.ikonli.materialdesign2.*;
+import org.kordamp.ikonli.swing.*;
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.EventObject;
-import java.util.function.Consumer;
+import java.awt.event.*;
+import java.util.*;
+import java.util.function.*;
 
-public class TeamsView extends JXPanel {
-
+public class TeamsView extends JXPanel
+{
     private final DefaultTableModel tableModel;
     private final JXTable table;
     private final JButton btnNuovoTeam;
@@ -33,7 +25,8 @@ public class TeamsView extends JXPanel {
     public static final int COL_NOME = 1;
     public static final int COL_ACTIONS = 2;
 
-    public TeamsView() {
+    public TeamsView()
+    {
         setLayout(new MigLayout("fill, insets 20", "[grow]", "[]20[grow]"));
         setBackground(Color.WHITE);
 
@@ -45,7 +38,7 @@ public class TeamsView extends JXPanel {
 
         btnRefresh = new JButton();
         btnRefresh.setIcon(FontIcon.of(MaterialDesignR.REFRESH, 18, new Color(100, 100, 100)));
-        btnRefresh.setToolTipText("Aggiorna dati");
+        btnRefresh.setToolTipText("Aggiorna");
         btnRefresh.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_TOOLBAR_BUTTON);
         btnRefresh.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -54,7 +47,6 @@ public class TeamsView extends JXPanel {
         btnNuovoTeam.setBackground(new Color(25, 118, 210));
         btnNuovoTeam.setForeground(Color.WHITE);
         btnNuovoTeam.setFocusPainted(false);
-        btnNuovoTeam.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnNuovoTeam.putClientProperty(FlatClientProperties.STYLE, "arc: 10; margin: 8,15,8,15");
         btnNuovoTeam.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -65,15 +57,17 @@ public class TeamsView extends JXPanel {
         add(headerPanel, "wrap, growx");
 
         String[] columns = {"ID", "Nome Team", "Azioni"};
-
-        tableModel = new DefaultTableModel(columns, 0) {
+        tableModel = new DefaultTableModel(columns, 0)
+        {
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int row, int column)
+            {
                 return column == COL_ACTIONS;
             }
 
             @Override
-            public Class<?> getColumnClass(int columnIndex) {
+            public Class<?> getColumnClass(int columnIndex)
+            {
                 return columnIndex == COL_ACTIONS ? TeamResponseDTO.class : String.class;
             }
         };
@@ -89,16 +83,10 @@ public class TeamsView extends JXPanel {
         table.getColumnModel().getColumn(COL_ID).setMinWidth(0);
         table.getColumnModel().getColumn(COL_ID).setMaxWidth(0);
         table.getColumnModel().getColumn(COL_ID).setPreferredWidth(0);
-        table.getColumnModel().getColumn(COL_ID).setResizable(false);
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        table.getColumnModel().getColumn(COL_ID).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(COL_ACTIONS).setMinWidth(180);
+        table.getColumnModel().getColumn(COL_ACTIONS).setMaxWidth(220);
 
-        table.getColumnModel().getColumn(COL_ACTIONS).setMinWidth(160);
-        table.getColumnModel().getColumn(COL_ACTIONS).setMaxWidth(200);
-
-        // Imposta il Renderer di default (l'Editor verrà settato dal Controller tramite setTableActions)
         table.getColumnModel().getColumn(COL_ACTIONS).setCellRenderer(new ActionsRenderer(new ActionsPanel(null, null, null)));
 
         JScrollPane scrollPane = new JScrollPane(table);
@@ -108,57 +96,73 @@ public class TeamsView extends JXPanel {
         add(scrollPane, "grow");
     }
 
-    public DefaultTableModel getModel() {
+    public DefaultTableModel getModel()
+    {
         return tableModel;
     }
 
-    public void addRefreshListener(ActionListener l) {
+    public void addRefreshListener(ActionListener l)
+    {
         btnRefresh.addActionListener(l);
     }
 
-    public void addCreateListener(ActionListener l) {
+    public void addCreateListener(ActionListener l)
+    {
         btnNuovoTeam.addActionListener(l);
     }
 
-    /**
-     * Metodo CRUCIALE: Il controller chiama questo metodo per iniettare la logica.
-     * La View crea l'editor e lo assegna alla tabella.
-     */
-    public void setTableActions(Consumer<TeamResponseDTO> onAdd, Consumer<TeamResponseDTO> onRemove, Consumer<TeamResponseDTO> onList) {
-        // Crea l'editor con i listener veri passati dal controller
+    public void setTableActions(Consumer<TeamResponseDTO> onAdd, Consumer<TeamResponseDTO> onRemove, Consumer<TeamResponseDTO> onList)
+    {
         ActionsPanel editorPanel = new ActionsPanel(onAdd, onRemove, onList);
         table.getColumnModel().getColumn(COL_ACTIONS).setCellEditor(new ActionsEditor(editorPanel));
+
+        ActionsPanel rendererPanel = new ActionsPanel(null, null, null);
+        table.getColumnModel().getColumn(COL_ACTIONS).setCellRenderer(new ActionsRenderer(rendererPanel));
     }
 
-    private static class ActionsPanel extends JPanel {
+    private class ActionsPanel extends JPanel
+    {
         private transient TeamResponseDTO currentTeam;
 
-        public ActionsPanel(Consumer<TeamResponseDTO> onAdd, Consumer<TeamResponseDTO> onRemove, Consumer<TeamResponseDTO> onList) {
+        public ActionsPanel(Consumer<TeamResponseDTO> onAdd, Consumer<TeamResponseDTO> onRemove, Consumer<TeamResponseDTO> onList)
+        {
             super(new MigLayout("insets 0, align center", "[]10[]10[]", "[]"));
             setOpaque(true);
             setBackground(Color.WHITE);
 
-            JButton btnAdd = createBtn(MaterialDesignA.ACCOUNT_PLUS, new Color(40, 167, 69), "Aggiungi Membro");
-            JButton btnRemove = createBtn(MaterialDesignA.ACCOUNT_REMOVE, new Color(220, 53, 69), "Rimuovi Membro");
-            JButton btnList = createBtn(MaterialDesignF.FORMAT_LIST_BULLETED, new Color(108, 117, 125), "Visualizza Lista");
+            JButton btnAdd = createBtn(MaterialDesignA.ACCOUNT_PLUS, new Color(40, 167, 69), "Aggiungi");
+            JButton btnRemove = createBtn(MaterialDesignA.ACCOUNT_REMOVE, new Color(220, 53, 69), "Rimuovi");
+            JButton btnList = createBtn(MaterialDesignF.FORMAT_LIST_BULLETED, new Color(108, 117, 125), "Lista");
 
             add(btnAdd);
             add(btnRemove);
             add(btnList);
 
-            if (onAdd != null) {
-                btnAdd.addActionListener(e -> { if(currentTeam != null) onAdd.accept(currentTeam); });
-                btnRemove.addActionListener(e -> { if(currentTeam != null) onRemove.accept(currentTeam); });
-                btnList.addActionListener(e -> { if(currentTeam != null) onList.accept(currentTeam); });
+            if(onAdd != null)
+            {
+                btnAdd.addActionListener(e -> fireAction(onAdd));
+                btnRemove.addActionListener(e -> fireAction(onRemove));
+                btnList.addActionListener(e -> fireAction(onList));
             }
         }
 
-        public void updateData(TeamResponseDTO team, boolean isSelected, JTable table) {
+        private void fireAction(Consumer<TeamResponseDTO> action)
+        {
+            if(table.getCellEditor() != null)
+                table.getCellEditor().stopCellEditing();
+
+            if(currentTeam != null)
+                action.accept(currentTeam);
+        }
+
+        public void updateData(TeamResponseDTO team, boolean isSelected, JTable table)
+        {
             this.currentTeam = team;
             setBackground(isSelected ? table.getSelectionBackground() : Color.WHITE);
         }
 
-        private JButton createBtn(org.kordamp.ikonli.Ikon icon, Color color, String tooltip) {
+        private JButton createBtn(org.kordamp.ikonli.Ikon icon, Color color, String tooltip)
+        {
             JButton btn = new JButton(FontIcon.of(icon, 20, color));
             btn.setToolTipText(tooltip);
             btn.setBorderPainted(false);
@@ -168,48 +172,53 @@ public class TeamsView extends JXPanel {
             btn.setPreferredSize(new Dimension(32, 32));
             return btn;
         }
+    }
 
-        public Long getIdSelectedTeam()
+    private class ActionsRenderer implements TableCellRenderer
+    {
+        private final ActionsPanel panel;
+
+        public ActionsRenderer(ActionsPanel panel)
         {
-            if(currentTeam!=null)
-                return currentTeam.getId();
-            else
-                return null;
+            this.panel = panel;
         }
-    }
-
-
-    private static class ActionsRenderer implements TableCellRenderer {
-        private final ActionsPanel panel;
-        public ActionsRenderer(ActionsPanel panel) { this.panel = panel; }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if (value instanceof TeamResponseDTO dto) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+        {
+            if(value instanceof TeamResponseDTO dto)
                 panel.updateData(dto, isSelected, table);
-            }
             return panel;
         }
     }
 
-    private static class ActionsEditor extends AbstractCellEditor implements TableCellEditor {
+    private class ActionsEditor extends AbstractCellEditor implements TableCellEditor
+    {
         private final ActionsPanel panel;
-        public ActionsEditor(ActionsPanel panel) { this.panel = panel; }
+
+        public ActionsEditor(ActionsPanel panel)
+        {
+            this.panel = panel;
+        }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            if (value instanceof TeamResponseDTO dto) {
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+        {
+            if(value instanceof TeamResponseDTO dto)
                 panel.updateData(dto, true, table);
-            }
             return panel;
         }
 
         @Override
-        public Object getCellEditorValue() { return null; }
+        public Object getCellEditorValue()
+        {
+            return panel.currentTeam;
+        }
 
         @Override
-        public boolean isCellEditable(EventObject e) { return true; }
+        public boolean isCellEditable(EventObject e)
+        {
+            return true;
+        }
     }
-
-
 }

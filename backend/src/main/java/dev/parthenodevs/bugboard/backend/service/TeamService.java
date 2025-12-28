@@ -10,25 +10,24 @@ import dev.parthenodevs.bugboard.backend.model.Team;
 import dev.parthenodevs.bugboard.backend.model.Utente;
 import dev.parthenodevs.bugboard.backend.repository.TeamRepository;
 import dev.parthenodevs.bugboard.backend.repository.UtenteRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
+import jakarta.persistence.*;
+import jakarta.transaction.*;
+import org.springframework.security.core.context.*;
+import org.springframework.stereotype.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.logging.Logger;
+import java.util.*;
+import java.util.logging.*;
 
 @Service
 public class TeamService
 {
     private static final Logger LOGGER = Logger.getLogger(TeamService.class.getName());
+    private static final String TEAM_NOT_FOUND_MSG = "Team non trovato con ID: ";
 
     private final TeamRepository teamRepository;
     private final UtenteRepository utenteRepository;
     private final TeamMapper teamMapper;
     private final UtenteMapper utenteMapper;
-    private static final String TEAM_NOT_FOUND_MSG = "Team non trovato con ID: ";
 
     public TeamService(TeamRepository teamRepository, TeamMapper teamMapper, UtenteRepository utenteRepository, UtenteMapper utenteMapper)
     {
@@ -41,31 +40,27 @@ public class TeamService
     @Transactional
     public TeamResponseDTO createNewTeam(CreateTeamRequestDTO request)
     {
-        LOGGER.info(() -> "Inizio procedura di creazione di un nuovo team.");
+        LOGGER.info("Inizio creazione nuovo team.");
 
         String email = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         Utente adminLoggato = utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Admin non trovato"));
 
         Team nuovoTeam = teamMapper.toEntity(request, adminLoggato);
-
         Team teamSalvato = teamRepository.save(nuovoTeam);
 
         adminLoggato.addTeam(teamSalvato);
         utenteRepository.save(adminLoggato);
 
-        LOGGER.info(() -> String.format("Team salvato con successo. ID: %d, Nome: %s, Admin: %s",
-                teamSalvato.getId(), teamSalvato.getNome(), teamSalvato.getAdmin().getNome()));
-
+        LOGGER.log(Level.INFO, "Team creato con successo: {0}", teamSalvato.getNome());
         return teamMapper.toDto(teamSalvato);
     }
 
     public List<TeamResponseDTO> getTeamsGestitiDaAdmin()
     {
         String email = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-
         Utente admin = utenteRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Utente non trovato"));
+                .orElseThrow(() -> new ResourceNotFoundException("Utente corrente non trovato"));
 
         return teamRepository.findByAdmin(admin)
                 .stream()
@@ -83,7 +78,6 @@ public class TeamService
 
     public List<UtenteResponseDTO> getTeamsNotMembers(long id)
     {
-
         return utenteRepository.findUsersNotInTeam(id)
                 .stream()
                 .map(utenteMapper::toDto)
@@ -94,49 +88,43 @@ public class TeamService
     public void addMembri(Long teamId, List<Long> userIds)
     {
         Team team = getTeamOrThrow(teamId);
+        List<Utente> utentiDaAggiungere = utenteRepository.findAllById(userIds);
 
-        List<Utente> newMembers = utenteRepository.findByAssignedTeams_Id(teamId);
-
-        for(Utente newMem : newMembers)
-            newMem.addTeam(team);
-        utenteRepository.saveAll(newMembers);
-
-        if(!newMembers.isEmpty())
+        if(utentiDaAggiungere.isEmpty())
         {
-            teamRepository.save(team);
+            LOGGER.warning("Nessun utente trovato per l'aggiunta.");
+            return;
         }
 
-        LOGGER.info(() -> "Al Team " + teamId + " aggiunti " + newMembers.size() + " utenti.");
+        for(Utente u : utentiDaAggiungere)
+            u.addTeam(team);
+
+        utenteRepository.saveAll(utentiDaAggiungere);
+        LOGGER.log(Level.INFO, "Aggiunti {0} utenti al team {1}", new Object[]{utentiDaAggiungere.size(), teamId});
     }
 
     @Transactional
     public void removeMembri(Long teamId, List<Long> userIds)
     {
         Team team = getTeamOrThrow(teamId);
+        List<Utente> utentiDaRimuovere = utenteRepository.findAllById(userIds);
 
-        List<Utente> oldMembers = utenteRepository.findByAssignedTeams_Id(teamId);
-        List<Utente> toDeletemembers = utenteRepository.findAllById(userIds);
-        for(Utente oldMem : oldMembers)
-            for(Utente toDelete : toDeletemembers)
-                if(oldMem.equals(toDelete))
-                    oldMem.removeTeam(team);
-        utenteRepository.saveAll(oldMembers);
-
-        if(!toDeletemembers.isEmpty())
+        if(utentiDaRimuovere.isEmpty())
         {
-            teamRepository.save(team);
+            LOGGER.warning("Nessun utente trovato per la rimozione.");
+            return;
         }
 
-        LOGGER.info(() -> "Dal Team " + teamId + " eliminati " + toDeletemembers.size() + " utenti.");
+        for(Utente u : utentiDaRimuovere)
+            u.removeTeam(team);
+
+        utenteRepository.saveAll(utentiDaRimuovere);
+        LOGGER.log(Level.INFO, "Rimossi {0} utenti dal team {1}", new Object[]{utentiDaRimuovere.size(), teamId});
     }
 
     private Team getTeamOrThrow(Long id)
     {
         return teamRepository.findById(id)
-                .orElseThrow(() ->
-                {
-                    LOGGER.warning(() -> TEAM_NOT_FOUND_MSG + id);
-                    return new EntityNotFoundException(TEAM_NOT_FOUND_MSG + id);
-                });
+                .orElseThrow(() -> new EntityNotFoundException(TEAM_NOT_FOUND_MSG + id));
     }
 }

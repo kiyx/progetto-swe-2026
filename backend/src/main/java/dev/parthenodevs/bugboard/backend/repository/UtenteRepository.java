@@ -14,10 +14,8 @@ public interface UtenteRepository extends JpaRepository<Utente, Long>
 {
     Optional<Utente> findByEmail(String email);
     boolean existsByEmail(String email);
-    List<Utente> findByAssignedTeams_Id(Long id);
-
-    @Query("SELECT u FROM Utente u WHERE u.id NOT IN (SELECT m.id FROM Team t JOIN t.membri m WHERE t.id = :teamId)")
+    @Query("SELECT u FROM Utente u WHERE u NOT IN (SELECT m FROM Team t JOIN t.membri m WHERE t.id = :teamId)")
     List<Utente> findUsersNotInTeam(@Param("teamId") Long teamId);
-
+    List<Utente> findByAssignedTeams_Id(Long teamId);
     List<Utente> findByAssignedIssuesContaining(Issue issue);
 }

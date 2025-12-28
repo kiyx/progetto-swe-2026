@@ -81,7 +81,7 @@ Un *Rich Client* desktop moderno e reattivo.
 
 ### DevOps & Tools
 * **Maven** (Dependency Management)
-* **Docker** (Containerizzazione - *In Roadmap*)
+* **Docker** (Containerizzazione
 
 ---
 
@@ -94,4 +94,11 @@ Configurare le credenziali nel file `backend/src/main/resources/application.prop
 ### 2. Avvio Backend
 ```bash
 cd backend
-mvn spring-boot:run
+docker-compose up --build
+```
+
+### 3. Avvio Frontend
+```bash
+cd frontend
+mvn clean compile exec:java
+```

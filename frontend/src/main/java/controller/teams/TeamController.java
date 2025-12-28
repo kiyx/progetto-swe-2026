@@ -1,8 +1,10 @@
 package controller.teams;
 
+import model.dto.response.IssueResponseDTO;
 import model.dto.response.TeamResponseDTO;
 import model.dto.response.UtenteResponseDTO;
 import service.TeamsService;
+import view.issues.AssignIssueDialog;
 import view.teams.*;
 
 import javax.swing.*;
@@ -10,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static view.issues.IssueFormDialog.MSG_ERROR;
 
 public class TeamController
 {
@@ -50,28 +54,32 @@ public class TeamController
 
     private void loadTeams()
     {
-        try{
-            List<TeamResponseDTO> teams = teamsService.getTeamsManagedByAdmin();
-            DefaultTableModel model = view.getModel();
+        new Thread(() ->
+        {
+            LOGGER.info(() -> "Avvio recupero progetti dal Backend...");
+            try{
+                List<TeamResponseDTO> teams = teamsService.getTeamsManagedByAdmin();
+                DefaultTableModel model = view.getModel();
 
-            model.setRowCount(0);
+                model.setRowCount(0);
 
-            if (teams != null) {
-                for (TeamResponseDTO team : teams) {
-                    model.addRow(new Object[]{
-                            team.getId(),
-                            team.getNome(),
-                            team
-                    });
+                if (teams != null) {
+                    for (TeamResponseDTO team : teams) {
+                        model.addRow(new Object[]{
+                                team.getId(),
+                                team.getNome(),
+                                team
+                        });
+                    }
                 }
             }
-        }
-        catch(Exception e)
-        {
-            LOGGER.log(Level.SEVERE, "Errore nel load Team", e);
-        }
-
+            catch(Exception e)
+            {
+                LOGGER.log(Level.SEVERE, "Errore nel load Team", e);
+            }
+        }).start();
     }
+
 
     private void onAddMember(TeamResponseDTO team) {
         LOGGER.info(() -> "Preparazione apertura dialog aggiunta membro al team...");
@@ -94,8 +102,16 @@ public class TeamController
                     }
 
                     AddMembroDialog dialog = new AddMembroDialog(mainFrame, utenti);
-                    //new UpdateTeamController(dialog, teamsService);
                     dialog.setVisible(true);
+                    List<UtenteResponseDTO> selectedUsers = dialog.getSelectedUsers();
+
+                    if(!selectedUsers.isEmpty())
+                    {
+                        List<Long> ids = selectedUsers.stream()
+                                .map(UtenteResponseDTO::getId)
+                                .toList();
+                        performAddMembri(team.getId(), ids);
+                    }
                 });
             }
             catch (Exception e)
@@ -126,8 +142,17 @@ public class TeamController
                     }
 
                     DeleteMembroDialog dialog = new DeleteMembroDialog(mainFrame, utenti);
-                    //new UpdateTeamController(dialog, teamsService);
                     dialog.setVisible(true);
+
+                    List<UtenteResponseDTO> selectedUsers = dialog.getSelectedUsers();
+
+                    if(!selectedUsers.isEmpty())
+                    {
+                        List<Long> ids = selectedUsers.stream()
+                                .map(UtenteResponseDTO::getId)
+                                .toList();
+                        performRemoveMembri(team.getId(), ids);
+                    }
                 });
             }
             catch (Exception e)
@@ -136,6 +161,44 @@ public class TeamController
             }
         }).start();
     }
+
+
+    private void performAddMembri(Long teamId, List<Long> userIds)
+    {
+        new Thread(() ->
+        {
+            boolean success = teamsService.aggiungiMembri(teamId, userIds);
+            SwingUtilities.invokeLater(() ->
+            {
+                if(success)
+                {
+                    JOptionPane.showMessageDialog(mainFrame, "Aggiunti i membri al team!");
+                    loadTeams();
+                }
+                else
+                    JOptionPane.showMessageDialog(mainFrame, "Errore durante l'aggiunta.", MSG_ERROR, JOptionPane.ERROR_MESSAGE);
+            });
+        }).start();
+    }
+
+    private void performRemoveMembri(Long teamId, List<Long> userIds)
+    {
+        new Thread(() ->
+        {
+            boolean success = teamsService.rimuoviMembri(teamId, userIds);
+            SwingUtilities.invokeLater(() ->
+            {
+                if(success)
+                {
+                    JOptionPane.showMessageDialog(mainFrame, "Eliminati i membri selezionati dal team!");
+                    loadTeams();
+                }
+                else
+                    JOptionPane.showMessageDialog(mainFrame, "Errore durante l'eliminazione.", MSG_ERROR, JOptionPane.ERROR_MESSAGE);
+            });
+        }).start();
+    }
+
 
     private void onViewMembers(TeamResponseDTO team) {
         new Thread(() ->
@@ -175,7 +238,7 @@ public class TeamController
                 {
 
                     CreateTeamDialog dialog = new CreateTeamDialog(mainFrame);
-                    new CreateTeamController(dialog, teamsService);
+                    new CreateTeamController(dialog, teamsService, this::loadTeams);
 
                     dialog.setVisible(true);
                 })).start();

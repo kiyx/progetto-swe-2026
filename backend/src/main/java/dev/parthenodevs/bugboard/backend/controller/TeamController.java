@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/teams")
@@ -48,5 +49,19 @@ public class TeamController
     {
         TeamResponseDTO newTeam = teamService.createNewTeam(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTeam);
+    }
+
+    @PatchMapping("/{id}/add")
+    public ResponseEntity<Void> addMembri(@PathVariable Long id, @RequestParam List<Long> userIds)
+    {
+        teamService.addMembri(id, userIds);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}/remove")
+    public ResponseEntity<Void> removeMembri(@PathVariable Long id, @RequestParam List<Long> userIds)
+    {
+        teamService.removeMembri(id, userIds);
+        return ResponseEntity.ok().build();
     }
 }

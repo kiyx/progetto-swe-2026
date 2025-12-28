@@ -10,11 +10,13 @@ public class CreateTeamController
 {
     private final CreateTeamDialog view;
     private final TeamsService teamsService;
+    private final Runnable onSuccessCallback;
 
-    public CreateTeamController(CreateTeamDialog view, TeamsService teamsService)
+    public CreateTeamController(CreateTeamDialog view, TeamsService teamsService, Runnable onSuccessCallback)
     {
         this.view = view;
         this.teamsService = teamsService;
+        this.onSuccessCallback = onSuccessCallback;
 
         this.view.setSaveAction(e -> handleRegistration());
     }
@@ -36,6 +38,9 @@ public class CreateTeamController
         {
             JOptionPane.showMessageDialog(view, "Team creato con successo!", "Operazione Completata", JOptionPane.INFORMATION_MESSAGE);
             view.dispose();
+
+            if(onSuccessCallback != null)
+                onSuccessCallback.run();
         }
         else
         {

@@ -1,6 +1,6 @@
 services:
   backend:
-    build: ./backend
+    build: .
     container_name: bugboard-backend
     ports:
       - "8080:8080"

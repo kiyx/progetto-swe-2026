@@ -4,103 +4,94 @@
 >
 > *Università degli Studi di Napoli Federico II*
 
-**BugBoard26** è una piattaforma distribuita per la gestione collaborativa di *issue* e *bug tracking* in progetti software. Il sistema permette ai team di segnalare problemi, monitorarne lo stato e tracciare le attività di risoluzione in modo intuitivo e centralizzato.
+**BugBoard26** è una piattaforma enterprise distribuita per il *bug tracking* e la gestione collaborativa di progetti software. Il sistema offre un'architettura robusta per la segnalazione di anomalie, la gestione dei team di sviluppo e il monitoraggio del ciclo di vita del software.
 
 ---
 
 ## 👥 Team di Sviluppo
 
-| Matricola | Studente | GitHub |
-| :--- | :--- | :--- |
-| **N86005174** | **Giuseppe Paolo Esposito** | [@kiyx](https://github.com/kiyx) |
-| **N86004987** | **Virginia Antonia Esposito** | [@virginiaesposito](https://github.com/virginiaesposito) |
+| Matricola | Studente |
+| :--- | :--- |
+| **N86005174** | **Giuseppe Paolo Esposito** |
+| **N86004987** | **Virginia Antonia Esposito** |
 
 ---
 
 ## 🚀 Funzionalità Implementate
 
-Il progetto implementa un sottoinsieme specifico di requisiti funzionali, assegnati sulla base della matricola del gruppo:
+Il progetto copre le seguenti funzionalità specifiche:
 
 ### 1. Autenticazione e Gestione Utenti
-* Sistema di login sicuro basato su email e password.
-* Distinzione dei ruoli tra **Amministratore** e **Utente Standard**.
-* Gestione della sicurezza e integrità delle credenziali.
+* **Login Sicuro:** Autenticazione basata su **JWT (JSON Web Token)** stateless.
+* **Gestione Ruoli:** Distinzione dei permessi tra **Amministratore** e **Utente Standard**.
+* **Registrazione:** Creazione nuovi account con validazione dei dati e hashing delle password.
 
 ### 2. Creazione e Gestione Issue
-* Segnalazione di issue con **Titolo** e **Descrizione** obbligatori.
-* Classificazione per tipologia: `Question`, `Bug`, `Documentation`, `Feature`.
-* Supporto per livelli di priorità e allegati (immagini).
-* Stato iniziale automatico impostato su `Todo`.
+* **Reporting:** Segnalazione di issue con campi strutturati (Titolo, Descrizione, Priorità).
+* **Supporto Multimediale:** Caricamento e visualizzazione di immagini allegate (codifica Base64).
+* **Tipologie:** Classificazione in `Bug`, `Feature`, `Documentation`, `Question`.
+* **Stati:** Gestione del ciclo di vita (`Todo` -> `Assigned` -> `In Progress` -> `Resolved`).
 
 ### 3. Dashboard e Visualizzazione
-* Vista riepilogativa di tutte le issue presenti nel sistema.
-* Funzionalità di **filtro** e **ordinamento** avanzato (per stato, tipologia, priorità, ecc.).
+* **Visualizzazione Tabellare:** Elenco interattivo delle issue con anteprima delle immagini.
+* **Filtraggio Avanzato:** Filtri dinamici per *Stato*, *Priorità* e *Tipologia*, con ricerca testuale.
+* **Viste Contestuali:** Separazione tra "Le mie Issue" (create/assegnate) e la visione globale (per Admin).
 
 ### 13. Archiviazione (Admin)
-* Funzionalità dedicata agli amministratori per **archiviare** i bug risolti o non più rilevanti.
-* I bug archiviati vengono rimossi dalle viste principali ma rimangono consultabili in una sezione storica dedicata.
+* **Storico:** Funzionalità riservata agli amministratori per archiviare i bug risolti.
+* **Audit:** Le issue archiviate vengono rimosse dalla dashboard operativa principale ma rimangono consultabili in una sezione dedicata ("Archivio").
 
 ---
 
 ## 🏗️ Architettura del Sistema
 
-L'applicazione è progettata come un **sistema distribuito Client-Server**, garantendo il totale disaccoppiamento tra la logica di presentazione e la logica di business.
+L'applicazione segue un'architettura **Client-Server Distribuita**.
 
-### 🔙 Backend (Core Logic)
-Il cuore del sistema, responsabile della logica di business e della persistenza. Segue una **Layered Architecture** implementando il modello **Boundary-Control-Entity (BCE)**:
-* **Boundary Layer (API REST):** Espone endpoint HTTP tramite Controller. Gestisce la validazione dei DTO in ingresso e la serializzazione delle risposte JSON.
-* **Control Layer (Service):** Incapsula la logica applicativa, coordinando le operazioni tra i controller e il livello dati.
-* **Entity Layer (Persistence):** Mappa le entità di dominio sul database relazionale tramite ORM.
+### 🔙 Backend (Spring Boot)
+Il core del sistema adotta una **Layered Architecture** rigorosa per garantire la separazione delle responsabilità:
+* **Controller Layer:** Espone le API REST e gestisce la validazione delle richieste (DTO).
+* **Service Layer:** Implementa la logica di business (es. regole di assegnazione, controlli sui team).
+* **Repository Layer (JPA):** Gestisce l'accesso ai dati su PostgreSQL utilizzando **Spring Data JPA**.
 
-### 🖥️ Frontend (Presentation)
-Applicazione Desktop indipendente che comunica con il server esclusivamente tramite API REST. Adotta il pattern **Model-View-ViewModel (MVVM)**:
-* **View (FXML):** Definisce la struttura dell'interfaccia utente, priva di logica.
-* **ViewModel:** Agisce da mediatore, esponendo dati e comandi alla View tramite *Data Binding*.
-* **Service Gateway:** Gestisce la comunicazione di rete, isolando la UI dai dettagli delle chiamate HTTP.
+### 🖥️ Frontend (Java Swing)
+Un *Rich Client* desktop moderno e reattivo.
+* **Pattern MVC:**
+    * **Model:** DTO e Service per la gestione dei dati e la comunicazione HTTP.
+    * **View:** Interfacce grafiche realizzate con **Swing**, **FlatLaf** (per un look moderno) e **MigLayout**. Le view sono componenti passivi.
+    * **Controller:** Gestiscono la logica di presentazione, coordinano i flussi e le chiamate asincrone ai servizi.
+* **Async UI:** Utilizzo di Thread separati per le operazioni di rete per mantenere l'interfaccia sempre responsiva.
 
 ---
 
 ## 🛠️ Stack Tecnologico
 
-Le scelte tecnologiche sono state guidate dai principi di modularità, testabilità e astrazione richiesti dal progetto.
-
 ### Backend
-* **Language:** Java 17+
-* **Framework:** **Spring Boot** (Web, Data JPA, Security). Scelto per il supporto nativo alla *Dependency Injection* e la facilità di creazione di API RESTful testabili.
-* **Testing:** JUnit 5 & Mockito.
+* **Java 17+**
+* **Spring Boot 3** (Web, Security, Data JPA)
+* **PostgreSQL** (Database Relazionale)
+* **Hibernate** (ORM)
+* **Lombok** (Boilerplate reduction)
 
 ### Frontend
-* **Framework:** **JavaFX** 17+. Scelto per la creazione di interfacce desktop moderne e reattive.
-* **Librerie:** Gson/Jackson (JSON parsing), HttpClient (Networking).
-
-### Data & Persistence
-* **Database:** **PostgreSQL**.
-* **Hosting:** **Supabase** (utilizzato esclusivamente come provider *Database-as-a-Service*).
-* **Accesso Dati:** Standard **JDBC** tramite **Spring Data JPA**.
-> *Nota: Non viene utilizzato alcun servizio MBaaS proprietario per la logica, garantendo l'indipendenza dal provider e la conformità ai requisiti di progetto.*
+* **Java Swing** (GUI Toolkit)
+* **FlatLaf** (Look and Feel)
+* **MigLayout** (Layout Manager)
+* **SwingX** (Componenti estesi)
+* **Jackson** (JSON Processing)
 
 ### DevOps & Tools
-* **Container:** **Docker**. Il backend è containerizzato per garantire un ambiente di esecuzione isolato e replicabile.
-* **VCS:** Git & GitHub (con GitHub Desktop).
-* **Build Tool:** Maven.
+* **Maven** (Dependency Management)
+* **Docker** (Containerizzazione - *In Roadmap*)
 
 ---
 
-## 📂 Struttura del Repository
+## ⚙️ Installazione e Avvio
 
-```text
-BugBoard26/
-├── backend/          # Spring Boot Application
-│   ├── src/main/java/com/unina/bugboard
-│   │   ├── api       # Boundary (Controllers)
-│   │   ├── service   # Control (Business Logic)
-│   │   └── model     # Entity (Domain & Repo)
-│   └── Dockerfile
-│
-├── frontend/         # JavaFX Application
-│   ├── src/main/resources/fxml  # Views
-│   └── src/main/java/com/unina/client
-│       ├── viewmodel
-│       └── service   # API Consumers
-│
-└── docs/             # Documentazione di progetto
+### 1. Configurazione Database
+Assicurarsi di avere PostgreSQL in esecuzione e importare gli script SQL forniti nella cartella `docs/database`.
+Configurare le credenziali nel file `backend/src/main/resources/application.properties`.
+
+### 2. Avvio Backend
+```bash
+cd backend
+mvn spring-boot:run

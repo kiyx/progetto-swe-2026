@@ -11,6 +11,7 @@
 
 # Maven build output directory
 target/
+.env
 
 # IntelliJ IDEA specific files
 .idea/

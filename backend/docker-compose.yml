@@ -1,0 +1,8 @@
+services:
+  backend:
+    build: ./backend
+    container_name: bugboard-backend
+    ports:
+      - "8080:8080"
+    environment:
+      NEON_PASSWORD: ${NEON_PASSWORD}

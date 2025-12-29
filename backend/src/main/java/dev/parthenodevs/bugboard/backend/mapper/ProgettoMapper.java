@@ -1,7 +1,6 @@
 package dev.parthenodevs.bugboard.backend.mapper;
 
 import dev.parthenodevs.bugboard.backend.dto.request.CreateProgettoRequestDTO;
-import dev.parthenodevs.bugboard.backend.dto.request.UpdateProgettoRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.ProgettoResponseDTO;
 import dev.parthenodevs.bugboard.backend.model.Progetto;
 import dev.parthenodevs.bugboard.backend.model.Team;
@@ -42,17 +41,5 @@ public class ProgettoMapper
                        .team(team)
                        .admin(admin)
                        .build();
-    }
-
-    public void update(Progetto entity, UpdateProgettoRequestDTO request)
-    {
-        if(request == null || entity == null)
-            return;
-
-        if(request.getNome() != null && !request.getNome().isBlank())
-            entity.setNome(request.getNome());
-
-        if(request.getStato() != null)
-            entity.setStato(request.getStato());
     }
 }

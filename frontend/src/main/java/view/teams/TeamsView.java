@@ -22,7 +22,6 @@ public class TeamsView extends JXPanel
     private final JButton btnRefresh;
 
     public static final int COL_ID = 0;
-    public static final int COL_NOME = 1;
     public static final int COL_ACTIONS = 2;
 
     public TeamsView()

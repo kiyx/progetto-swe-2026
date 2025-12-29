@@ -52,7 +52,7 @@ public class GlobalExceptionHandler
                 LocalDateTime.now(),
                 HttpStatus.UNAUTHORIZED.value(),
                 "Token Scaduto",
-                "La sessione è scaduta. Effettua nuovamente il login."
+                ex.getMessage()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler
                 LocalDateTime.now(),
                 HttpStatus.UNAUTHORIZED.value(),
                 "Token Non Valido",
-                "Il token fornito non è valido."
+                ex.getMessage()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
@@ -80,7 +80,7 @@ public class GlobalExceptionHandler
                 LocalDateTime.now(),
                 HttpStatus.UNAUTHORIZED.value(),
                 "Errore Autenticazione",
-                "Impossibile verificare l'identità."
+                ex.getMessage()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
@@ -124,7 +124,7 @@ public class GlobalExceptionHandler
                 LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Errore Interno",
-                "Si è verificato un errore imprevisto nel server."
+                ex.getMessage()
         );
 
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -156,7 +156,7 @@ public class GlobalExceptionHandler
 
         ErrorDTO errorResponse = new ErrorDTO(
                 LocalDateTime.now(),
-                HttpStatus.CONFLICT.value(), // 409 Conflict
+                HttpStatus.CONFLICT.value(),
                 "Dato Duplicato",
                 "Esiste già un elemento con questo nome (o vincolo violato)."
         );

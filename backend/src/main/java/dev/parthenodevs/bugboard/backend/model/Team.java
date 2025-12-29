@@ -57,10 +57,4 @@ public class Team implements Serializable
         this.progetti.add(progetto);
         progetto.setTeam(this);
     }
-
-    public void removeProgetto(Progetto progetto)
-    {
-        this.progetti.remove(progetto);
-        progetto.setTeam(null);
-    }
 }

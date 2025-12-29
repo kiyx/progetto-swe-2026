@@ -71,7 +71,7 @@ public class TeamsService
         try
         {
             String body = objectMapper.writeValueAsString(requestDTO);
-            HttpRequest request = buildPostRequest(API_URL + "/create", body);
+            HttpRequest request = buildPostRequest(body);
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -158,10 +158,10 @@ public class TeamsService
                 .build();
     }
 
-    private HttpRequest buildPostRequest(String url, String body)
+    private HttpRequest buildPostRequest(String body)
     {
         return HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(URI.create("http://localhost:8080/teams/create"))
                 .header(CONTENT_TYPE, APPLICATION_JSON)
                 .header(AUTHORIZATION, BEARER + authService.getJwtToken())
                 .POST(HttpRequest.BodyPublishers.ofString(body))

@@ -1,7 +1,6 @@
 package dev.parthenodevs.bugboard.backend.mapper;
 
 import dev.parthenodevs.bugboard.backend.dto.request.CreateTeamRequestDTO;
-import dev.parthenodevs.bugboard.backend.dto.request.UpdateTeamRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.TeamResponseDTO;
 import dev.parthenodevs.bugboard.backend.model.Team;
 import dev.parthenodevs.bugboard.backend.model.Utente;
@@ -34,14 +33,5 @@ public class TeamMapper
                 .nome(request.getNome())
                 .admin(admin)
                 .build();
-    }
-
-    public void update (Team entity, UpdateTeamRequestDTO request)
-    {
-        if(entity == null || request == null)
-            return;
-
-        if(request.getNome() != null && !request.getNome().isBlank())
-            entity.setNome(request.getNome());
     }
 }

@@ -77,6 +77,7 @@ public class ProgettoService
         }
 
         Progetto nuovoProgetto = progettoMapper.toEntity(request, team, adminLoggato);
+        team.addProgetto(nuovoProgetto);
         return progettoMapper.toDto(progettoRepository.save(nuovoProgetto));
     }
 

@@ -66,7 +66,7 @@ Un *Rich Client* desktop moderno e reattivo.
 ## 🛠️ Stack Tecnologico
 
 ### Backend
-* **Java 17+**
+* **Java 21+**
 * **Spring Boot 3** (Web, Security, Data JPA)
 * **PostgreSQL** (Database Relazionale)
 * **Hibernate** (ORM)
@@ -81,7 +81,7 @@ Un *Rich Client* desktop moderno e reattivo.
 
 ### DevOps & Tools
 * **Maven** (Dependency Management)
-* **Docker** (Containerizzazione
+* **Docker** (Containerizzazione)
 
 ---
 

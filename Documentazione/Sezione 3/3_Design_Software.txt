@@ -1,0 +1,104 @@
+3. Documento di Design del Software
+3.c Descrizione e motivazione delle scelte di software design adottate
+
+La progettazione di dettaglio ha seguito i principi SOLID e l'utilizzo di Design Pattern standard per garantire un codice modulare, testabile e manutenibile.
+1. Inversion of Control (IoC) & Dependency Injection
+
+Nel backend, la creazione e il collegamento degli oggetti non sono gestiti manualmente ma delegati al container Spring.
+Implementazione: Le dipendenze (es. IssueRepository dentro IssueService) vengono iniettate tramite costruttore (annotazione @RequiredArgsConstructor di Lombok).
+Motivazione: Rende il codice debolmente accoppiato e abilita il Testing Unitario, permettendo di sostituire le dipendenze reali con Mock (oggetti simulati) 
+durante i test.
+
+2. Pattern DTO e Mapper (Data Transfer Object)
+
+Non vengono mai esposte le Entità di persistenza (@Entity) direttamente nelle API. Sono stati definiti oggetti DTO specifici per ogni richiesta/risposta 
+(es. CreateIssueRequestDTO, IssueResponseDTO).
+Motivazione (Information Hiding): Disaccoppia lo schema del database dall'interfaccia pubblica, previene l'esposizione di dati sensibili (es. password hashate) 
+ed evita problemi di ricorsione infinita nella serializzazione JSON. La conversione è gestita da classi Mapper dedicate.
+
+3. Builder Pattern
+
+Utilizzato estensivamente per la creazione di oggetti complessi (DTO ed Entità) tramite l'annotazione @Builder di Lombok.
+Motivazione: Migliora la leggibilità del codice rispetto a costruttori con numerosi parametri posizionali e permette di creare oggetti immutabili in modo fluido.
+
+4. Gestione Centralizzata delle Eccezioni
+
+È stato applicato il pattern Global Exception Handler tramite l'annotazione @ControllerAdvice.
+Motivazione: Centralizza la logica di gestione degli errori in un'unica classe (GlobalExceptionHandler), garantendo che il client 
+riceva sempre risposte JSON standardizzate (ErrorDTO) e coerenti per qualsiasi tipo di errore (404, 400, 500).
+
+5. Security Chain of Responsibility
+
+La sicurezza è implementata come una catena di filtri HTTP (SecurityFilterChain).
+Implementazione: Un filtro personalizzato JwtAuthenticationFilter intercetta ogni richiesta, verifica il token JWT e configura il contesto di sicurezza.
+Motivazione: Gestisce l'autenticazione come un Cross-Cutting Concern (aspetto trasversale), evitando di duplicare i controlli di sicurezza in ogni metodo di business.
+
+6. Concorrenza nel Frontend (Worker Thread)
+
+Per rispettare la Single Thread Rule di Swing e mantenere la UI reattiva:
+
+    Le operazioni di rete (es. login, fetch dati) vengono eseguite su thread separati (Worker Threads).
+    L'aggiornamento della UI avviene esclusivamente sull'Event Dispatch Thread (EDT) tramite SwingUtilities.invokeLater.
+    Motivazione: Previene il "congelamento" (freezing) dell'interfaccia utente durante le operazioni di I/O.
+
+3.d Evidenza dell’uso di strumenti di versioning
+
+La gestione della configurazione è stata effettuata tramite Git con hosting su GitHub. Data la dimensione del team e la necessità di iterazioni rapide, 
+è stata adottata la metodologia del Trunk-Based Development (o Centralized Workflow).
+
+Strategia Adottata:
+
+    Sviluppo diretto sul ramo principale main, garantendo un'integrazione continua (Continuous Integration).
+    Frequenti commit atomici ("Small atomic commits") per facilitare il debugging e mantenere la storia delle modifiche pulita.
+    Uso rigoroso del file .gitignore per escludere artefatti di build e configurazioni locali.
+
+Report Statistico (Snapshot):
+
+    Repository: Privato su GitHub (kiyx/progetto-swe-2026)
+    Totale Commit: ~85 (dato indicativo)
+    Contributors: 2
+    Frequenza: Commit regolari durante le fasi attive di sprint.
+    Messaggi: Descrittivi e semantici (es. feat: implementato login, fix: risolto bug visualizzazione).
+
+3.e Report di qualità del codice (Backend)
+
+L'analisi statica del codice (SAST) e la verifica della copertura dei test sono state integrate nella pipeline di build (Maven) e monitorate tramite SonarQube/SonarCloud.
+
+Sintesi delle Metriche: Il progetto rispetta il Quality Gate definito (Rating A).
+
+    Affidabilità (Reliability): Rating A (0 Bug).
+
+    Sicurezza (Security): Rating A (0 Vulnerabilità).
+    Nota: Il "Security Hotspot" relativo alla disabilitazione del CSRF è stato analizzato e marcato come Safe, in quanto l'architettura Stateless basata su JWT non utilizza cookie di sessione, rendendo l'attacco non applicabile.
+
+    Manutenibilità (Maintainability): Rating A (Debito Tecnico molto basso). L'uso di Lombok ha ridotto drasticamente il codice ripetitivo (boilerplate).
+
+    Code Coverage: Copertura della logica di business (Service Layer) superiore al 90%, ottenuta tramite Test Unitari con JUnit 5 e Mockito.
+
+3.f Codice Sorgente sviluppato e Artefatti
+
+Il progetto è strutturato come un Monorepo Maven Multi-Modulo, permettendo di gestire frontend e backend nello stesso repository mantenendo build indipendenti.
+
+Struttura delle Directory:
+
+progetto-swe-2026/
+├── backend/                # Modulo Server (Spring Boot 3)
+│   ├── src/main/java       # Business Logic, Controller, Repository, Entity
+│   ├── src/test/java       # Test Unitari (Service) e Integrazione (Repository)
+│   ├── Dockerfile          # Configurazione Multi-Stage Build
+│   └── pom.xml             # Dipendenze: Spring Web, Security, JPA, JJWT, Lombok
+├── frontend/               # Modulo Client (Java Swing)
+│   ├── src/main/java       # View (FlatLaf), Controller, Service Client
+│   └── pom.xml             # Dipendenze: FlatLaf, Jackson, HttpClient, SwingX
+├── .github/workflows/      # Pipeline CI/CD (GitHub Actions)
+└── docker-compose.yml      # Orchestrazione container (Backend + DB)
+
+Automazione di Build e Deploy:
+
+    Maven: Gestisce il ciclo di vita del software (clean, compile, test, package).
+
+    Docker: Il backend dispone di un Dockerfile con Multi-Stage Build.
+        Build Stage: Compilazione del codice tramite immagine Maven.
+        Run Stage: Esecuzione dell'applicazione su un'immagine JRE leggera (eclipse-temurin:21-jre-alpine), garantendo sicurezza e ridotte dimensioni.
+
+    CI Pipeline: Il workflow di GitHub Actions automatizza compilazione, test e analisi statica ad ogni push sul repository.

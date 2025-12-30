@@ -1,0 +1,113 @@
+@startuml
+!theme plain
+autonumber
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+skinparam roundcorner 10
+
+skinparam sequence {
+    ArrowColor #444444
+    LifeLineBorderColor #444444
+    LifeLineBackgroundColor #F0F0F0
+    
+    ParticipantBorderThickness 1
+    ParticipantBackgroundColor #E3F2FD
+    ParticipantBorderColor #1565C0
+    ParticipantFontColor #0D47A1
+    ParticipantFontStyle bold
+    
+    ActorBackgroundColor #FFECB3
+    ActorBorderColor #FF6F00
+    
+    BoxPadding 10
+}
+
+skinparam note {
+    BackgroundColor #FFF3E0
+    BorderColor #FFB74D
+    FontColor #5D4037
+}
+
+skinparam group {
+    BackgroundColor #F9FBE7
+    BorderColor #9E9D24
+    HeaderFontColor #827717
+    FontColor #827717
+}
+
+actor "IssueController" as Client
+
+box "Service Layer" #FAFAFA
+    participant "IssueService" as Service
+    participant "SecurityContext" as Security
+    participant "IssueMapper" as Mapper
+end box
+
+box "Data Access Layer" #FAFAFA
+    participant "UtenteRepository" as UserRepo
+    participant "ProgettoRepository" as ProjectRepo
+    participant "IssueRepository" as IssueRepo
+end box
+
+activate Client
+Client -> Service: createIssue(CreateIssueRequestDTO)
+activate Service
+
+group Security Check
+    Service -> Security: getContext().getAuthentication()
+    activate Security
+    Security --> Service: Authentication auth
+    deactivate Security
+
+    alt auth is null OR !isAuthenticated
+        Service --> Client: <font color=red>throw SecurityException</font>\n("Utente non autenticato")
+        note right: Log Warning
+    end
+end
+
+Service -> Security: auth.getName()
+activate Security
+Security --> Service: email
+deactivate Security
+
+note right of Service: Log Info: Inizio creazione da parte di {email}
+
+Service -> UserRepo: findByEmail(email)
+activate UserRepo
+UserRepo --> Service: Optional.of(autore)
+deactivate UserRepo
+
+alt Utente not found (Optional.empty)
+    Service --> Client: <font color=red>throw EntityNotFoundException</font>\n("Autore non trovato")
+    note right: Log Warning
+end
+
+Service -> ProjectRepo: findById(request.getIdProgetto())
+activate ProjectRepo
+ProjectRepo --> Service: Optional.of(progetto)
+deactivate ProjectRepo
+
+alt Progetto not found (Optional.empty)
+    Service --> Client: <font color=red>throw EntityNotFoundException</font>\n("Progetto non trovato")
+    note right: Log Warning
+end
+
+Service -> Mapper: toEntity(request, autore, progetto)
+activate Mapper
+Mapper --> Service: issue
+deactivate Mapper
+
+Service -> IssueRepo: save(issue)
+activate IssueRepo
+IssueRepo --> Service: savedIssue
+deactivate IssueRepo
+
+note right of Service: Log Info: Nuova issue creata: {titolo} (ID: {id})
+
+Service --> Client: void
+deactivate Service
+deactivate Client
+
+@enduml

@@ -1,0 +1,47 @@
+2. Documento di Design del Sistema
+2.a Descrizione dell’architettura proposta
+
+Il sistema BugBoard26 implementa un'architettura distribuita Client-Server, caratterizzata da un disaccoppiamento forte (loose coupling) 
+tra il livello di presentazione e il livello dei dati. La comunicazione avviene tramite protocollo HTTP seguendo lo stile architetturale REST (Representational State Transfer).
+Topologia del Sistema
+
+Il sistema è composto da due nodi logici principali:
+
+    Backend (Server): Espone un'interfaccia di servizio pubblica (API) e incapsula l'intera logica di business e l'accesso ai dati. È progettato per essere Stateless: 
+    ogni richiesta HTTP contiene tutte le informazioni necessarie per essere elaborata (incluso il token di sicurezza JWT), migliorando la scalabilità orizzontale e 
+    l'affidabilità.
+
+    Frontend (Client): Un'applicazione Rich Desktop Client che consuma le API. Si occupa esclusivamente della logica di presentazione e dell'interazione utente, 
+    delegando ogni elaborazione dati complessa al server.
+
+Pattern Architetturali di Alto Livello
+
+    Layered Architecture (Backend): Il server è suddiviso orizzontalmente in strati concentrici che comunicano solo con il livello immediatamente sottostante, 
+    garantendo il principio di Separation of Concerns (SoC):
+
+        Boundary Layer (Web): Gestione dell'I/O HTTP e validazione sintattica (Controller).
+        Control Layer (Service): Coordinamento transazionale e logica di dominio (Service).
+        Data Access Layer (Repository): Astrazione sul database relazionale (Repository / Entity).
+
+    MVC - Model View Controller (Frontend): Adottato per organizzare il codice dell'interfaccia grafica:
+
+        Model: Rappresentazione dei dati e logica di comunicazione (DTO, Service).
+        View: Definizione del layout e rendering grafico (JXPanel, FlatLaf).
+        Controller: Gestione degli eventi utente e aggiornamento della vista (Listeners).
+
+Motivazioni delle scelte
+
+La scelta di separare nettamente Frontend e Backend permette cicli di vita del software indipendenti: è possibile aggiornare l'interfaccia grafica o sviluppare client alternativi (es. mobile) senza modificare il backend, a patto che il contratto delle API (Interface) rimanga invariato.
+2.b Descrizione e motivazione delle scelte tecnologiche
+
+    Backend - Spring Boot 3 (Java 21): Scelto per l'ecosistema enterprise maturo e l'approccio Convention over Configuration. 
+    Fornisce nativamente il container IoC per la Dependency Injection e moduli robusti per la sicurezza (Spring Security).
+
+    Frontend - Java Swing + FlatLaf: Swing garantisce portabilità su ogni OS con JVM ("Write Once, Run Anywhere"). 
+    L'integrazione della libreria FlatLaf è stata determinante per superare i limiti estetici standard di Swing, offrendo una UI moderna, scalabile e personalizzabile.
+
+    Persistenza - PostgreSQL su Neon: Database relazionale scelto per garantire l'integrità referenziale (ACID) dei dati critici. 
+    L'hosting Serverless su Neon ottimizza l'uso delle risorse, scalando automaticamente.
+
+    Containerizzazione - Docker: Utilizzato per garantire la parità ambientale tra sviluppo e produzione, 
+    eliminando le problematiche di configurazione dipendenti dalla macchina host ("works on my machine").

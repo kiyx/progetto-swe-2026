@@ -1,100 +1,86 @@
-@startuml ComponentDiagram_BugBoard26_Modern
+@startuml BugBoard26_Final_Architecture
 !theme plain
+hide stereotype
 skinparam backgroundColor white
 skinparam shadowing false
-skinparam linetype polyline
+skinparam linetype ortho
 skinparam defaultFontName "Segoe UI"
-skinparam defaultFontSize 13
-skinparam roundcorner 20
+skinparam defaultFontSize 14
+skinparam roundcorner 15
 
-skinparam nodesep 140
-skinparam ranksep 90
+' Setup Spaziature per evitare sovrapposizioni
+skinparam nodesep 60
+skinparam ranksep 100
 
+' Icone
 !include <tupadr3/devicons2/java>
 !include <tupadr3/devicons2/spring>
 !include <tupadr3/devicons2/postgresql>
 !include <tupadr3/devicons2/docker>
-!include <tupadr3/material/cloud>
+!include <tupadr3/font-awesome-5/user>
 
 left to right direction
-title **Architettura BugBoard26** - Component Diagram
+
+' --- STILI ---
+skinparam rectangle {
+    BorderThickness 1
+    BorderColor #DDDDDD
+    FontColor #333333
+}
 
 skinparam arrow {
     Color #555555
     Thickness 1.5
-    FontColor #444444
-    FontStyle italic
 }
 
-skinparam interface {
-    BackgroundColor #FFFFFF
-    BorderColor #555555
-    BorderThickness 1.5
-}
-
-skinparam node {
-    BackgroundColor #FAFAFA
-    BorderColor #DDDDDD
-    FontColor #666666
-    FontStyle bold
-    BorderThickness 1.5
-}
-
-skinparam database {
-    BackgroundColor #FFF8E1
-    BorderColor #FFA000
-    FontColor #E65100
-}
-
-skinparam note {
-    BackgroundColor #F0F0F0
-    BorderColor #CCCCCC
-    FontColor #666666
-    FontSize 10
-}
-
-skinparam component {
-    BackgroundColor<<Frontend>> #F5F9FF
-    BorderColor<<Frontend>> #2979FF
-    FontColor<<Frontend>> #1565C0
-    BorderThickness 1.5
+' --- 1. CLIENT LAYER (MVC) ---
+rectangle "<b>Client Workstation</b>" as client_node #E3F2FD {
     
-    BackgroundColor<<Backend>> #F1F8E9
-    BorderColor<<Backend>> #43A047
-    FontColor<<Backend>> #2E7D32
-    BorderThickness 1.5
+    rectangle "<$java>\n<b>Frontend Application</b>\n<<MVC Pattern>>" as frontend #BBDEFB {
+        rectangle "<b>View</b>\n(Java Swing / FlatLaf)" as view #FFFFFF
+        rectangle "<b>Controller</b>\n(Event Handling)" as controller #FFFFFF
+        rectangle "<b>Model / Service</b>\n(Data & Network)" as proxy #FFFFFF
+        
+        ' Allineamento verticale interno
+        view -[hidden]-> controller
+        controller -[hidden]-> proxy
+    }
 }
 
-node "Client Workstation" as client {
-    component "<$java>\nBugBoard Client\n(JavaFX)" as frontend <<Frontend>>
+' --- 2. SERVER LAYER (Docker + Layered) ---
+rectangle "<b>Server Host</b>" as server_node #F1F8E9 {
+
+    rectangle "<$docker>\n<b>Docker Container</b>" as docker #C8E6C9 {
     
-    note bottom of frontend
-        **Pattern:** MVVM
-    end note
+        rectangle "<$spring>\n<b>Spring Boot Backend</b>\n<<Layered Architecture>>" as backend #A5D6A7 {
+            rectangle "<b>Web Layer</b>\n(Controllers & Security)" as web #FFFFFF
+            rectangle "<b>Service Layer</b>\n(Business Logic)" as service #FFFFFF
+            rectangle "<b>Data Access Layer</b>\n(JPA Repositories/Model)" as repo #FFFFFF
+            
+            ' Allineamento verticale interno
+            web -[hidden]-> service
+            service -[hidden]-> repo
+        }
+    }
 }
 
-node "Server Host (Docker Container)" as serverNode {
-    component "<$spring>\nBugBoard Backend\n(Spring Boot)" as backend <<Backend>>
-    note top of backend
-        **Pattern:** Layered (BCE)
-    end note
-    
-    interface "Port 8080\n(REST API)" as api
+' --- 3. DATA LAYER ---
+rectangle "<b>Cloud Infrastructure</b>" as data_node #FFF3E0 {
+    rectangle "<$postgresql>\n<b>Neon Cloud (AWS)</b>\n(PostgreSQL DB)" as db #FFE0B2
 }
 
-cloud "<$cloud>\nNeon (Cloud)" as cloud {
-    database "<$postgresql>\nPostgreSQL" as db
-}
+' --- ATTORI ---
+actor "User" as user
 
-backend -right- api
-frontend .right.> api : "**HTTP / JSON**"
-note on link
-  REST API v1
-end note
+' --- FLUSSO E RELAZIONI ---
 
-backend ---> db : "**JDBC / TCP**"
-note on link
-  Read/Write
-end note
+' 1. Utente usa la View
+user -r-> view : "Uses"
+
+' 2. Frontend chiama Backend (Protocollo HTTP)
+proxy -r-> web : " HTTP / JSON \n (JWT Token)"
+
+' 3. Backend chiama Database (Protocollo JDBC)
+repo -r-> db : " JDBC (SSL) \n (Read/Write)"
 
 @enduml

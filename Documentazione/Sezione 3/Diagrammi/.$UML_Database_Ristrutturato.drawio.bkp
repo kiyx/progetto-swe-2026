@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
   <diagram name="Pagina-1" id="-LYN_TRJXf-t4SSpYXdf">
-    <mxGraphModel dx="2037" dy="1201" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1678" dy="989" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -212,6 +212,9 @@
         </mxCell>
         <mxCell id="kLt9kxavjtCexVwGieb0-60" value="riguarda" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="701" y="415" width="62" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="kLt9kxavjtCexVwGieb0-64" value="&lt;div&gt;&lt;font size=&quot;3&quot;&gt;Se isAdmin == false allora User non può formare un team&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;Se isAdmin == false allora User non può assegnare un progetto a un team&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;Se isAdmin == false allora User non può archiviare una issue (DA JAVA)&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;Se isAdmin == false allora User non può assegnare una issue (DA JAVA)&amp;nbsp;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="33.86" y="1034" width="561" height="116" as="geometry" />
         </mxCell>
         <mxCell id="kkERPTjwsOq-S_wgjgpm-1" value="uses" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;" parent="1" source="kLt9kxavjtCexVwGieb0-32" target="kLt9kxavjtCexVwGieb0-45" edge="1">
           <mxGeometry width="160" relative="1" as="geometry">

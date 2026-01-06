@@ -43,8 +43,7 @@ class IssueServiceTest
         request.setTipo(TipoIssue.DOCUMENTATION);
         request.setStato(StatoIssue.ASSEGNATA);
         request.setPriorita(TipoPriorita.BASSA);
-
-        IssueRepository issueRepository = mock(IssueRepository.class);
+        
 
         service.updateIssue(null, request);
 
@@ -102,7 +101,6 @@ class IssueServiceTest
         request.setStato(StatoIssue.ASSEGNATA);
         request.setPriorita(TipoPriorita.BASSA);
 
-        IssueRepository issueRepository = mock(IssueRepository.class);
         when(issueRepository.findById(123L)).thenReturn(Optional.empty());
 
         assertNotEquals(mockIssue.getTitolo(), request.getTitolo());
@@ -159,7 +157,6 @@ class IssueServiceTest
         mockIssue.setProgetto(mockProgetto);
         mockIssue.setAssegnatari(null);
 
-        IssueRepository issueRepository = mock(IssueRepository.class);
         when(issueRepository.findById(123L)).thenReturn(Optional.of(mockIssue));
         when(issueRepository.save(mockIssue)).thenReturn(mockIssue);
 
@@ -228,7 +225,6 @@ class IssueServiceTest
         request.setStato(StatoIssue.ASSEGNATA);
         request.setPriorita(TipoPriorita.BASSA);
 
-        IssueRepository issueRepository = mock(IssueRepository.class);
         when(issueRepository.findById(123L)).thenReturn(Optional.of(mockIssue));
         when(issueRepository.save(mockIssue)).thenReturn(mockIssue);
 
@@ -295,7 +291,6 @@ class IssueServiceTest
         request.setStato(StatoIssue.ASSEGNATA);
         request.setPriorita(TipoPriorita.BASSA);
 
-        IssueRepository issueRepository = mock(IssueRepository.class);
         when(issueRepository.findById(123L)).thenReturn(Optional.of(mockIssue));
         when(issueRepository.save(mockIssue)).thenReturn(mockIssue);
 

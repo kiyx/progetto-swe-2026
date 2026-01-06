@@ -43,11 +43,10 @@ class IssueServiceTest
         request.setTipo(TipoIssue.DOCUMENTATION);
         request.setStato(StatoIssue.ASSEGNATA);
         request.setPriorita(TipoPriorita.BASSA);
-        
 
-        service.updateIssue(null, request);
+        assertThrows(IllegalArgumentException.class, ()->service.updateIssue(null, request));
 
-        verify(issueRepository).findById(null);
+        verify(issueRepository, times(0)).findById(null);
         verify(issueRepository, times(0)).save(null);
     }
 

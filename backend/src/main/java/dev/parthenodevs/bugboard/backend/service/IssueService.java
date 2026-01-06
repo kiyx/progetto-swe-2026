@@ -105,6 +105,10 @@ public class IssueService
     @Transactional
     public void updateIssue(Long id, UpdateIssueRequestDTO request)
     {
+        if (id==null)
+        {
+            throw new IllegalArgumentException("ID dell'Issue non può essere null");
+        }
         Issue issue = getIssueOrThrow(id);
 
         issueMapper.update(issue, request);

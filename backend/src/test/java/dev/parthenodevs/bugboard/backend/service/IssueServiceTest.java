@@ -5,6 +5,7 @@ import dev.parthenodevs.bugboard.backend.dto.enums.StatoProgetto;
 import dev.parthenodevs.bugboard.backend.dto.enums.TipoIssue;
 import dev.parthenodevs.bugboard.backend.dto.enums.TipoPriorita;
 import dev.parthenodevs.bugboard.backend.dto.request.UpdateIssueRequestDTO;
+import dev.parthenodevs.bugboard.backend.mapper.IssueMapper;
 import dev.parthenodevs.bugboard.backend.model.Issue;
 import dev.parthenodevs.bugboard.backend.model.Progetto;
 import dev.parthenodevs.bugboard.backend.model.Team;
@@ -29,8 +30,9 @@ class IssueServiceTest
     IssueRepository issueRepository = mock(IssueRepository.class);
     UtenteRepository utenteRepository = mock(UtenteRepository.class);
     ProgettoRepository progettoRepository = mock(ProgettoRepository.class);
+    IssueMapper issueMapper = mock(IssueMapper.class);
 
-    private final IssueService service = new IssueService(issueRepository, utenteRepository, progettoRepository, I);
+    private final IssueService service = new IssueService(issueRepository, utenteRepository, progettoRepository, issueMapper);
 
     @Test
     void updateIssue_ID2_UIRD1()

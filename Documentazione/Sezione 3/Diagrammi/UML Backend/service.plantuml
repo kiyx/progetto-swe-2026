@@ -1,0 +1,135 @@
+@startuml service
+
+skinparam linetype ortho
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 350
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #FEF9E7
+    BorderColor #F1C40F
+    ArrowColor #2C3E50
+}
+
+title Service Layer (Business Logic) - Backend [Completo]
+
+package "backend.service" {
+
+    class AuthService <<Service>> {
+        - utenteRepository : UtenteRepository
+        - utenteMapper : UtenteMapper
+        - passwordEncoder : PasswordEncoder
+        - jwtService : JWTService
+        --
+        + login(requestDTO: LoginRequestDTO) : AuthResponseDTO
+    }
+
+    class JWTService <<Service>> {
+        - secretKey : String
+        - expirationTime : long
+        --
+        + generateToken(utente: Utente) : String
+        + extractEmail(token: String) : String
+        + isTokenValid(token: String, utente: Utente) : boolean
+        + extractClaim(token: String, claimsResolver: Function) : T
+        - isTokenExpired(token: String) : boolean
+        - extractExpiration(token: String) : Date
+        - extractAllClaims(token: String) : Claims
+        - getSigningKey() : SecretKey
+    }
+
+    class IssueService <<Service>> {
+        - issueRepository : IssueRepository
+        - utenteRepository : UtenteRepository
+        - progettoRepository : ProgettoRepository
+        - issueMapper : IssueMapper
+        --
+        + getAllIssues() : List<IssueResponseDTO>
+        + getIssuesByAssignee(userId: Long) : List<IssueResponseDTO>
+        + getIssuesByAuthor(userId: Long) : List<IssueResponseDTO>
+        + createIssue(request: CreateIssueRequestDTO) : void
+        + updateIssue(id: Long, request: UpdateIssueRequestDTO) : void
+        + resolveIssue(id: Long) : void
+        + archiveIssue(id: Long) : void
+        + assignIssue(issueId: Long, userIds: List<Long>) : void
+        - getIssueOrThrow(id: Long) : Issue
+    }
+
+    class ProgettoService <<Service>> {
+        - progettoRepository : ProgettoRepository
+        - teamRepository : TeamRepository
+        - utenteRepository : UtenteRepository
+        - progettoMapper : ProgettoMapper
+        --
+        + getProgettiAccessibili() : List<ProgettoResponseDTO>
+        + createProgetto(request: CreateProgettoRequestDTO) : ProgettoResponseDTO
+        + attivaProgetto(idProgetto: Long) : ProgettoResponseDTO
+        + concludiProgetto(idProgetto: Long) : ProgettoResponseDTO
+        - getAdminLoggato() : Utente
+        - getProgettoIfAdmin(idProgetto: Long) : Progetto
+    }
+
+    class TeamService <<Service>> {
+        - teamRepository : TeamRepository
+        - utenteRepository : UtenteRepository
+        - teamMapper : TeamMapper
+        - utenteMapper : UtenteMapper
+        --
+        + createNewTeam(request: CreateTeamRequestDTO) : TeamResponseDTO
+        + getTeamsGestitiDaAdmin() : List<TeamResponseDTO>
+        + getTeamsMembers(id: long) : List<UtenteResponseDTO>
+        + getTeamsNotMembers(id: long) : List<UtenteResponseDTO>
+        + addMembri(teamId: Long, userIds: List<Long>) : void
+        + removeMembri(teamId: Long, userIds: List<Long>) : void
+        - getTeamOrThrow(id: Long) : Team
+    }
+
+    class UtenteService <<Service>> {
+        - utenteRepository : UtenteRepository
+        - utenteMapper : UtenteMapper
+        - passwordEncoder : PasswordEncoder
+        --
+        + updateUtente(email: String, request: UpdateUtenteRequestDTO) : UtenteResponseDTO
+        + registerUtente(request: RegisterRequestDTO) : UtenteResponseDTO
+    }
+}
+
+package "backend.repository" {
+    interface IssueRepository
+    interface ProgettoRepository
+    interface TeamRepository
+    interface UtenteRepository
+}
+
+package "backend.mapper" {
+    class IssueMapper
+    class ProgettoMapper
+    class TeamMapper
+    class UtenteMapper
+}
+
+AuthService ..> JWTService
+AuthService ..> UtenteRepository
+AuthService ..> UtenteMapper
+IssueService ..> IssueRepository
+IssueService ..> UtenteRepository
+IssueService ..> ProgettoRepository
+IssueService ..> IssueMapper
+ProgettoService ..> ProgettoRepository
+ProgettoService ..> TeamRepository
+ProgettoService ..> UtenteRepository
+ProgettoService ..> ProgettoMapper
+TeamService ..> TeamRepository
+TeamService ..> UtenteRepository
+TeamService ..> TeamMapper
+TeamService ..> UtenteMapper
+UtenteService ..> UtenteRepository
+UtenteService ..> UtenteMapper
+
+@enduml

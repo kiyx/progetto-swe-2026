@@ -1,0 +1,43 @@
+@startuml backendapplication
+
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 80
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #D7BDE2
+    BorderColor #8E44AD
+    ArrowColor #2C3E50
+}
+
+title Entry Point Application - Backend
+
+package "bugboard.backend" {
+
+    class BackendApplication <<SpringBootApplication>> {
+        ' Costruttore privato per prevenire istanziazione
+        - BackendApplication()
+        
+        ' Metodo Main statico
+        + {static} main(args: String[]) : void
+    }
+
+}
+
+
+package "Spring Framework" {
+    class SpringApplication {
+        + {static} run(source: Class<?>, args: String[]) : ConfigurableApplicationContext
+    }
+}
+
+BackendApplication ..> SpringApplication : delegates to
+
+@enduml

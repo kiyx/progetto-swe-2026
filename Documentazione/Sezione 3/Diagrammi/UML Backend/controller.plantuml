@@ -1,0 +1,85 @@
+@startuml controller
+
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 80
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #EBF5FB
+    BorderColor #2980B9
+    ArrowColor #2C3E50
+}
+
+title REST Controller Layer - Backend
+
+package "backend.controller" {
+
+    class AuthController <<RestController>> {
+        - authService : AuthService
+        --
+        + login(req: LoginRequestDTO) : ResponseEntity<AuthResponseDTO>
+    }
+
+    class IssueController <<RestController>> {
+        - issueService : IssueService
+        --
+        + getAllIssues() : List<IssueResponseDTO>
+        + getIssuesAssignedTo(userId) : List<IssueResponseDTO>
+        + getIssuesCreatedBy(userId) : List<IssueResponseDTO>
+        + createIssue(req) : Void
+        + updateIssue(id, req) : Void
+        + resolveIssue(id) : Void
+        + archiveIssue(id) : Void
+        + assignIssue(id, userIds) : Void
+    }
+
+    class ProgettoController <<RestController>> {
+        - progettoService : ProgettoService
+        --
+        + getMieiProgetti() : List<ProgettoResponseDTO>
+        + createProgetto(req) : ProgettoResponseDTO
+        + attivaProgetto(id) : ProgettoResponseDTO
+        + concludiProgetto(id) : ProgettoResponseDTO
+    }
+
+    class TeamController <<RestController>> {
+        - teamService : TeamService
+        --
+        + getTeamsGestiti() : List<TeamResponseDTO>
+        + getMembri(id) : List<UtenteResponseDTO>
+        + getNotMembri(id) : List<UtenteResponseDTO>
+        + createTeam(req) : TeamResponseDTO
+        + addMembri(id, userIds) : Void
+        + removeMembri(id, userIds) : Void
+    }
+
+    class UtenteController <<RestController>> {
+        - utenteService : UtenteService
+        --
+        + updateMe(req) : UtenteResponseDTO
+        + register(req) : UtenteResponseDTO
+    }
+}
+
+package "backend.service" {
+    class AuthService
+    class IssueService
+    class ProgettoService
+    class TeamService
+    class UtenteService
+}
+
+AuthController --> AuthService : uses
+IssueController --> IssueService : uses
+ProgettoController --> ProgettoService : uses
+TeamController --> TeamService : uses
+UtenteController --> UtenteService : uses
+
+@enduml

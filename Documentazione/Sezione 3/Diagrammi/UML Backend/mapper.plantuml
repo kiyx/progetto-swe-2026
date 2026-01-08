@@ -1,0 +1,61 @@
+@startuml mapper
+
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 80
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #FEF9E7
+    BorderColor #D4AC0D
+    ArrowColor #2C3E50
+}
+
+title Mapper Layer (DTO <-> Entity Converter) - Backend
+
+package "backend.mapper" {
+
+    class UtenteMapper <<Component>> {
+        + toDto(utente: Utente) : UtenteResponseDTO
+        + toEntity(req: RegisterRequestDTO) : Utente
+    }
+
+    class TeamMapper <<Component>> {
+        + toDto(team: Team) : TeamResponseDTO
+        + toEntity(req: CreateTeamRequestDTO, admin: Utente) : Team
+    }
+
+    class ProgettoMapper <<Component>> {
+        + toDto(progetto: Progetto) : ProgettoResponseDTO
+        + toEntity(req: CreateProgettoRequestDTO, team: Team, admin: Utente) : Progetto
+    }
+
+    class IssueMapper <<Component>> {
+        + toDto(issue: Issue) : IssueResponseDTO
+        + toEntity(req: CreateIssueRequestDTO, autore: Utente, progetto: Progetto) : Issue
+        + update(entity: Issue, req: UpdateIssueRequestDTO) : void
+    }
+}
+
+package "backend.dto" as DTOs {}
+package "backend.model" as Entities {}
+
+UtenteMapper ..> DTOs
+UtenteMapper ..> Entities
+
+TeamMapper ..> DTOs
+TeamMapper ..> Entities
+
+ProgettoMapper ..> DTOs
+ProgettoMapper ..> Entities
+
+IssueMapper ..> DTOs
+IssueMapper ..> Entities
+
+@enduml

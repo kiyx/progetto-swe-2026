@@ -1,0 +1,73 @@
+@startuml exception
+
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #F9EBEA
+    BorderColor #C0392B
+    ArrowColor #2C3E50
+}
+skinparam record {
+    BackgroundColor #FDEDEC
+    BorderColor #C0392B
+}
+
+title Exception Handling Layer (AOP) - Backend
+
+package "backend.exception" {
+
+    class GlobalExceptionHandler <<RestControllerAdvice>> {
+        ' Metodi Handler
+        + handleInvalidFieldException(ex) : ResponseEntity<ErrorDTO>
+        + handleAuthFailure(ex) : ResponseEntity<ErrorDTO>
+        + handleExpiredJwtException(ex) : ResponseEntity<ErrorDTO>
+        + handleInvalidJwtException(ex) : ResponseEntity<ErrorDTO>
+        + handleGenericJwtException(ex) : ResponseEntity<ErrorDTO>
+        + handleResourceNotFound(ex) : ResponseEntity<ErrorDTO>
+        + handleConflicts(ex) : ResponseEntity<ErrorDTO>
+        + handleValidationExceptions(ex) : ResponseEntity<ErrorDTO>
+        + handleDatabaseExceptions(ex) : ResponseEntity<ErrorDTO>
+        + handleGenericException(ex) : ResponseEntity<ErrorDTO>
+    }
+
+    class ErrorDTO <<Record>> {
+        - timestamp : LocalDateTime
+        - status : int
+        - error : String
+        - message : String
+    }
+
+    
+    package "-" {
+        class RuntimeException {
+            ' Java Standard Class
+        }
+        class UserNotFoundException
+        class PasswordNotMatchingException
+        class UnauthorizedException
+        class InvalidFieldException
+        class EmailAlreadyUsedException <<ResponseStatus>>
+        class BusinessLogicException <<ResponseStatus>>
+        class ResourceNotFoundException <<ResponseStatus>>
+    }
+}
+RuntimeException <|-- UserNotFoundException
+RuntimeException <|-- PasswordNotMatchingException
+RuntimeException <|-- UnauthorizedException
+RuntimeException <|-- InvalidFieldException
+RuntimeException <|-- EmailAlreadyUsedException
+RuntimeException <|-- BusinessLogicException
+RuntimeException <|-- ResourceNotFoundException
+GlobalExceptionHandler ..> RuntimeException : "catches & handles" 
+GlobalExceptionHandler ..> ErrorDTO : "produces response"
+
+@enduml

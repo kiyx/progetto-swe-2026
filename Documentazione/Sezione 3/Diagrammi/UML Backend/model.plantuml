@@ -1,0 +1,95 @@
+@startuml model
+
+skinparam linetype ortho
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #FDFEFE
+    BorderColor #2C3E50
+    ArrowColor #2C3E50
+}
+
+title Domain Model (JPA Entities) - Backend
+
+package "backend.model" {
+
+    class Utente implements "UserDetails" {
+        - id : Long
+        - email : String
+        - nome : String
+        - cognome : String
+        - password : String
+        - isAdmin : Boolean
+        --
+        + Utente()
+        + Utente(email: String, nome: String, cognome: String, password: String, isAdmin: Boolean)
+        
+        + addIssue(issue: Issue) : void
+        + removeIssue(issue: Issue) : void
+        + addTeam(team: Team) : void
+        + removeTeam(team: Team) : void
+        
+        + getAuthorities() : Collection<? extends GrantedAuthority>
+        + getUsername() : String
+        + isAccountNonExpired() : boolean
+        + isAccountNonLocked() : boolean
+        + isCredentialsNonExpired() : boolean
+        + isEnabled() : boolean
+    }
+
+    class Team {
+        - id : Long
+        - nome : String
+        --
+        ' Costruttori
+        + Team()
+        + Team(nome: String, admin: Utente)
+        
+        ' Metodi di Business
+        + addProgetto(progetto: Progetto) : void
+    }
+
+    class Progetto {
+        - id : Long
+        - nome : String
+        - stato : StatoProgetto
+        --
+        ' Costruttori
+        + Progetto()
+        + Progetto(nome: String, stato: StatoProgetto, team: Team, admin: Utente)
+    }
+
+    class Issue {
+        - id : Long
+        - titolo : String
+        - descrizione : String
+        - tipo : TipoIssue
+        - stato : StatoIssue
+        - isArchiviato : boolean
+        - immagine : String
+        - priorita : TipoPriorita
+        --
+        ' Costruttori
+        + Issue()
+        + Issue(titolo: String, descrizione: String, tipo: TipoIssue, stato: StatoIssue, autore: Utente, progetto: Progetto, priorita: TipoPriorita, immagine: String, isArchiviato: Boolean)
+    }
+
+}
+
+Team "*" --> "1" Utente : admin
+Progetto "*" --> "1" Utente : admin
+Issue "*" --> "1" Utente : autore
+Utente "*" <--> "*" Team : membri
+Utente "*" <--> "*" Issue : assegnatari
+Team "1" <--> "*" Progetto : progetti
+Progetto "1" <--> "*" Issue : issues
+
+@enduml

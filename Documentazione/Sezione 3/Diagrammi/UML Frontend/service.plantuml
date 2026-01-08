@@ -1,0 +1,201 @@
+@startuml service
+
+
+skinparam linetype ortho
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 400
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #E8F6F3
+    BorderColor #16A085
+    ArrowColor #2C3E50
+}
+skinparam interface {
+    BackgroundColor #FEF9E7
+    BorderColor #F1C40F
+}
+
+title Service Layer (Client-Side Logic) - Frontend
+
+package "frontend.service" {
+
+    interface NavigationService {
+        + start() : void
+        + goToLogin() : void
+        + goToIssues() : void
+        + goToTeams() : void
+        + goToProjects() : void
+        + logout() : void
+    }
+
+    class AuthService {
+        - {static} LOGGER : Logger
+        - {static} API_URL : String
+        - httpClient : HttpClient
+        - objectMapper : ObjectMapper
+        - jwtToken : String
+        - currentUser : UtenteResponseDTO
+        --
+        + AuthService(httpClient: HttpClient, objectMapper: ObjectMapper)
+        + login(email: String, password: String) : boolean
+        + refreshLocalUser(newUser: UtenteResponseDTO) : void
+        + isAuthenticated() : boolean
+        + isNotAuthenticated() : boolean
+        + logout() : void
+        + getJwtToken() : String
+        + getCurrentUser() : UtenteResponseDTO
+    }
+
+    class IssueService {
+        - {static} logger : Logger
+        - {static} API_URL : String
+        - {static} JWT_BEARER : String
+        - {static} JWT_AUTH : String
+        + {static} PATCH : String
+        + {static} PUT : String
+        - httpClient : HttpClient
+        - objectMapper : ObjectMapper
+        - authService : AuthService
+        --
+        + IssueService(httpClient: HttpClient, objectMapper: ObjectMapper, authService: AuthService)
+        + getAllIssues() : List<IssueResponseDTO>
+        + getIssuesAssignedTo(userId: Long) : List<IssueResponseDTO>
+        + getIssuesCreatedBy(userId: Long) : List<IssueResponseDTO>
+        + createIssue(requestDTO: CreateIssueRequestDTO) : boolean
+        + updateIssue(issueId: Long, requestDTO: UpdateIssueRequestDTO) : boolean
+        + resolveIssue(issueId: Long) : boolean
+        + archiveIssue(issueId: Long) : boolean
+        + assignIssue(issueId: Long, userIds: List<Long>) : boolean
+        - executeListGetRequest(url: String, operationDescription: String) : List<IssueResponseDTO>
+        - executeWriteRequest(url: String, method: String, bodyPayload: Object, operationDescription: String) : boolean
+        - handleException(e: Exception, context: String) : void
+    }
+
+    class ProjectsService {
+        - {static} logger : Logger
+        - {static} API_URL : String
+        - {static} JWT_BEARER : String
+        - {static} JWT_AUTH : String
+        - httpClient : HttpClient
+        - objectMapper : ObjectMapper
+        - authService : AuthService
+        --
+        + ProjectsService(httpClient: HttpClient, objectMapper: ObjectMapper, authService: AuthService)
+        + getProgettiAccessibili() : List<ProgettoResponseDTO>
+        + createProgetto(requestDTO: CreateProgettoRequestDTO) : boolean
+        + attivaProgetto(idProgetto: Long) : boolean
+        + concludiProgetto(idProgetto: Long) : boolean
+    }
+
+    class TeamsService {
+        - {static} LOGGER : Logger
+        - {static} API_URL : String
+        - {static} CONTENT_TYPE : String
+        - {static} APPLICATION_JSON : String
+        - {static} AUTHORIZATION : String
+        - {static} BEARER : String
+        - httpClient : HttpClient
+        - objectMapper : ObjectMapper
+        - authService : AuthService
+        --
+        + TeamsService(httpClient: HttpClient, objectMapper: ObjectMapper, authService: AuthService)
+        + getTeamsManagedByAdmin() : List<TeamResponseDTO>
+        + getTeamsNotMembers(teamId: Long) : List<UtenteResponseDTO>
+        + getTeamMembers(teamId: Long) : List<UtenteResponseDTO>
+        + create(requestDTO: CreateTeamRequestDTO) : boolean
+        + aggiungiMembri(teamId: Long, userIds: List<Long>) : boolean
+        + rimuoviMembri(teamId: Long, userIds: List<Long>) : boolean
+        - executeMemberOperation(teamId: Long, userIds: List<Long>, operation: String) : boolean
+        - executeListRequest(request: HttpRequest, typeRef: TypeReference<List<T>>) : List<T>
+        - buildGetRequest(url: String) : HttpRequest
+        - buildPostRequest(body: String) : HttpRequest
+        - isSuccess(code: int) : boolean
+        - logError(context: String, response: HttpResponse<String>) : void
+        - logException(context: String, e: Exception) : void
+    }
+
+    class UtenteService {
+        - {static} LOGGER : Logger
+        - {static} API_BASE_URL : String
+        - httpClient : HttpClient
+        - objectMapper : ObjectMapper
+        - authService : AuthService
+        --
+        + UtenteService(httpClient: HttpClient, objectMapper: ObjectMapper, authService: AuthService)
+        + updateMe(requestDTO: UpdateUtenteRequestDTO) : Optional<UtenteResponseDTO>
+        + register(requestDTO: RegisterRequestDTO) : boolean
+    }
+}
+
+package "Java Standard Library" {
+    class HttpClient
+}
+package "Jackson Library" {
+    class ObjectMapper
+}
+
+package "model.dto.request" {
+    class LoginRequestDTO
+    class CreateIssueRequestDTO
+    class UpdateIssueRequestDTO
+    class CreateProgettoRequestDTO
+    class CreateTeamRequestDTO
+    class UpdateUtenteRequestDTO
+    class RegisterRequestDTO
+}
+
+package "model.dto.response" {
+    class AuthResponseDTO
+    class UtenteResponseDTO
+    class IssueResponseDTO
+    class ProgettoResponseDTO
+    class TeamResponseDTO
+}
+
+IssueService --> AuthService : authService
+ProjectsService --> AuthService : authService
+TeamsService --> AuthService : authService
+UtenteService --> AuthService : authService
+
+AuthService ..> HttpClient
+AuthService ..> ObjectMapper
+
+IssueService ..> HttpClient
+IssueService ..> ObjectMapper
+
+ProjectsService ..> HttpClient
+ProjectsService ..> ObjectMapper
+
+TeamsService ..> HttpClient
+TeamsService ..> ObjectMapper
+
+UtenteService ..> HttpClient
+UtenteService ..> ObjectMapper
+
+AuthService ..> LoginRequestDTO
+AuthService ..> AuthResponseDTO
+AuthService ..> UtenteResponseDTO
+
+IssueService ..> CreateIssueRequestDTO
+IssueService ..> UpdateIssueRequestDTO
+IssueService ..> IssueResponseDTO
+
+ProjectsService ..> CreateProgettoRequestDTO
+ProjectsService ..> ProgettoResponseDTO
+
+TeamsService ..> CreateTeamRequestDTO
+TeamsService ..> TeamResponseDTO
+TeamsService ..> UtenteResponseDTO
+
+UtenteService ..> UpdateUtenteRequestDTO
+UtenteService ..> RegisterRequestDTO
+UtenteService ..> UtenteResponseDTO
+
+@enduml

@@ -1,0 +1,73 @@
+@startuml config
+
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 80
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #F4ECF7
+    BorderColor #8E44AD
+    ArrowColor #2C3E50
+}
+skinparam interface {
+    BackgroundColor #EAEDED
+    BorderColor #2C3E50
+}
+
+title Configuration & Security Layer - Backend
+
+package "backend.config" {
+
+    class ApplicationConfig <<Configuration>> {
+        + passwordEncoder() : PasswordEncoder
+    }
+
+    class SecurityConfiguration <<Configuration>> {
+        - jwtAuthFilter : JwtAuthenticationFilter
+        --
+        + SecurityConfiguration(jwtAuthFilter: JwtAuthenticationFilter)
+        + securityFilterChain(http: HttpSecurity) : SecurityFilterChain
+    }
+
+    class JwtAuthenticationFilter <<Component>> {
+        - jwtService : JWTService
+        - utenteRepository : UtenteRepository
+        --
+        + JwtAuthenticationFilter(jwtService, utenteRepository)
+        # doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain)
+    }
+}
+
+package "Spring Security Framework" {
+    class OncePerRequestFilter {
+        ' Classe base di Spring
+    }
+    interface PasswordEncoder
+    class HttpSecurity
+    interface SecurityFilterChain
+}
+
+package "backend.service" {
+    class JWTService
+}
+
+package "backend.repository" {
+    interface UtenteRepository
+}
+
+JwtAuthenticationFilter --|> OncePerRequestFilter : extends
+SecurityConfiguration --> JwtAuthenticationFilter : injects
+JwtAuthenticationFilter --> JWTService : uses
+JwtAuthenticationFilter --> UtenteRepository : uses
+ApplicationConfig ..> PasswordEncoder : produces bean
+SecurityConfiguration ..> SecurityFilterChain : configures & builds
+SecurityConfiguration ..> HttpSecurity : configures
+
+@enduml

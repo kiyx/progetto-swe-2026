@@ -1,0 +1,74 @@
+@startuml repository
+
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 80
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam interface {
+    BackgroundColor #E9F7EF
+    BorderColor #27AE60
+    ArrowColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #FDFEFE
+    BorderColor #2C3E50
+}
+
+title Data Access Layer (Repositories) - Backend
+
+package "backend.repository" {
+
+    interface IssueRepository <<Repository>> {
+        + findByAutore_Id(idAutore: Long) : List<Issue>
+    }
+
+    interface ProgettoRepository <<Repository>> {
+        + findProgettiAccessibiliOrderByIdDesc(userId: Long) : List<Progetto>
+        + existsByTeamIdAndStato(teamId: Long, stato: StatoProgetto) : boolean
+    }
+
+    interface TeamRepository <<Repository>> {
+        + findByAdmin(admin: Utente) : List<Team>
+    }
+
+    interface UtenteRepository <<Repository>> {
+        + findByEmail(email: String) : Optional<Utente>
+        + existsByEmail(email: String) : boolean
+        + findUsersNotInTeam(teamId: Long) : List<Utente>
+        + findByAssignedTeams_Id(teamId: Long) : List<Utente>
+        + findByAssignedIssuesContaining(issue: Issue) : List<Utente>
+    }
+}
+
+package "Spring Data JPA" {
+    interface "JpaRepository<T, ID>" as JpaRepository {
+        + save(entity: T)
+        + findById(id: ID)
+        + delete(entity: T)
+    }
+}
+
+package "backend.model" {
+    class Issue
+    class Progetto
+    class Team
+    class Utente
+}
+
+JpaRepository <|-- IssueRepository : "<Issue, Long>"
+JpaRepository <|-- ProgettoRepository : "<Progetto, Long>"
+JpaRepository <|-- TeamRepository : "<Team, Long>"
+JpaRepository <|-- UtenteRepository : "<Utente, Long>"
+IssueRepository ..> Issue : manages
+ProgettoRepository ..> Progetto : manages
+TeamRepository ..> Team : manages
+UtenteRepository ..> Utente : manages
+
+@enduml

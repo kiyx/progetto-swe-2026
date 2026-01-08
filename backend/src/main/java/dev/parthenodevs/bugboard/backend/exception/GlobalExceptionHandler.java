@@ -1,5 +1,6 @@
 package dev.parthenodevs.bugboard.backend.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -85,8 +86,8 @@ public class GlobalExceptionHandler
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorDTO> handleResourceNotFound(ResourceNotFoundException ex)
+    @ExceptionHandler({ResourceNotFoundException.class, EntityNotFoundException.class})
+    public ResponseEntity<ErrorDTO> handleResourceNotFound(RuntimeException ex)
     {
         LOGGER.log(Level.INFO, ()-> "Risorsa non trovata: " + ex.getMessage());
 

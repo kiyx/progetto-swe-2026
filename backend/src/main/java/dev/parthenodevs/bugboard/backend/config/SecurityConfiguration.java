@@ -29,7 +29,6 @@ public class SecurityConfiguration
                 .anyRequest().authenticated()
         );
 
-
         http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

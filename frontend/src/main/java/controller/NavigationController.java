@@ -12,6 +12,7 @@ import view.projects.*;
 import view.teams.*;
 import view.user.*;
 import javax.swing.*;
+import java.awt.*;
 
 public class NavigationController implements NavigationService
 {
@@ -77,6 +78,7 @@ public class NavigationController implements NavigationService
 
             mainFrame.addView(mainLayoutView, VIEW_APP_SHELL);
             mainFrame.setSize(1280, 800);
+            mainFrame.setMinimumSize(new Dimension(1280, 800));
             mainFrame.setLocationRelativeTo(null);
         }
     }
@@ -86,6 +88,8 @@ public class NavigationController implements NavigationService
     {
         SwingUtilities.invokeLater(() ->
         {
+            mainFrame.setResizable(false);
+            mainFrame.setMinimumSize(new Dimension(0, 0));
             mainFrame.clearViews();
             mainLayoutView = null;
 
@@ -110,6 +114,7 @@ public class NavigationController implements NavigationService
         SwingUtilities.invokeLater(() ->
         {
             initMainLayoutIfNeeded();
+            mainFrame.setResizable(true);
 
             boolean isAdmin = false;
             var user = authService.getCurrentUser();

@@ -1,5 +1,6 @@
 package dev.parthenodevs.bugboard.backend.controller;
 
+import dev.parthenodevs.bugboard.backend.dto.enums.*;
 import dev.parthenodevs.bugboard.backend.dto.request.CreateIssueRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.request.UpdateIssueRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.IssueResponseDTO;
@@ -76,5 +77,17 @@ public class IssueController
         LOGGER.info(() -> "Richiesta assegnazione issue " + id + " agli utenti: " + userIds);
         issueService.assignIssue(id, userIds);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<IssueResponseDTO>> searchIssues(
+                                                                @RequestParam(required = false) String titolo,
+                                                                @RequestParam(required = false) TipoIssue tipo,
+                                                                @RequestParam(required = false) StatoIssue stato,
+                                                                @RequestParam(required = false) TipoPriorita priorita,
+                                                                @RequestParam(required = false) Boolean isArchiviato
+                                                               )
+    {
+        return ResponseEntity.ok(issueService.searchIssues(titolo, tipo, stato, priorita, isArchiviato));
     }
 }

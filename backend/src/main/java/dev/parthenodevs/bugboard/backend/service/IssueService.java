@@ -1,6 +1,6 @@
 package dev.parthenodevs.bugboard.backend.service;
 
-import dev.parthenodevs.bugboard.backend.dto.enums.StatoIssue;
+import dev.parthenodevs.bugboard.backend.dto.enums.*;
 import dev.parthenodevs.bugboard.backend.dto.request.CreateIssueRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.request.UpdateIssueRequestDTO;
 import dev.parthenodevs.bugboard.backend.dto.response.IssueResponseDTO;
@@ -43,9 +43,26 @@ public class IssueService
         this.issueMapper = issueMapper;
     }
 
+    @Transactional
     public List<IssueResponseDTO> getAllIssues()
     {
-        return issueRepository.findAll().stream()
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if(auth == null || !auth.isAuthenticated())
+            throw new SecurityException("Utente non autenticato");
+
+        String email = auth.getName();
+        Utente currentUser = utenteRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
+
+        List<Issue> issues;
+
+        if(Boolean.TRUE.equals(currentUser.getIsAdmin()))
+            issues = issueRepository.findIssuesByAdminTeams(currentUser.getId());
+        else
+            return getIssuesByAssignee(currentUser.getId());
+
+        return issues.stream()
                 .map(issueMapper::toDto)
                 .toList();
     }
@@ -183,5 +200,15 @@ public class IssueService
                     logger.warning(() -> ISSUE_NOT_FOUND_MSG + id);
                     return new EntityNotFoundException(ISSUE_NOT_FOUND_MSG + id);
                 });
+    }
+
+    public List<IssueResponseDTO> searchIssues(String titolo, TipoIssue tipo, StatoIssue stato,
+                                               TipoPriorita priorita, Boolean isArchiviato)
+    {
+        List<Issue> issues = issueRepository.filtraIssues(titolo, tipo, stato, priorita, isArchiviato);
+
+        return issues.stream()
+                .map(issueMapper::toDto)
+                .toList();
     }
 }

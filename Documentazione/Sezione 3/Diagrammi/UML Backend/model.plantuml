@@ -5,23 +5,50 @@ skinparam nodesep 100
 skinparam ranksep 100
 skinparam classAttributeIconSize 0
 skinparam shadowing false
-skinparam wrapWidth 300
+skinparam wrapWidth 400
 
 skinparam package {
     BackgroundColor White
     BorderColor #2C3E50
 }
+
 skinparam class {
     BackgroundColor #FDFEFE
     BorderColor #2C3E50
     ArrowColor #2C3E50
 }
+skinparam class<<External>> {
+    BackgroundColor #F2F4F4
+    BorderColor #95A5A6
+    FontColor #95A5A6
+}
+skinparam interface<<External>> {
+    BackgroundColor #F2F4F4
+    BorderColor #95A5A6
+    FontColor #95A5A6
+}
 
 title Domain Model (JPA Entities) - Backend
 
+
+package "userdetails" {
+    interface UserDetails <<External>> {}
+}
+
+package "backend.exception" {
+    class InvalidFieldException <<External>> {}
+}
+
+package "backend.dto.enums" {
+    enum StatoProgetto <<External>> {}
+    enum StatoIssue <<External>> {}
+    enum TipoIssue <<External>> {}
+    enum TipoPriorita <<External>> {}
+}
+
 package "backend.model" {
 
-    class Utente implements "UserDetails" {
+    class Utente {
         - id : Long
         - email : String
         - nome : String
@@ -29,14 +56,17 @@ package "backend.model" {
         - password : String
         - isAdmin : Boolean
         --
+        ' Costruttori
         + Utente()
         + Utente(email: String, nome: String, cognome: String, password: String, isAdmin: Boolean)
         
+        ' Metodi di Business
         + addIssue(issue: Issue) : void
         + removeIssue(issue: Issue) : void
         + addTeam(team: Team) : void
         + removeTeam(team: Team) : void
         
+        ' Metodi UserDetails
         + getAuthorities() : Collection<? extends GrantedAuthority>
         + getUsername() : String
         + isAccountNonExpired() : boolean
@@ -60,7 +90,6 @@ package "backend.model" {
     class Progetto {
         - id : Long
         - nome : String
-        - stato : StatoProgetto
         --
         ' Costruttori
         + Progetto()
@@ -71,11 +100,8 @@ package "backend.model" {
         - id : Long
         - titolo : String
         - descrizione : String
-        - tipo : TipoIssue
-        - stato : StatoIssue
         - isArchiviato : boolean
         - immagine : String
-        - priorita : TipoPriorita
         --
         ' Costruttori
         + Issue()
@@ -84,11 +110,20 @@ package "backend.model" {
 
 }
 
+Utente .up.|> UserDetails : implements
+Utente ..> InvalidFieldException : throws
+Team ..> InvalidFieldException : throws
+Progetto ..> InvalidFieldException : throws
+Issue ..> InvalidFieldException : throws
+Progetto --> StatoProgetto : stato
+Issue --> TipoIssue : tipo
+Issue --> StatoIssue : stato
+Issue --> TipoPriorita : priorita
 Team "*" --> "1" Utente : admin
 Progetto "*" --> "1" Utente : admin
 Issue "*" --> "1" Utente : autore
-Utente "*" <--> "*" Team : membri
-Utente "*" <--> "*" Issue : assegnatari
+Utente "*" <--> "*" Team : membri / assignedTeams
+Utente "*" <--> "*" Issue : assegnatari / assignedIssues
 Team "1" <--> "*" Progetto : progetti
 Progetto "1" <--> "*" Issue : issues
 

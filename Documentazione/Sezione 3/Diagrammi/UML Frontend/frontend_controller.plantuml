@@ -1,0 +1,297 @@
+@startuml controller
+
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 350
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #E8F6F3
+    BorderColor #16A085
+    ArrowColor #2C3E50
+}
+skinparam interface {
+    BackgroundColor #FEF9E7
+    BorderColor #F1C40F
+    ArrowColor #2C3E50
+}
+skinparam class<<External>> {
+    BackgroundColor #F2F4F4
+    BorderColor #95A5A6
+    FontColor #95A5A6
+}
+
+title Controller Layer (MVC Logic) - Frontend
+
+package "frontend.service" {
+    class AuthService <<External>> {}
+    class IssueService <<External>> {}
+    class ProjectsService <<External>> {}
+    class TeamsService <<External>> {}
+    class UtenteService <<External>> {}
+}
+
+package "Utils & Swing" {
+    class Logger <<External>> {}
+    class Timer <<External>> {}
+    class ActionEvent <<External>> {}
+}
+
+package "frontend.controller" {
+
+    class NavigationController implements NavigationService {
+        - {static} VIEW_LOGIN : String = "LOGIN"
+        - {static} VIEW_APP_SHELL : String = "APP_SHELL"
+        - {static} INNER_ISSUES : String = "ISSUES"
+        - {static} INNER_TEAMS : String = "TEAMS"
+        - {static} INNER_PROJECTS : String = "PROJECTS"
+        - mainLayoutView : MainLayoutView
+        - mainFrame : MainFrame
+        - authService : AuthService
+        - utenteService : UtenteService
+        - issueService : IssueService
+        - projectsService : ProjectsService
+        - teamsService : TeamsService
+        --
+        + NavigationController(mainFrame, authService, utenteService, issueService, projectsService, teamsService)
+        + start() : void
+        - initMainLayoutIfNeeded() : void
+        + goToLogin() : void
+        + goToIssues() : void
+        + goToTeams() : void
+        + goToProjects() : void
+        - showEditPasswordDialog() : void
+        + showRegisterUserDialog() : void
+        + logout() : void
+    }
+
+    package "user" {
+        class LoginController {
+            - {static} LOGGER : Logger
+            - {static} EMAIL_MIN_LENGTH : int
+            - {static} EMAIL_MAX_LENGTH : int
+            - {static} PASSWORD_MIN_LENGTH : int
+            - {static} USERNAME_REGEX : Pattern
+            - view : LoginView
+            - authService : AuthService
+            - navigationService : NavigationService
+            --
+            + LoginController(view, authService, navService)
+            - initController() : void
+            - handleLogin(e: ActionEvent) : void
+            - validateInput() : void
+            - checkEmail() : boolean
+            - checkPassword() : boolean
+        }
+
+        class RegisterUserController {
+            - {static} PASSWORD_REGEX : String
+            - {static} EMAIL_REGEX : String
+            - view : RegisterUserDialog
+            - utenteService : UtenteService
+            --
+            + RegisterUserController(view, utenteService)
+            - handleRegistration() : void
+            - showWarning(msg) : void
+            - showError(msg) : void
+        }
+
+        class UpdatePasswordController {
+            - {static} PASSWORD_REGEX : String
+            - view : UpdatePasswordDialog
+            - authService : AuthService
+            - utenteService : UtenteService
+            --
+            + UpdatePasswordController(view, authService, utenteService)
+            - handleSave() : void
+        }
+    }
+
+    package "issues" {
+        class IssuesController {
+            - {static} LOGGER : Logger
+            - {static} MSG_ERROR : String
+            - {static} REFRESH_INTERVAL_MS : int
+            - view : IssuesView
+            - issueService : IssueService
+            - teamService : TeamsService
+            - projectsService : ProjectsService
+            - authService : AuthService
+            - mainFrame : MainFrame
+            - autoRefreshTimer : Timer
+            - cacheMainList : List<IssueResponseDTO>
+            - cacheCreatedList : List<IssueResponseDTO>
+            - cacheArchivedList : List<IssueResponseDTO>
+            --
+            + IssuesController(view, issueService, teamService, projectsService, authService, mainFrame)
+            - initController() : void
+            - loadData(silentMode) : void
+            - applyFilters() : void
+            - filterList(...) : List
+            - resetFilters() : void
+            - handleAssignRequest(issueId) : void
+            - performAssign(issueId, userIds) : void
+            - openCreateDialog() : void
+            - createIssue(req) : void
+            - openEditDialog(issueId) : void
+            - updateIssue(issueId, req) : void
+            - resolveIssue(id) : void
+            - archiveIssue(id) : void
+        }
+    }
+
+    package "projects" {
+        class ProjectsController {
+            - {static} logger : Logger
+            - view : ProjectsView
+            - projectsService : ProjectsService
+            - teamsService : TeamsService
+            - authService : AuthService
+            - mainFrame : JFrame
+            --
+            + ProjectsController(view, projectsService, teamsService, authService, mainFrame)
+            - initController() : void
+            - loadData() : void
+            - openCreateDialog() : void
+        }
+
+        class CreateProjectController {
+            - {static} logger : Logger
+            - view : CreateProjectDialog
+            - progettoService : ProjectsService
+            - authService : AuthService
+            - onSuccessCallback : Runnable
+            --
+            + CreateProjectController(view, projectsService, authService, callback)
+            - initController() : void
+            - handleSave() : void
+        }
+    }
+
+    package "teams" {
+        class TeamController {
+            - {static} LOGGER : Logger
+            - view : TeamsView
+            - teamsService : TeamsService
+            - mainFrame : JFrame
+            --
+            + TeamController(view, teamsService, mainFrame)
+            - initController() : void
+            - loadTeams() : void
+            - onViewMembers(team) : void
+            - onAddMember(team) : void
+            - onRemoveMember(team) : void
+            - performAddMembri(...) : void
+            - performRemoveMembri(...) : void
+            - openCreateDialog() : void
+            - showError(msg) : void
+        }
+
+        class CreateTeamController {
+            - {static} LOGGER : Logger
+            - view : CreateTeamDialog
+            - teamsService : TeamsService
+            - onSuccessCallback : Runnable
+            --
+            + CreateTeamController(view, teamsService, callback)
+            - handleCreation() : void
+            - showWarning(msg) : void
+            - showError(msg) : void
+        }
+    }
+}
+
+package "frontend.view" {
+    class MainFrame <<External>> {}
+    class MainLayoutView <<External>> {}
+    
+    package "user" as view_user {
+        class LoginView <<External>> {}
+        class RegisterUserDialog <<External>> {}
+        class UpdatePasswordDialog <<External>> {}
+    }
+    package "issues" as view_issues {
+        class IssuesView <<External>> {}
+    }
+    package "projects" as view_projects {
+        class ProjectsView <<External>> {}
+        class CreateProjectDialog <<External>> {}
+    }
+    package "teams" as view_teams {
+        class TeamsView <<External>> {}
+        class CreateTeamDialog <<External>> {}
+    }
+}
+
+NavigationController --> AuthService
+NavigationController --> UtenteService
+NavigationController --> IssueService
+NavigationController --> ProjectsService
+NavigationController --> TeamsService
+
+LoginController --> AuthService
+LoginController --> NavigationService
+
+RegisterUserController --> UtenteService
+
+UpdatePasswordController --> AuthService
+UpdatePasswordController --> UtenteService
+
+IssuesController --> IssueService
+IssuesController --> TeamsService
+IssuesController --> ProjectsService
+IssuesController --> AuthService
+
+ProjectsController --> ProjectsService
+ProjectsController --> TeamsService
+ProjectsController --> AuthService
+
+CreateProjectController --> ProjectsService
+CreateProjectController --> AuthService
+
+TeamController --> TeamsService
+
+CreateTeamController --> TeamsService
+
+NavigationController --> MainFrame
+NavigationController --> MainLayoutView
+
+LoginController --> LoginView
+
+RegisterUserController --> RegisterUserDialog
+
+UpdatePasswordController --> UpdatePasswordDialog
+
+IssuesController --> IssuesView
+
+ProjectsController --> ProjectsView
+CreateProjectController --> CreateProjectDialog
+
+TeamController --> TeamsView
+CreateTeamController --> CreateTeamDialog
+
+NavigationController ..> LoginController
+NavigationController ..> IssuesController
+NavigationController ..> ProjectsController
+NavigationController ..> TeamController
+NavigationController ..> RegisterUserController
+NavigationController ..> UpdatePasswordController
+
+ProjectsController ..> CreateProjectController
+TeamController ..> CreateTeamController
+
+IssuesController --> Timer
+LoginController --> Logger
+TeamController --> Logger
+ProjectsController --> Logger
+
+"frontend.service" -[hidden]right- "frontend.controller"
+"frontend.controller" -[hidden]right- "frontend.view"
+
+@enduml

@@ -1,0 +1,169 @@
+@startuml dto
+
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor<<Request>> #E8F8F5
+    BackgroundColor<<Response>> #F4F6F7
+    BackgroundColor<<Enum>> #FEF9E7
+    BorderColor #2C3E50
+    ArrowColor #2C3E50
+}
+
+title Diagramma DTO (Data Transfer Objects) - Frontend
+
+package "model.dto.enums" {
+    enum StatoIssue <<Enum>> {
+        TODO
+        ASSEGNATA
+        DA_ACCETTARE
+        RISOLTA
+    }
+
+    enum StatoProgetto <<Enum>> {
+        ATTIVO
+        FUTURO
+        CONCLUSO
+    }
+
+    enum TipoIssue <<Enum>> {
+        QUESTION
+        BUG
+        DOCUMENTATION
+        FEATURE
+    }
+
+    enum TipoPriorita <<Enum>> {
+        ALTA
+        BASSA
+        MEDIA
+    }
+}
+
+package "model.dto.request" {
+    
+    class CreateIssueRequestDTO <<Request>> {
+        - titolo : String
+        - descrizione : String
+        - tipo : TipoIssue
+        - isArchiviato : Boolean
+        - priorita : TipoPriorita
+        - immagine : String
+        - idProgetto : Long
+    }
+
+    class UpdateIssueRequestDTO <<Request>> {
+        - titolo : String
+        - descrizione : String
+        - tipo : TipoIssue
+        - stato : StatoIssue
+        - isArchiviato : Boolean
+        - priorita : TipoPriorita
+        - immagine : String
+    }
+
+    class CreateProgettoRequestDTO <<Request>> {
+        - nome : String
+        - stato : StatoProgetto
+        - idTeam : Long
+        - idAdmin : Long
+    }
+
+    class CreateTeamRequestDTO <<Request>> {
+        - nome : String
+    }
+
+    class RegisterRequestDTO <<Request>> {
+        - email : String
+        - nome : String
+        - cognome : String
+        - password : String
+        - isAdmin : Boolean
+    }
+
+    class LoginRequestDTO <<Request>> {
+        - email : String
+        - password : String
+    }
+
+    class UpdateUtenteRequestDTO <<Request>> {
+        - oldPassword : String
+        - password : String
+    }
+}
+
+package "model.dto.response" {
+
+    class AuthResponseDTO <<Response>> {
+        - jwtToken : String
+        - tokenType : String
+    }
+
+    class UtenteResponseDTO <<Response>> {
+        - id : Long
+        - email : String
+        - nome : String
+        - cognome : String
+        - isAdmin : Boolean
+    }
+
+    class IssueResponseDTO <<Response>> {
+        - id : Long
+        - titolo : String
+        - descrizione : String
+        - tipo : TipoIssue
+        - stato : StatoIssue
+        - isArchiviato : boolean
+        - immagine : String
+        - priorita : TipoPriorita
+        - idAutore : Long
+        - nomeAutore : String
+        - idProgetto : Long
+        - nomeProgetto : String
+        - idTeam : Long
+        - nomeTeam : String
+    }
+
+    class ProgettoResponseDTO <<Response>> {
+        - id : Long
+        - nome : String
+        - stato : StatoProgetto
+        - idTeam : Long
+        - nomeTeam : String
+        - idAdmin : Long
+        - nomeAdmin : String
+        - issuesTotali : int
+    }
+    
+    class TeamResponseDTO <<Response>> {
+        - id : Long
+        - nome : String
+        - idAdmin : Long
+        - nomeAdmin : String
+        - numeroMembri : int
+        - numeroProgetti : int
+    }
+}
+
+CreateIssueRequestDTO ..> TipoIssue
+CreateIssueRequestDTO ..> TipoPriorita
+UpdateIssueRequestDTO ..> TipoIssue
+UpdateIssueRequestDTO ..> StatoIssue
+UpdateIssueRequestDTO ..> TipoPriorita
+CreateProgettoRequestDTO ..> StatoProgetto
+IssueResponseDTO ..> TipoIssue
+IssueResponseDTO ..> StatoIssue
+IssueResponseDTO ..> TipoPriorita
+ProgettoResponseDTO ..> StatoProgetto
+AuthResponseDTO --> UtenteResponseDTO
+
+@enduml

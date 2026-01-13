@@ -1,0 +1,121 @@
+@startuml view_user
+
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+hide <<External>> empty members
+
+title View Layer - User Package
+
+package "Swing & UI Libs" {
+    class "JXPanel" <<External>>
+    class "JDialog" <<External>>
+    class "JXTextField" <<External>>
+    class "JPasswordField" <<External>>
+    class "JXButton" <<External>>
+    class "JXLabel" <<External>>
+    class "JTextField" <<External>>
+    class "JCheckBox" <<External>>
+    interface "Ikon" <<External>>
+}
+
+package "frontend.view.user" {
+
+    class LoginView {
+        - {static} EMAIL_DOMAIN : String
+        - emailField : JXTextField
+        - passwordField : JPasswordField
+        - loginButton : JXButton
+        - errorLabel : JXLabel
+        --
+        + LoginView()
+        - createLogoLabel() : JXLabel
+        + getEmail() : String
+        + getEmailDomain() : String
+        + getPassword() : String
+        + setEmailError(hasError: boolean, msg: String) : void
+        + setPasswordError(hasError: boolean, msg: String) : void
+        + setAsDefaultFocus() : void
+        + showErrorMessage(msg: String) : void
+        + clearErrorMessage() : void
+        + setLoginButtonEnabled(enabled: boolean) : void
+        + showLoadingState(loading: boolean) : void
+        + addInputListener(l: DocumentListener) : void
+        + addLoginActionListener(l: ActionListener) : void
+        + addFocusListener(l: FocusListener) : void
+    }
+
+    class RegisterUserDialog {
+        - txtNome : JTextField
+        - txtCognome : JTextField
+        - txtEmail : JTextField
+        - txtPassword : JPasswordField
+        - txtConfirmPassword : JPasswordField
+        - chkAdmin : JCheckBox
+        - btnSave : JXButton
+        - btnCancel : JXButton
+        - {static} EMAIL_DOMAIN : String
+        --
+        + RegisterUserDialog(owner: Frame)
+        - createTextField(placeholder: String, icon: Ikon) : JTextField
+        - createEmailField() : JTextField
+        - createPassField(placeholder: String) : JPasswordField
+        + getNome() : String
+        + getCognome() : String
+        + getEmail() : String
+        + getPassword() : String
+        + getConfirmPassword() : String
+        + isAdmin() : boolean
+        + setSaveAction(l: ActionListener) : void
+        + setCancelAction(l: ActionListener) : void
+    }
+
+    class UpdatePasswordDialog {
+        - txtOldPassword : JPasswordField
+        - txtPassword : JPasswordField
+        - txtConfirmPassword : JPasswordField
+        - btnSave : JXButton
+        - btnCancel : JXButton
+        --
+        + UpdatePasswordDialog(owner: Frame, currentUser: UtenteResponseDTO)
+        - createPassField(placeholder: String) : JPasswordField
+        + getOldPassword() : String
+        + getPassword() : String
+        + getConfirmPassword() : String
+        + setSaveAction(l: ActionListener) : void
+        + setCancelAction(l: ActionListener) : void
+    }
+}
+
+package "Data" {
+    class "UtenteResponseDTO" <<External>>
+}
+
+
+LoginView -up-|> JXPanel
+RegisterUserDialog -up-|> JDialog
+UpdatePasswordDialog -up-|> JDialog
+
+UpdatePasswordDialog ..> UtenteResponseDTO : usa
+
+LoginView --> JXTextField
+LoginView --> JPasswordField
+LoginView --> JXButton
+LoginView --> JXLabel
+
+RegisterUserDialog --> JTextField
+RegisterUserDialog --> JPasswordField
+RegisterUserDialog --> JCheckBox
+RegisterUserDialog --> JXButton
+RegisterUserDialog ..> Ikon : usa
+
+UpdatePasswordDialog --> JPasswordField
+UpdatePasswordDialog --> JXButton
+
+"Swing & UI Libs" -[hidden]down- "frontend.view.user"
+"frontend.view.user" -[hidden]down- "Data"
+
+@enduml

@@ -43,19 +43,32 @@ package "backend.mapper" {
     }
 }
 
-package "backend.dto" as DTOs {}
-package "backend.model" as Entities {}
+package "backend.model" {
+    class Utente
+    class Team
+    class Progetto
+    class Issue
+}
 
-UtenteMapper ..> DTOs
-UtenteMapper ..> Entities
+package "backend.dto" {
+    class RequestDTOs
+    class ResponseDTOs
+}
 
-TeamMapper ..> DTOs
-TeamMapper ..> Entities
+UtenteMapper ..> Utente
+UtenteMapper ..> RequestDTOs
+UtenteMapper ..> ResponseDTOs
 
-ProgettoMapper ..> DTOs
-ProgettoMapper ..> Entities
+TeamMapper ..> Team
+TeamMapper ..> RequestDTOs
+TeamMapper ..> ResponseDTOs
 
-IssueMapper ..> DTOs
-IssueMapper ..> Entities
+ProgettoMapper ..> Progetto
+ProgettoMapper ..> RequestDTOs
+ProgettoMapper ..> ResponseDTOs
+
+IssueMapper ..> Issue
+IssueMapper ..> RequestDTOs
+IssueMapper ..> ResponseDTOs
 
 @enduml

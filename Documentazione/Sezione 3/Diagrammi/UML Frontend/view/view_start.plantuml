@@ -1,0 +1,99 @@
+@startuml view_start
+
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+
+hide <<External>> empty members
+
+title View Layer - Application Entry Point & Core Layout
+
+package "External Libraries" {
+    class "JXFrame" as JXFrame_Ext <<External>>
+    class "JXPanel" as JXPanel_Ext <<External>>
+    class "CardLayout" as CardLayout_Ext <<External>>
+    class "HttpClient" as HttpClient_Ext <<External>>
+    class "ObjectMapper" as ObjectMapper_Ext <<External>>
+    class "Logger" as Logger_Ext <<External>>
+}
+
+package "Controller & Services" {
+    class "NavigationController" as NavController_Ext <<External>>
+    class "AuthService" as AuthService_Ext <<External>>
+    class "UtenteService" as UtenteService_Ext <<External>>
+    class "ProjectsService" as ProjectsService_Ext <<External>>
+    class "TeamsService" as TeamsService_Ext <<External>>
+    class "IssueService" as IssueService_Ext <<External>>
+}
+
+package "frontend.view.component" {
+    class "HeaderPanel" as HeaderPanel_Ext <<External>>
+    class "SidebarPanel" as SidebarPanel_Ext <<External>>
+}
+
+package "frontend.view" {
+
+    class FrontendApplication {
+        - {static} LOGGER : Logger
+        --
+        + {static} main(args: String[]) : void
+        - {static} getNavigationController(client: HttpClient, mapper: ObjectMapper, auth: AuthService) : NavigationController
+    }
+
+    class MainFrame {
+        - {static} LOGGER : Logger
+        - {static} MIN_DIMENSION : Dimension
+        - cardLayout : CardLayout
+        - mainPanel : JXPanel
+        --
+        + MainFrame()
+        + addView(view: JXPanel, key: String) : void
+        + showView(key: String) : void
+        + clearViews() : void
+    }
+
+    class MainLayoutView {
+        - sidebar : SidebarPanel
+        - contentPanel : JXPanel
+        - contentCardLayout : CardLayout
+        --
+        + MainLayoutView(header: HeaderPanel, sidebar: SidebarPanel)
+        + toggleSidebar() : void
+        + addContentView(view: JXPanel, key: String) : void
+        + showContentView(key: String) : void
+    }
+}
+
+
+MainFrame -up-|> JXFrame_Ext
+MainLayoutView -up-|> JXPanel_Ext
+
+FrontendApplication ..> HttpClient_Ext : crea
+FrontendApplication ..> ObjectMapper_Ext : crea
+FrontendApplication ..> Logger_Ext : usa
+
+FrontendApplication ..> AuthService_Ext : crea
+FrontendApplication ..> UtenteService_Ext : crea
+FrontendApplication ..> ProjectsService_Ext : crea
+FrontendApplication ..> TeamsService_Ext : crea
+FrontendApplication ..> IssueService_Ext : crea
+
+FrontendApplication ..> MainFrame : crea
+FrontendApplication ..> NavController_Ext : crea e avvia
+
+MainFrame --> CardLayout_Ext : usa (layout manager)
+MainFrame --> JXPanel_Ext : contiene (mainPanel)
+MainFrame ..> Logger_Ext : usa
+
+MainLayoutView --> CardLayout_Ext : usa (content layout)
+MainLayoutView --> JXPanel_Ext : contiene (contentPanel)
+MainLayoutView --> HeaderPanel_Ext : contiene (North)
+MainLayoutView --> SidebarPanel_Ext : contiene (West)
+
+"External Libraries" -[hidden]down- "frontend.view"
+"Controller & Services" -[hidden]down- "frontend.view"
+
+@enduml

@@ -1,0 +1,120 @@
+@startuml view_projects
+
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+hide <<External>> empty members
+
+title View Layer - Projects Package
+
+package "Swing & UI Libs" {
+    class "JXPanel" <<External>>
+    class "JDialog" <<External>>
+    class "JPanel" <<External>>
+    class "JButton" <<External>>
+    class "DefaultTableModel" <<External>>
+    class "AbstractCellEditor" <<External>>
+    interface "TableCellRenderer" <<External>>
+    interface "TableCellEditor" <<External>>
+    class "JTextField" <<External>>
+    class "JComboBox" <<External>>
+    class "JXButton" <<External>>
+}
+
+package "frontend.view.projects" {
+
+    class ProjectsView {
+        - btnNuovoProgetto : JXButton
+        - btnRefresh : JXButton
+        - tableModel : DefaultTableModel
+        - onCloseProject : Consumer<Long>
+        - onActivateProject : Consumer<Long>
+        --
+        + ProjectsView()
+        - createIconButton() : JXButton
+        + updateTable(progetti: List<ProgettoResponseDTO>) : void
+        + setNuovoProgettoAction(l: ActionListener) : void
+        + setRefreshAction(l: ActionListener) : void
+        + setCreateButtonVisible(visible: boolean) : void
+    }
+    
+    class ActionsPanel <<Inner>> {
+        + btnActivate : JButton
+        + btnClose : JButton
+        --
+        + ActionsPanel()
+        - styleBtn(btn: JButton, tip: String) : void
+        + updateView(stato: StatoProgetto, isSelected: boolean) : void
+    }
+
+    class ActionsRenderer <<Inner>> {
+        + getTableCellRendererComponent(table: JTable, value: Object, isSel: boolean, hasFocus: boolean, row: int, col: int) : Component
+    }
+
+    class ActionsEditor <<Inner>> {
+        - panel : ActionsPanel
+        - currentId : Long
+        --
+        + ActionsEditor()
+        + getTableCellEditorComponent(table: JTable, value: Object, isSel: boolean, row: int, col: int) : Component
+        + getCellEditorValue() : Object
+        + isCellEditable(e: EventObject) : boolean
+    }
+
+    class CreateProjectDialog {
+        - txtNome : JTextField
+        - cmbStato : JComboBox
+        - cmbTeam : JComboBox
+        - btnSave : JXButton
+        - btnCancel : JXButton
+        --
+        + CreateProjectDialog(owner: Frame, teams: List<TeamResponseDTO>)
+        + getNome() : String
+        + getSelectedTeam() : TeamResponseDTO
+        + getStato() : StatoProgetto
+        + setSaveAction(l: ActionListener) : void
+        + setCancelAction(l: ActionListener) : void
+    }
+}
+
+package "Data" {
+    class "ProgettoResponseDTO" <<External>>
+    class "TeamResponseDTO" <<External>>
+    enum "StatoProgetto" <<External>>
+}
+
+ProjectsView -up-|> JXPanel
+CreateProjectDialog -up-|> JDialog
+
+ActionsPanel -up-|> JPanel
+ActionsRenderer -up-|> ActionsPanel
+ActionsRenderer .up.|> TableCellRenderer
+ActionsEditor -up-|> AbstractCellEditor
+ActionsEditor .up.|> TableCellEditor
+
+ProjectsView +-- ActionsPanel
+ProjectsView +-- ActionsRenderer
+ProjectsView +-- ActionsEditor
+
+ActionsEditor -left-> ActionsPanel : usa (delega UI)
+
+ProjectsView ..> ProgettoResponseDTO : usa (table model)
+ProjectsView ..> StatoProgetto : usa (renderer logic)
+
+CreateProjectDialog ..> TeamResponseDTO : usa (combo box)
+CreateProjectDialog ..> StatoProgetto : usa (combo box)
+
+ProjectsView --> JXButton
+ProjectsView --> DefaultTableModel
+ActionsPanel --> JButton
+CreateProjectDialog --> JTextField
+CreateProjectDialog --> JComboBox
+CreateProjectDialog --> JXButton
+
+"Swing & UI Libs" -[hidden]down- "frontend.view.projects"
+"frontend.view.projects" -[hidden]down- "Data"
+
+@enduml

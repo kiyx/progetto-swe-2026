@@ -1,0 +1,207 @@
+@startuml view_issues
+
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+
+hide <<External>> empty members
+
+title View Layer - Issues Package
+
+package "Swing & UI Libs" {
+    class "JXPanel" <<External>>
+    class "JDialog" <<External>>
+    class "JPanel" <<External>>
+    class "DefaultTableModel" <<External>>
+    class "AbstractCellEditor" <<External>>
+    class "DefaultTableCellRenderer" <<External>>
+    interface "TableCellRenderer" <<External>>
+    interface "TableCellEditor" <<External>>
+    class "JButton" <<External>>
+    class "JTextField" <<External>>
+    class "JComboBox" <<External>>
+    class "JList" <<External>>
+    class "JLabel" <<External>>
+    class "JXButton" <<External>>
+}
+
+package "frontend.view.issues" {
+
+    class IssuesView {
+        - isAdmin : boolean
+        - modelMain : DefaultTableModel
+        - modelCreate : DefaultTableModel
+        - modelArchive : DefaultTableModel
+        - searchField : JTextField
+        - filterTipo : JComboBox
+        - filterStato : JComboBox
+        - filterPriorita : JComboBox
+        - btnNuovaIssue : JXButton
+        - btnRefresh : JXButton
+        - onArchiveIssue : LongConsumer
+        - onEditIssue : LongConsumer
+        - onResolveIssue : LongConsumer
+        - onAssignIssue : LongConsumer
+        --
+        + IssuesView(isAdmin: boolean)
+        - initHeader() : void
+        - initFilterPanel() : void
+        - createModel(cols: String[]) : DefaultTableModel
+        - createTable(model: DefaultTableModel, tabType: TabType) : JTable
+        - setupCombo(combo: JComboBox, placeholder: String) : void
+        - createIconButton() : JXButton
+        + updateMainTab(issues: List<IssueResponseDTO>) : void
+        + updateCreateTab(issues: List<IssueResponseDTO>) : void
+        + updateArchiveTab(issues: List<IssueResponseDTO>) : void
+        - updateModel(model: DefaultTableModel, issues: List<IssueResponseDTO>) : void
+        + setupFiltersListener(l: ActionListener) : void
+        + setNuovaIssueAction(l: ActionListener) : void
+        + setRefreshAction(l: ActionListener) : void
+        + setResetFilterAction(l: ActionListener) : void
+        - showImagePreview(base64: String) : void
+    }
+
+    
+    class ActionsPanel <<Inner>> {
+        + btnEdit : JButton
+        + btnResolve : JButton
+        + btnArchive : JButton
+        + btnAssign : JButton
+        - tabType : TabType
+        --
+        + ActionsPanel(tabType: TabType)
+        - createActionBtn(tooltip: String) : JButton
+        + updateView(isSelected: boolean, stato: StatoIssue, tipo: TipoIssue) : void
+        - updateColors(isSelected: boolean) : void
+        - updateVisibility(stato: StatoIssue, tipo: TipoIssue) : void
+    }
+
+    class ActionsRenderer <<Inner>> {
+        + ActionsRenderer(type: TabType)
+        + getTableCellRendererComponent(table: JTable, value: Object, isSel: boolean, hasFocus: boolean, row: int, col: int) : Component
+    }
+
+    class ActionsEditor <<Inner>> {
+        - panel : ActionsPanel
+        - currentId : Long
+        --
+        + ActionsEditor(type: TabType)
+        - fireAction(action: LongConsumer) : void
+        + getTableCellEditorComponent(table: JTable, value: Object, isSel: boolean, row: int, col: int) : Component
+        + getCellEditorValue() : Object
+        + isCellEditable(e: EventObject) : boolean
+    }
+
+    class ImageCellRenderer <<Inner>> {
+        + getTableCellRendererComponent(table: JTable, value: Object, isSelected: boolean, hasFocus: boolean, row: int, column: int) : Component
+    }
+
+
+    class IssueFormDialog {
+        - txtTitolo : JTextField
+        - txtDescrizione : JTextArea
+        - cmbTipo : JComboBox
+        - cmbPriorita : JComboBox
+        - cmbProgetto : JComboBox
+        - lblImagePreview : JLabel
+        - currentBase64Image : String
+        - confirmed : boolean
+        --
+        + IssueFormDialog(owner: Frame, progetti: List<ProgettoResponseDTO>, issueToEdit: IssueResponseDTO)
+        - setupWindowProperties() : void
+        - initComponents(progettiDisponibili: List<ProgettoResponseDTO>) : void
+        - initPrioritaCombo() : void
+        - initProgettoCombo(progettiDisponibili: List<ProgettoResponseDTO>) : void
+        - initImageComponents() : void
+        - buildLayout(title: String) : void
+        - createFooterButtons() : JPanel
+        - loadIssueData(issue: IssueResponseDTO) : void
+        - selectProjectById(idProgetto: Long) : void
+        - loadImageIfExists(base64Image: String) : void
+        - chooseImage() : void
+        - removeImage() : void
+        - validateFields() : boolean
+        + getCreateRequest() : CreateIssueRequestDTO
+        + getUpdateRequest() : UpdateIssueRequestDTO
+        + isConfirmed() : boolean
+    }
+
+    class AssignIssueDialog {
+        - userList : JList<UtenteResponseDTO>
+        - confirmed : boolean
+        --
+        + AssignIssueDialog(owner: Frame, members: List<UtenteResponseDTO>)
+        + getSelectedUsers() : List<UtenteResponseDTO>
+    }
+}
+
+package "Data & Utils" {
+    class "IssueResponseDTO" <<External>>
+    class "CreateIssueRequestDTO" <<External>>
+    class "UpdateIssueRequestDTO" <<External>>
+    class "ProgettoResponseDTO" <<External>>
+    class "UtenteResponseDTO" <<External>>
+    
+    enum "StatoIssue" <<External>>
+    enum "TipoIssue" <<External>>
+    enum "TipoPriorita" <<External>>
+    
+    class "ImageUtils" <<External>>
+}
+
+
+IssuesView -up-|> JXPanel
+IssueFormDialog -up-|> JDialog
+AssignIssueDialog -up-|> JDialog
+
+ActionsPanel -up-|> JPanel
+ActionsRenderer -up-|> ActionsPanel
+ActionsRenderer .up.|> TableCellRenderer
+ActionsEditor -up-|> AbstractCellEditor
+ActionsEditor .up.|> TableCellEditor
+ImageCellRenderer -up-|> DefaultTableCellRenderer
+
+IssuesView --> JTextField
+IssuesView --> JComboBox
+IssuesView --> JXButton
+IssuesView --> DefaultTableModel
+
+ActionsPanel --> JButton
+
+IssueFormDialog --> JTextField
+IssueFormDialog --> JComboBox
+IssueFormDialog --> JLabel
+
+AssignIssueDialog --> JList
+
+IssuesView +-- ActionsPanel
+IssuesView +-- ActionsRenderer
+IssuesView +-- ActionsEditor
+IssuesView +-- ImageCellRenderer
+
+ActionsEditor -left-> ActionsPanel : usa (delega UI)
+
+IssuesView ..> IssueResponseDTO : usa (list e model)
+IssuesView ..> StatoIssue : usa (filtri)
+IssuesView ..> TipoIssue : usa (filtri)
+IssuesView ..> TipoPriorita : usa (filtri)
+
+IssueFormDialog ..> ProgettoResponseDTO : usa (combo)
+IssueFormDialog ..> IssueResponseDTO : usa (edit mode)
+IssueFormDialog ..> CreateIssueRequestDTO : crea
+IssueFormDialog ..> UpdateIssueRequestDTO : crea
+IssueFormDialog ..> TipoIssue : usa
+IssueFormDialog ..> TipoPriorita : usa
+
+AssignIssueDialog ..> UtenteResponseDTO : usa (lista)
+
+IssuesView ..> ImageUtils : usa (preview image)
+IssueFormDialog ..> ImageUtils : usa (upload/preview image)
+
+"Swing & UI Libs" -[hidden]down- "frontend.view.issues"
+"frontend.view.issues" -[hidden]down- "Data & Utils"
+
+@enduml

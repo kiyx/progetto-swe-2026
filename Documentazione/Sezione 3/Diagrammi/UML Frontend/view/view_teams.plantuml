@@ -1,0 +1,151 @@
+@startuml view_teams
+
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 300
+hide <<External>> empty members
+
+title View Layer - Teams Package
+
+package "Swing & UI Libs" {
+    class "JXPanel" <<External>>
+    class "JDialog" <<External>>
+    class "JPanel" <<External>>
+    class "DefaultTableModel" <<External>>
+    class "AbstractCellEditor" <<External>>
+    class "JXTable" <<External>>
+    class "JButton" <<External>>
+    class "JList" <<External>>
+    class "JTextField" <<External>>
+    interface "TableCellRenderer" <<External>>
+    interface "TableCellEditor" <<External>>
+}
+
+package "frontend.view.teams" {
+
+    class TeamsView {
+        - tableModel : DefaultTableModel
+        - table : JXTable
+        - btnNuovoTeam : JButton
+        - btnRefresh : JButton
+        --
+        + TeamsView()
+        + getModel() : DefaultTableModel
+        + addCreateListener(l: ActionListener) : void
+        + addRefreshListener(l: ActionListener) : void
+        + setTableActions(onAdd: Consumer, onRemove: Consumer, onList: Consumer) : void
+    }
+
+    
+    class ActionsPanel <<Inner>> {
+        - currentTeam : TeamResponseDTO
+        --
+        + ActionsPanel(onAdd, onRemove, onList)
+        - fireAction(action: Consumer) : void
+        + updateData(team: TeamResponseDTO, isSelected: boolean, table: JTable) : void
+        - createBtn(icon: Ikon, color: Color, tooltip: String) : JButton
+    }
+
+    class ActionsRenderer <<Inner>> {
+        - panel : ActionsPanel
+        --
+        + ActionsRenderer(panel: ActionsPanel)
+        + getTableCellRendererComponent(table: JTable, value: Object, isSelected: boolean, hasFocus: boolean, row: int, column: int) : Component
+    }
+
+    class ActionsEditor <<Inner>> {
+        - panel : ActionsPanel
+        --
+        + ActionsEditor(panel: ActionsPanel)
+        + getTableCellEditorComponent(table: JTable, value: Object, isSelected: boolean, row: int, column: int) : Component
+        + getCellEditorValue() : Object
+        + isCellEditable(e: EventObject) : boolean
+    }
+
+
+    class CreateTeamDialog {
+        - nameField : JTextField
+        - confirmButton : JButton
+        --
+        + CreateTeamDialog(owner: Frame)
+        - initComponents() : void
+        + setSaveAction(l: ActionListener) : void
+        + getTeamName() : String
+    }
+
+    class AddMembroDialog {
+        - userList : JList
+        - confirmed : boolean
+        --
+        + AddMembroDialog(owner: Frame, availableUsers: List<UtenteResponseDTO>)
+        + getSelectedUsers() : List<UtenteResponseDTO>
+    }
+
+    class DeleteMembroDialog {
+        - userList : JList
+        - confirmed : boolean
+        --
+        + DeleteMembroDialog(owner: Frame, members: List<UtenteResponseDTO>)
+        + getSelectedUsers() : List<UtenteResponseDTO>
+    }
+
+    class ShowMembriDialog {
+        --
+        + ShowMembriDialog(owner: Frame, members: List<UtenteResponseDTO>)
+    }
+}
+
+package "Data & Utils" {
+    class "TeamResponseDTO" <<External>>
+    class "UtenteResponseDTO" <<External>>
+    class "UtenteListRenderer" <<External>>
+}
+
+TeamsView -up-|> JXPanel
+CreateTeamDialog -up-|> JDialog
+AddMembroDialog -up-|> JDialog
+DeleteMembroDialog -up-|> JDialog
+ShowMembriDialog -up-|> JDialog
+
+ActionsPanel -up-|> JPanel
+ActionsRenderer .up.|> TableCellRenderer
+ActionsEditor -up-|> AbstractCellEditor
+ActionsEditor .up.|> TableCellEditor
+
+TeamsView +-- ActionsPanel
+TeamsView +-- ActionsRenderer
+TeamsView +-- ActionsEditor
+
+ActionsRenderer --> ActionsPanel : usa (composition)
+ActionsEditor --> ActionsPanel : usa (composition)
+
+TeamsView ..> TeamResponseDTO : usa (table model)
+ActionsPanel ..> TeamResponseDTO : usa
+
+AddMembroDialog ..> UtenteResponseDTO : usa (list)
+AddMembroDialog ..> UtenteListRenderer : usa (renderer)
+
+DeleteMembroDialog ..> UtenteResponseDTO : usa (list)
+DeleteMembroDialog ..> UtenteListRenderer : usa (renderer)
+
+ShowMembriDialog ..> UtenteResponseDTO : usa (list)
+ShowMembriDialog ..> UtenteListRenderer : usa (renderer)
+
+TeamsView --> JXTable
+TeamsView --> JButton
+TeamsView --> DefaultTableModel
+
+CreateTeamDialog --> JTextField
+CreateTeamDialog --> JButton
+
+AddMembroDialog --> JList
+DeleteMembroDialog --> JList
+ShowMembriDialog --> JList
+
+"Swing & UI Libs" -[hidden]down- "frontend.view.teams"
+"frontend.view.teams" -[hidden]down- "Data & Utils"
+
+@enduml

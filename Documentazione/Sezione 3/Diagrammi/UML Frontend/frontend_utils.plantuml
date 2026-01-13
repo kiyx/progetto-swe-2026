@@ -1,0 +1,93 @@
+@startuml utils
+
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 80
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 400
+
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #E8F6F3
+    BorderColor #16A085
+    ArrowColor #2C3E50
+}
+
+skinparam class<<External>> {
+    BackgroundColor #F2F4F4
+    BorderColor #95A5A6
+    FontColor #95A5A6
+}
+
+title Utils & Renderers (Helper Components) - Frontend
+
+package "swing" {
+    class ImageIcon <<External>> {}
+    class JList <<External>> {}
+    class JTable <<External>> {}
+    class DefaultListCellRenderer <<External>> {}
+}
+
+package "table" {
+    class DefaultTableCellRenderer <<External>> {}
+}
+
+package "awt" {
+    class Component <<External>> {}
+}
+
+package "io" {
+    class File <<External>> {}
+}
+
+package "logging" {
+    class Logger <<External>> {}
+}
+
+package "model.dto.response" {
+    class UtenteResponseDTO <<External>> {}
+}
+
+package "frontend.utils" {
+
+    class ImageUtils {
+        - {static} LOGGER : Logger
+        --
+        - ImageUtils()
+        + {static} encodeFileToBase64(file: File) : String
+        + {static} decodeBase64ToIcon(base64String: String, width: int, height: int) : ImageIcon
+        + {static} loadResizedIcon(file: File, width: int, height: int) : ImageIcon
+    }
+
+    class ImageCellRenderer {
+        --
+        + getTableCellRendererComponent(table: JTable, value: Object, isSelected: boolean, hasFocus: boolean, row: int, column: int) : Component
+    }
+
+    class UtenteListRenderer {
+        --
+        + getListCellRendererComponent(list: JList<?>, value: Object, index: int, isSelected: boolean, cellHasFocus: boolean) : Component
+    }
+
+}
+
+
+ImageCellRenderer --|> DefaultTableCellRenderer : extends
+UtenteListRenderer --|> DefaultListCellRenderer : extends
+ImageUtils +-- ImageCellRenderer : contains
+ImageUtils --> Logger : LOGGER
+ImageUtils ..> File
+ImageUtils ..> ImageIcon
+ImageCellRenderer ..> JTable
+ImageCellRenderer ..> Component
+ImageCellRenderer ..> ImageUtils : uses
+UtenteListRenderer ..> JList
+UtenteListRenderer ..> Component
+UtenteListRenderer ..> UtenteResponseDTO : casts value to
+
+@enduml

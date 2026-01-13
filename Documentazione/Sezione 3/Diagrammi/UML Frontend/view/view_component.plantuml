@@ -1,0 +1,77 @@
+@startuml view_component
+
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 60
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam wrapWidth 350
+
+skinparam package {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam class {
+    BackgroundColor #E8F6F3
+    BorderColor #16A085
+    ArrowColor #2C3E50
+}
+skinparam class<<External>> {
+    BackgroundColor #F2F4F4
+    BorderColor #95A5A6
+    FontColor #95A5A6
+}
+
+title View Layer - Components Package
+
+package "Librerie Esterne" {
+    class "JXPanel" as JXPanel_Ext <<External>> {}
+    class "JXButton" as JXButton_Ext <<External>> {}
+    class "JPopupMenu" as JPopupMenu_Ext <<External>> {}
+    class "JMenuItem" as JMenuItem_Ext <<External>> {}
+    interface "ActionListener" as ActionListener_Ext <<External>> {}
+    interface "Ikon" as Ikon_Ext <<External>> {}
+}
+
+package "frontend.view.component" {
+
+    class HeaderPanel {
+        - btnToggleSidebar : JXButton
+        - btnProfile : JXButton
+        - profileMenu : JPopupMenu
+        - itemLogout : JMenuItem
+        - itemProfile : JMenuItem
+        - itemCreateUser : JMenuItem
+        --
+        + HeaderPanel(username: String, isAdmin: boolean)
+        + setToggleAction(action: ActionListener) : void
+        + setLogoutAction(action: ActionListener) : void
+        + setEditPasswordAction(action: ActionListener) : void
+        + setCreateUserAction(action: ActionListener) : void
+    }
+
+    class SidebarPanel {
+        - btnIssues : JXButton
+        - btnProjects : JXButton
+        - btnTeams : JXButton
+        --
+        + SidebarPanel(isAdmin: boolean)
+        - createNavButton(text: String, icon: Ikon) : JXButton
+        + setIssuesAction(l: ActionListener) : void
+        + setProjectsAction(l: ActionListener) : void
+        + setTeamsAction(l: ActionListener) : void
+    }
+
+}
+
+HeaderPanel --|> JXPanel_Ext
+SidebarPanel --|> JXPanel_Ext
+HeaderPanel --> JXButton_Ext : contiene
+HeaderPanel --> JPopupMenu_Ext : contiene
+HeaderPanel --> JMenuItem_Ext : contiene
+SidebarPanel --> JXButton_Ext : contiene
+HeaderPanel ..> ActionListener_Ext : usa nei setter
+SidebarPanel ..> ActionListener_Ext : usa nei setter
+SidebarPanel ..> Ikon_Ext : usa (createNavButton)
+
+@enduml

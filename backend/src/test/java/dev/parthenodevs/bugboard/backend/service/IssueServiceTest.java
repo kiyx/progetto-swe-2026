@@ -1,307 +1,171 @@
 package dev.parthenodevs.bugboard.backend.service;
 
-import dev.parthenodevs.bugboard.backend.dto.enums.StatoIssue;
-import dev.parthenodevs.bugboard.backend.dto.enums.StatoProgetto;
-import dev.parthenodevs.bugboard.backend.dto.enums.TipoIssue;
-import dev.parthenodevs.bugboard.backend.dto.enums.TipoPriorita;
-import dev.parthenodevs.bugboard.backend.dto.request.UpdateIssueRequestDTO;
-import dev.parthenodevs.bugboard.backend.mapper.IssueMapper;
-import dev.parthenodevs.bugboard.backend.model.Issue;
-import dev.parthenodevs.bugboard.backend.model.Progetto;
-import dev.parthenodevs.bugboard.backend.model.Team;
-import dev.parthenodevs.bugboard.backend.model.Utente;
-import dev.parthenodevs.bugboard.backend.repository.IssueRepository;
-import dev.parthenodevs.bugboard.backend.repository.ProgettoRepository;
-import dev.parthenodevs.bugboard.backend.repository.UtenteRepository;
-import org.junit.jupiter.api.Test;
+import dev.parthenodevs.bugboard.backend.dto.enums.*;
+import dev.parthenodevs.bugboard.backend.dto.request.*;
+import dev.parthenodevs.bugboard.backend.mapper.*;
+import dev.parthenodevs.bugboard.backend.model.*;
+import dev.parthenodevs.bugboard.backend.repository.*;
+import jakarta.persistence.*;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.junit.jupiter.*;
-
-import java.util.Optional;
-
+import java.util.*;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("all")
 @ExtendWith(MockitoExtension.class)
 class IssueServiceTest
 {
-
     IssueRepository issueRepository = mock(IssueRepository.class);
     UtenteRepository utenteRepository = mock(UtenteRepository.class);
     ProgettoRepository progettoRepository = mock(ProgettoRepository.class);
     IssueMapper issueMapper = mock(IssueMapper.class);
-
     private final IssueService service = new IssueService(issueRepository, utenteRepository, progettoRepository, issueMapper);
 
+
+    // ---------------------------------------------
+    // Test per updateIssue
+    // ---------------------------------------------
+
+    // T1: CE-ID2 (Non Esiste) + CE-DTO1 (Valido) -> EntityNotFoundException
     @Test
-    void updateIssue_ID2_UIRD1()
+    void updateIssue_T1_NotFound()
     {
+        Long issueId = 999L;
         UpdateIssueRequestDTO request = new UpdateIssueRequestDTO();
-        request.setTitolo("titolo cambiato");
-        request.setDescrizione("descrizione cambiata");
-        request.setTipo(TipoIssue.DOCUMENTATION);
-        request.setStato(StatoIssue.ASSEGNATA);
-        request.setPriorita(TipoPriorita.BASSA);
 
-        assertThrows(IllegalArgumentException.class, ()->service.updateIssue(null, request));
+        when(issueRepository.findById(issueId)).thenReturn(Optional.empty());
 
-        verify(issueRepository, times(0)).findById(null);
-        verify(issueRepository, times(0)).save(null);
+        assertThrows(EntityNotFoundException.class, () -> service.updateIssue(issueId, request));
+
+        verify(issueRepository, never()).save(any());
     }
 
-    void updateIssue_ID3_UIRD1()
+    // T2: CE-ID3 (Null) + CE-DTO2 (Null) -> IllegalArgumentException
+    @Test
+    void updateIssue_T2_IdNull_DtoNull()
     {
-        Utente mockUtente = new Utente();
-        mockUtente.setId(111L);
-        mockUtente.setNome("Utente");
-        mockUtente.setCognome("Cognome");
-        mockUtente.setEmail("email@bugboard26.com");
-        mockUtente.setPassword("password");
-        mockUtente.setIsAdmin(false);
+        when(issueRepository.findById(isNull())).thenThrow(new IllegalArgumentException("ID null"));
 
-        Utente mockAdmin = new Utente();
-        mockUtente.setId(222L);
-        mockUtente.setNome("Admin");
-        mockUtente.setCognome("CognomeAdmin");
-        mockUtente.setEmail("emailadmin@bugboard26.com");
-        mockUtente.setPassword("password");
-        mockUtente.setIsAdmin(false);
+        assertThrows(IllegalArgumentException.class, () -> service.updateIssue(null, null));
 
-        Team mockTeam = new Team();
-        mockTeam.setId(333L);
-        mockTeam.setAdmin(mockAdmin);
-        mockTeam.setNome("nomeTeam");
-        mockTeam.setMembri(null);
-
-        Progetto mockProgetto = new Progetto();
-        mockProgetto.setId(444L);
-        mockProgetto.setNome("nomeProgetto");
-        mockProgetto.setTeam(mockTeam);
-        mockProgetto.setStato(StatoProgetto.ATTIVO);
-        mockProgetto.setIssues(null);
-        mockProgetto.setAdmin(mockAdmin);
-
-        Issue mockIssue = new Issue();
-        mockIssue.setId(123L);
-        mockIssue.setTitolo("titolo iniziale");
-        mockIssue.setDescrizione("descrizione iniziale");
-        mockIssue.setTipo(TipoIssue.BUG);
-        mockIssue.setStato(StatoIssue.TODO);
-        mockIssue.setArchiviato(false);
-        mockIssue.setPriorita(TipoPriorita.ALTA);
-        mockIssue.setAutore(mockUtente);
-        mockIssue.setProgetto(mockProgetto);
-
-        UpdateIssueRequestDTO request = new UpdateIssueRequestDTO();
-        request.setTitolo("titolo cambiato");
-        request.setDescrizione("descrizione cambiata");
-        request.setTipo(TipoIssue.DOCUMENTATION);
-        request.setStato(StatoIssue.ASSEGNATA);
-        request.setPriorita(TipoPriorita.BASSA);
-
-        when(issueRepository.findById(123L)).thenReturn(Optional.empty());
-
-        assertNotEquals(mockIssue.getTitolo(), request.getTitolo());
-        assertNotEquals(mockIssue.getDescrizione(), request.getDescrizione());
-        assertNotEquals(mockIssue.getTipo(), request.getTipo());
-        assertNotEquals(mockIssue.getStato(), request.getStato());
-        assertNotEquals(mockIssue.getPriorita(), request.getPriorita());
-
-        verify(issueRepository).findById(123L);
-        verify(issueRepository, times(0)).save(null);
+        verify(issueRepository).findById(isNull());
     }
 
-    void updateIssue_UIRD2_ID1()
+    // T3: CE-ID1 (Esiste) + CE-DTO1 (Valido) -> Successo
+    @Test
+    void updateIssue_T3_Success()
     {
-        Utente mockUtente = new Utente();
-        mockUtente.setId(111L);
-        mockUtente.setNome("Utente");
-        mockUtente.setCognome("Cognome");
-        mockUtente.setEmail("email@bugboard26.com");
-        mockUtente.setPassword("password");
-        mockUtente.setIsAdmin(false);
-
-        Utente mockAdmin = new Utente();
-        mockUtente.setId(222L);
-        mockUtente.setNome("Admin");
-        mockUtente.setCognome("CognomeAdmin");
-        mockUtente.setEmail("emailadmin@bugboard26.com");
-        mockUtente.setPassword("password");
-        mockUtente.setIsAdmin(false);
-
-        Team mockTeam = new Team();
-        mockTeam.setId(333L);
-        mockTeam.setAdmin(mockAdmin);
-        mockTeam.setNome("nomeTeam");
-        mockTeam.setMembri(null);
-
-        Progetto mockProgetto = new Progetto();
-        mockProgetto.setId(444L);
-        mockProgetto.setNome("nomeProgetto");
-        mockProgetto.setTeam(mockTeam);
-        mockProgetto.setStato(StatoProgetto.ATTIVO);
-        mockProgetto.setIssues(null);
-        mockProgetto.setAdmin(mockAdmin);
-
-        Issue mockIssue = new Issue();
-        mockIssue.setId(123L);
-        mockIssue.setTitolo("titolo iniziale");
-        mockIssue.setDescrizione("descrizione iniziale");
-        mockIssue.setTipo(TipoIssue.BUG);
-        mockIssue.setStato(StatoIssue.TODO);
-        mockIssue.setArchiviato(false);
-        mockIssue.setPriorita(TipoPriorita.ALTA);
-        mockIssue.setAutore(mockUtente);
-        mockIssue.setProgetto(mockProgetto);
-        mockIssue.setAssegnatari(null);
-
-        when(issueRepository.findById(123L)).thenReturn(Optional.of(mockIssue));
-        when(issueRepository.save(mockIssue)).thenReturn(mockIssue);
-
-        service.updateIssue(123L, null);
-
-        assertEquals("titolo iniziale", mockIssue.getTitolo());
-        assertEquals("descrizione iniziale", mockIssue.getDescrizione());
-        assertEquals(TipoIssue.BUG, mockIssue.getTipo());
-        assertEquals(StatoIssue.TODO, mockIssue.getStato());
-        assertEquals(TipoPriorita.ALTA, mockIssue.getPriorita());
-
-        verify(issueRepository).findById(123L);
-        verify(issueRepository).save(mockIssue);
-
-    }
-
-    void updateIssue_ID1_UIRD1()
-    {
-
-        Utente mockUtente = new Utente();
-        mockUtente.setId(111L);
-        mockUtente.setNome("Utente");
-        mockUtente.setCognome("Cognome");
-        mockUtente.setEmail("email@bugboard26.com");
-        mockUtente.setPassword("password");
-        mockUtente.setIsAdmin(false);
-
-        Utente mockAdmin = new Utente();
-        mockUtente.setId(222L);
-        mockUtente.setNome("Admin");
-        mockUtente.setCognome("CognomeAdmin");
-        mockUtente.setEmail("emailadmin@bugboard26.com");
-        mockUtente.setPassword("password");
-        mockUtente.setIsAdmin(false);
-
-        Team mockTeam = new Team();
-        mockTeam.setId(333L);
-        mockTeam.setAdmin(mockAdmin);
-        mockTeam.setNome("nomeTeam");
-        mockTeam.setMembri(null);
-
-        Progetto mockProgetto = new Progetto();
-        mockProgetto.setId(444L);
-        mockProgetto.setNome("nomeProgetto");
-        mockProgetto.setTeam(mockTeam);
-        mockProgetto.setStato(StatoProgetto.ATTIVO);
-        mockProgetto.setIssues(null);
-        mockProgetto.setAdmin(mockAdmin);
-
-        Issue mockIssue = new Issue();
-        mockIssue.setId(123L);
-        mockIssue.setTitolo("titolo iniziale");
-        mockIssue.setDescrizione("descrizione iniziale");
-        mockIssue.setTipo(TipoIssue.BUG);
-        mockIssue.setStato(StatoIssue.TODO);
-        mockIssue.setArchiviato(false);
-        mockIssue.setPriorita(TipoPriorita.ALTA);
-        mockIssue.setAutore(mockUtente);
-        mockIssue.setProgetto(mockProgetto);
-        mockIssue.setAssegnatari(null);
+        Long issueId = 1L;
+        Issue issue = new Issue();
+        issue.setId(issueId);
 
         UpdateIssueRequestDTO request = new UpdateIssueRequestDTO();
-        request.setTitolo("titolo cambiato");
-        request.setDescrizione("descrizione cambiata");
-        request.setTipo(TipoIssue.DOCUMENTATION);
-        request.setStato(StatoIssue.ASSEGNATA);
-        request.setPriorita(TipoPriorita.BASSA);
+        request.setTitolo("Nuovo Titolo");
 
-        when(issueRepository.findById(123L)).thenReturn(Optional.of(mockIssue));
-        when(issueRepository.save(mockIssue)).thenReturn(mockIssue);
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
 
-        service.updateIssue(123L, request);
+        // Simuliamo che il mapper aggiorni davvero l'oggetto
+        doAnswer(invocation ->
+        {
+            Issue t = invocation.getArgument(0);
+            UpdateIssueRequestDTO s = invocation.getArgument(1);
+            t.setTitolo(s.getTitolo());
+            return null;
+        }).when(issueMapper).update(any(), any());
 
-        assertEquals(mockIssue.getTitolo(), request.getTitolo());
-        assertEquals(mockIssue.getDescrizione(), request.getDescrizione());
-        assertEquals(mockIssue.getTipo(), request.getTipo());
-        assertEquals(mockIssue.getStato(), request.getStato());
-        assertEquals(mockIssue.getPriorita(), request.getPriorita());
+        service.updateIssue(issueId, request);
 
-        verify(issueRepository).findById(123L);
-        verify(issueRepository).save(mockIssue);
+        assertEquals("Nuovo Titolo", issue.getTitolo());
+        verify(issueRepository).save(issue);
     }
 
-    void updateIssue_ID1_UIRD3()
+    // T4: CE-ID1 (Esiste) + CE-DTO2 (Null) -> Successo
+    @Test
+    void updateIssue_T4_DtoNull()
     {
+        Long issueId = 1L;
+        Issue issue = new Issue();
+        issue.setId(issueId);
 
-        Utente mockUtente = new Utente();
-        mockUtente.setId(111L);
-        mockUtente.setNome("Utente");
-        mockUtente.setCognome("Cognome");
-        mockUtente.setEmail("email@bugboard26.com");
-        mockUtente.setPassword("password");
-        mockUtente.setIsAdmin(false);
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
 
-        Utente mockAdmin = new Utente();
-        mockUtente.setId(222L);
-        mockUtente.setNome("Admin");
-        mockUtente.setCognome("CognomeAdmin");
-        mockUtente.setEmail("emailadmin@bugboard26.com");
-        mockUtente.setPassword("password");
-        mockUtente.setIsAdmin(false);
+        service.updateIssue(issueId, null);
 
-        Team mockTeam = new Team();
-        mockTeam.setId(333L);
-        mockTeam.setAdmin(mockAdmin);
-        mockTeam.setNome("nomeTeam");
-        mockTeam.setMembri(null);
+        verify(issueMapper).update(eq(issue), isNull());
+        verify(issueRepository).save(issue);
+    }
 
-        Progetto mockProgetto = new Progetto();
-        mockProgetto.setId(444L);
-        mockProgetto.setNome("nomeProgetto");
-        mockProgetto.setTeam(mockTeam);
-        mockProgetto.setStato(StatoProgetto.ATTIVO);
-        mockProgetto.setIssues(null);
-        mockProgetto.setAdmin(mockAdmin);
+    // ---------------------------------------------
+    // Test per assignIssue
+    // ---------------------------------------------
 
-        Issue mockIssue = new Issue();
-        mockIssue.setId(123L);
-        mockIssue.setTitolo("titolo iniziale");
-        mockIssue.setDescrizione("descrizione iniziale");
-        mockIssue.setTipo(TipoIssue.BUG);
-        mockIssue.setStato(StatoIssue.TODO);
-        mockIssue.setArchiviato(false);
-        mockIssue.setPriorita(TipoPriorita.ALTA);
-        mockIssue.setAutore(mockUtente);
-        mockIssue.setProgetto(mockProgetto);
-        mockIssue.setAssegnatari(null);
+    // T1: CE-ID1 (TODO) + CE-U1 (Lista Piena) -> Successo + Cambio Stato
+    @Test
+    void assignIssue_T1_Todo_ListNotEmpty()
+    {
+        Long issueId = 1L;
+        Issue issue = new Issue();
+        issue.setStato(StatoIssue.TODO);
 
-        UpdateIssueRequestDTO request = new UpdateIssueRequestDTO();
-        request.setDescrizione("descrizione cambiata");
-        request.setTipo(TipoIssue.DOCUMENTATION);
-        request.setStato(StatoIssue.ASSEGNATA);
-        request.setPriorita(TipoPriorita.BASSA);
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
+        when(utenteRepository.findAllById(anyList())).thenReturn(List.of(new Utente()));
 
-        when(issueRepository.findById(123L)).thenReturn(Optional.of(mockIssue));
-        when(issueRepository.save(mockIssue)).thenReturn(mockIssue);
+        service.assignIssue(issueId, List.of(10L));
 
-        service.updateIssue(123L, request);
+        assertEquals(StatoIssue.ASSEGNATA, issue.getStato());
+        verify(issueRepository).save(issue);
+    }
 
-        assertEquals("titolo iniziale", mockIssue.getTitolo());
-        assertEquals(mockIssue.getDescrizione(), request.getDescrizione());
-        assertEquals(mockIssue.getTipo(), request.getTipo());
-        assertEquals(mockIssue.getStato(), request.getStato());
-        assertEquals(mockIssue.getPriorita(), request.getPriorita());
+    // T2: CE-ID2 (Altro Stato) + CE-U2 (Lista Vuota) -> Successo + No Cambio Stato
+    @Test
+    void assignIssue_T2_OtherState_EmptyList()
+    {
+        Long issueId = 1L;
+        Issue issue = new Issue();
+        issue.setStato(StatoIssue.RISOLTA);
 
-        verify(issueRepository).findById(123L);
-        verify(issueRepository).save(mockIssue);
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
+        when(utenteRepository.findAllById(Collections.emptyList())).thenReturn(Collections.emptyList());
+
+        service.assignIssue(issueId, Collections.emptyList());
+
+        assertEquals(StatoIssue.RISOLTA, issue.getStato());
+    }
+
+    // T3: CE-ID3 (Non Esiste) + CE-U1 (Valid) -> EntityNotFoundException
+    @Test
+    void assignIssue_T3_IssueNotFound()
+    {
+        when(issueRepository.findById(999L)).thenReturn(Optional.empty());
+
+        List<Long> ids = List.of(1L);
+        assertThrows(EntityNotFoundException.class, () -> service.assignIssue(999L, ids));
+    }
+
+    // T4: CE-ID4 (Null) + CE-U2 (Valid) -> IllegalArgumentException
+    @Test
+    void assignIssue_T4_IssueIdNull()
+    {
+        when(issueRepository.findById(null)).thenThrow(new IllegalArgumentException("ID null"));
+
+        List<Long> emptyList = Collections.emptyList();
+        assertThrows(IllegalArgumentException.class, () -> service.assignIssue(null, emptyList));
+    }
+
+    // T5: CE-U3 (Null List) + CE-ID2 (Valid) -> IllegalArgumentException
+    @Test
+    void assignIssue_T5_ListNull()
+    {
+        Long issueId = 1L;
+        Issue issue = new Issue();
+        issue.setStato(StatoIssue.RISOLTA);
+
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
+        when(utenteRepository.findAllById(null)).thenThrow(new IllegalArgumentException("List null"));
+
+        assertThrows(IllegalArgumentException.class, () -> service.assignIssue(issueId, null));
     }
 }

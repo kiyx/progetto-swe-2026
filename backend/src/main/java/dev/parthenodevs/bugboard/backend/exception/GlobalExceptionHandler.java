@@ -29,7 +29,7 @@ public class GlobalExceptionHandler
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({UserNotFoundException.class, PasswordNotMatchingException.class})
+    @ExceptionHandler({UserNotFoundException.class, PasswordNotMatchingException.class, SecurityException.class})
     public ResponseEntity<ErrorDTO> handleAuthFailure(RuntimeException ex)
     {
         LOGGER.log(Level.WARNING, () -> "Tentativo di login fallito: " + ex.getMessage());

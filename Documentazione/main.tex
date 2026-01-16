@@ -1393,7 +1393,7 @@ La gestione della configurazione software è stata affidata a \textbf{Git}, con 
 \begin{itemize}
     \item \textbf{Repository URL:} \href{https://github.com/kiyx/progetto-swe-2026}{\texttt{github.com/kiyx/progetto-swe-2026}} \faExternalLink*
     \item \textbf{Branching Strategy:} Sviluppo diretto sul ramo principale \texttt{main}, garantendo la Continuous Integration.
-    \item \textbf{Totale Commit:} $\sim$110
+    \item \textbf{Totale Commit:} $\sim$120
 \end{itemize}
 
 \vspace{0.3cm}
@@ -1549,6 +1549,9 @@ In conformità con la modalità di svolgimento del progetto ("in itinere"), l'at
 % a. Test Plan
 % -------------------------------------------------------------
 \subsection*{a. Test Plan}
+\phantomsection
+\addcontentsline{toc}{subsection}{a. Test Plan}
+
 Il piano di test seguente verifica la funzionalità \textbf{Creazione Issue}, identificata come critica per il sistema. L'obiettivo è validare la robustezza dell'applicazione su quattro livelli di difesa:
 \begin{itemize}
     \item \textbf{Frontend (UI):} Prevenzione errori banali prima dell'invio.
@@ -1703,6 +1706,8 @@ I casi di test coprono tutte le classi di equivalenza identificate e i valori li
 \newpage
 
 \subsection*{b. Codice Sorgente dei Test}
+\phantomsection
+\addcontentsline{toc}{subsection}{b. Codice Sorgente dei Test}
 Di seguito viene riportata l'implementazione dei test di unità per la classe \texttt{IssueService}. Il codice verifica i metodi \texttt{updateIssue} e \texttt{assignIssue} utilizzando Mockito per l'isolamento delle dipendenze.
 
 \begin{tcolorbox}[
@@ -1890,6 +1895,8 @@ class IssueServiceTest
 \end{tcolorbox}
 
 \subsection*{c. Documentazione strategie di testing}
+\phantomsection
+\addcontentsline{toc}{subsection}{c. Documentazione strategie di testing}
 Per la verifica delle unità funzionali del Service Layer, è stata adottata la strategia \textbf{Black Box} denominata \textbf{R-WECT (Robust Weak Equivalence Class Testing)}.
 
 Questa tecnica prevede la partizione del dominio di input $D$ in un insieme di classi di equivalenza disgiunte $C_1, C_2, \dots, C_n$ tali che:
@@ -1983,4 +1990,63 @@ Per gestire la dipendenza logica tra l'esistenza dell'entità e il suo stato int
     \textbf{T5} & CE-ID2, CE-U3 & Invalido & Eccezione \texttt{IllegalArgument} \\ \hline
 \end{longtable}
 
+\newpage
+\subsection*{d. Valutazione dell'Usabilità - Ispezione Euristica (Nielsen-Molich)}
+L'interfaccia utente (Frontend Desktop) è stata sottoposta a una review sistematica basata sulle \textbf{10 Euristiche di Nielsen-Molich}. Di seguito si riporta l'esito della valutazione per i principi più rilevanti:
+\phantomsection
+\addcontentsline{toc}{subsection}{d. Valutazione dell'Usabilità - Ispezione Euristica (Nielsen-Molich)}
+
+\renewcommand{\arraystretch}{1.5}
+\begin{longtable}{|p{0.8cm}|p{4.5cm}|p{5.0cm}|p{3.5cm}|}
+    \hline
+    \rowcolor{UninaBlue} 
+    \textbf{\color{white}\#} & \textbf{\color{white}Euristica} & \textbf{\color{white}Implementazione nel Sistema} & \textbf{\color{white}Valutazione} \\ 
+    \hline
+    \endfirsthead
+    \hline
+    \rowcolor{UninaBlue} 
+    \textbf{\color{white}\#} & \textbf{\color{white}Euristica} & \textbf{\color{white}Implementazione nel Sistema} & \textbf{\color{white}Valutazione} \\ 
+    \hline
+    \endhead
+
+    \textbf{1} & \textbf{Simple and Natural Dialogue} & 
+    L'interfaccia presenta solo le informazioni essenziali (titolo, descrizione, stato) rimuovendo elementi grafici superflui che potrebbero distrarre l'utente. & 
+    \textbf{\textcolor{green!70!black}{Soddisfatta}} \\ \hline
+
+    \textbf{2} & \textbf{Speak the User’s Language} & 
+    Vengono utilizzati termini familiari al dominio (Bug, Team, Assegnatario) invece di gergo tecnico di sistema. & 
+    \textbf{\textcolor{green!70!black}{Soddisfatta}} \\ \hline
+
+    \textbf{3} & \textbf{Minimize User Memory Load} & 
+    L'uso di menu a tendina (ComboBox) per selezionare progetti e utenti evita che l'utente debba ricordare codici o nomi esatti. & 
+    \textbf{\textcolor{green!70!black}{Soddisfatta}} \\ \hline
+
+    \textbf{4} & \textbf{Consistency} & 
+    L'adozione della libreria \textit{FlatLaf} garantisce che pulsanti, colori e font siano coerenti in tutte le schermate (Login, Dashboard, Form). & 
+    \textbf{\textcolor{green!70!black}{Soddisfatta}} \\ \hline
+
+    \textbf{5} & \textbf{Feedback} & 
+    Il sistema fornisce risposte immediate alle azioni utente (es. dialog di conferma "Issue creata con successo"). & 
+    \textbf{\textcolor{green!70!black}{Soddisfatta}} \\ \hline
+
+    \textbf{6} & \textbf{Clearly Marked Exits} & 
+    Ogni finestra di dialogo (es. Creazione Team) dispone di un pulsante "Annulla" ben visibile per uscire dallo stato senza salvare. & 
+    \textbf{\textcolor{green!70!black}{Soddisfatta}} \\ \hline
+
+    \textbf{7} & \textbf{Shortcuts} & 
+    Nella vista principale sono presenti filtri rapidi per permettere agli utenti esperti di trovare velocemente le issue di interesse. & 
+    \textbf{\textcolor{green!70!black}{Soddisfatta}} \\ \hline
+
+    \textbf{8} & \textbf{Good Error Messages} & 
+    I messaggi di errore (es. "Credenziali errate", "Campo obbligatorio") sono espressi in linguaggio naturale, indicando il problema preciso. & 
+    \textbf{\textcolor{green!70!black}{Soddisfatta}} \\ \hline
+
+    \textbf{9} & \textbf{Prevent Errors} & 
+    Il form di creazione disabilita l'invio se i campi obbligatori sono vuoti, prevenendo errori lato server. & 
+    \textbf{\textcolor{green!70!black}{Soddisfatta}} \\ \hline
+
+    \textbf{10} & \textbf{Help and Documentation} & 
+    L'interfaccia è auto-esplicativa. Sebbene non sia presente un manuale integrato, i tooltip e i placeholder guidano l'utente. & 
+    \textbf{\textcolor{orange}{Parz. Soddisfatta}} \\ \hline
+\end{longtable}
 \end{document}

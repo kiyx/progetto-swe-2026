@@ -1,0 +1,1986 @@
+% ============================================================
+% BugBoard26 - Documento per Università degli Studi di Napoli Federico II
+% ============================================================
+
+\documentclass[a4paper,12pt]{article}
+
+% ------------------------------------------------------------
+% Pacchetti base
+% ------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{svg}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{afterpage}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+\usepackage{array}
+\usepackage{pifont}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{wrapfig}
+\usepackage{pdfpages}
+\usepackage{shadowtext}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{pifont}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{float}
+\floatplacement{figure}{H}
+\floatplacement{table}{H}
+\usepackage{afterpage}
+\usepackage{needspace}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{fontawesome5}
+\usepackage{pgfplots}
+\usepackage{svg}
+
+% ------------------------------------------------------------
+% Configurazione titoli e indice - SENZA NUMERAZIONE
+% ------------------------------------------------------------
+\titleformat{\section}
+{\normalfont\Large\bfseries\color{UninaBlue}}
+{}{0em}{}
+
+\titleformat{\subsection}
+{\normalfont\large\bfseries\color{UninaBlue}}
+{}{0em}{}
+
+\titleformat{\subsubsection}
+{\normalfont\normalsize\bfseries\color{UninaBlue!80!black}}
+{}{0em}{}
+
+% Stile moderno per l'indice
+\usepackage{titletoc}
+\contentsmargin{0cm}
+\titlecontents{section}
+[0cm]
+{\addvspace{4pt}\normalsize\bfseries\color{UninaBlue}}
+{\contentslabel[\thecontentslabel]{1.5cm}}
+{}
+{\titlerule*[3pt]{.}\contentspage}
+[]
+\titlecontents{subsection}
+[0.5cm]
+{\addvspace{2pt}\small}
+{\contentslabel[\thecontentslabel]{1.5cm}}
+{}
+{\titlerule*[3pt]{.}\contentspage}
+[]
+\titlecontents{subsubsection}
+[1.0cm]
+{\addvspace{1pt}\footnotesize}
+{\contentslabel[\thecontentslabel]{1.5cm}}
+{}
+{\titlerule*[3pt]{.}\contentspage}
+[]
+
+% ------------------------------------------------------------
+% Margini e layout
+% ------------------------------------------------------------
+\geometry{a4paper, margin=2.5cm, top=3cm, bottom=2.5cm}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+% ------------------------------------------------------------
+% Colori e stili
+% ------------------------------------------------------------
+\definecolor{UninaBlue}{HTML}{003366}
+\definecolor{UninaRed}{HTML}{CC0000}
+\definecolor{PrimaryBlue}{HTML}{1A73E8}
+\definecolor{SecondaryCyan}{HTML}{00BCD4}
+\definecolor{GrayText}{HTML}{555555}
+\definecolor{BoxLight}{HTML}{F8F9FA}
+\definecolor{BoxDark}{HTML}{003366}
+\definecolor{AccentColor}{HTML}{FF6B35}
+
+% ------------------------------------------------------------
+% Configurazione hyperref per link funzionanti
+% ------------------------------------------------------------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=UninaBlue,
+    citecolor=UninaBlue,
+    filecolor=UninaBlue,
+    urlcolor=UninaBlue,
+    pdftitle={BugBoard26 - Documentazione},
+    pdfauthor={Gruppo INGSW2526_005},
+    pdfsubject={Ingegneria del Software},
+    pdfkeywords={bug, issue, tracking, software engineering}
+}
+
+% ------------------------------------------------------------
+% Header e Footer
+% ------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{UninaBlue}{\small \textbf{BugBoard26}}}
+\fancyhead[C]{\textcolor{UninaBlue}{\small \textbf{Ingegneria del Software - A.A. 2025/2026}}}
+\fancyhead[R]{\textcolor{UninaBlue}{\small \textbf{\thepage}}}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{UninaBlue!30}\leaders\hrule height \headrulewidth\hfill}}
+\fancyfoot[C]{\textcolor{UninaBlue!70}{\footnotesize BugBoard26 - Ingegneria del Software - A.A. 2025/2026}}
+
+% =============================================================
+% Documento
+% =============================================================
+\begin{document}
+
+% ============================================================
+% Frontespizio UNINA - DESIGN COMPATTATO
+% =============================================================
+\begin{titlepage}
+\newgeometry{margin=2cm}
+\pagecolor{UninaBlue!3}
+\begin{center}
+
+% Logo universitario centrato
+\vspace*{0.3cm}
+\includegraphics[width=0.16\textwidth]{immagini/uni_logo.png}
+\vspace{0.2cm}
+
+% Intestazione Università
+{\Huge \textcolor{UninaBlue}{\textbf{Università degli Studi di Napoli Federico II}}}\\[0.1cm]
+{\large \textcolor{UninaBlue}{Dipartimento di Ingegneria Elettrica e}}\\[0.05cm]
+{\large \textcolor{UninaBlue}{delle Tecnologie dell'Informazione}}\\[0.1cm]
+{\normalsize \textcolor{UninaBlue}{Corso di Laurea in Informatica}}\\[0.3cm]
+
+% Linea separatrice
+\rule{0.6\textwidth}{0.8pt}\\[0.3cm]
+
+% Logo Bug più grande (512x512 -> 0.2\textwidth)
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=1.5pt,
+    arc=8pt,
+    width=0.2\textwidth,
+    height=0.2\textwidth,
+    valign=center,
+    halign=center,
+    drop shadow={UninaBlue!30}
+]
+    \includegraphics[width=0.9\linewidth]{immagini/bug.png}
+\end{tcolorbox}
+\vspace{0.2cm}
+
+% Titolo del Progetto
+{\Huge \textcolor{UninaBlue}{\textbf{BUG BOARD 26}}}\\[0.2cm]
+{\Large \textcolor{UninaBlue}{\textbf{Sistema di Gestione Issue Collaborativo}}}\\[0.3cm]
+% Linea separatrice
+\rule{0.6\textwidth}{0.8pt}\\[0.3cm]
+% Insegnamento e Docenti
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue!50,
+    boxrule=0.8pt,
+    arc=4pt,
+    width=0.7\textwidth,
+    title=Insegnamento,
+    fonttitle=\bfseries\color{UninaBlue},
+    coltitle=UninaBlue
+]
+    \centering
+    {\Large \textcolor{UninaBlue}{\textbf{Ingegneria del Software}}}\\[0.3cm]
+    {\normalsize \textbf{Docenti}}\\[0.1cm]
+    {\small Prof. Sergio Di Martino}\\[0.05cm]
+    {\small Prof. Luigi Libero Lucio Starace}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+% Candidati con Gruppo incluso
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue!50,
+    boxrule=0.8pt,
+    arc=4pt,
+    width=0.8\textwidth,
+    title=Candidati,
+    fonttitle=\bfseries\color{UninaBlue},
+    coltitle=UninaBlue
+]
+    \centering
+    \begin{tabular}{c}
+        % Riga del Gruppo - centrata sopra i candidati
+        \begin{minipage}{0.8\textwidth}
+            \centering
+            {\large \textbf{GRUPPO INGSW2526\_005}}\\[0.2cm]
+        \end{minipage}
+        \\[0.1cm]
+        % Linea separatrice
+        \hline
+        \\[0.01cm]
+        % Candidati affiancati
+        \begin{tabular}{cc}
+            \begin{minipage}{0.4\textwidth}
+                \centering
+                {\normalsize \textbf{Virginia Antonia Esposito}}\\[0.1cm]
+                {\small Matricola: N86004987}
+            \end{minipage}
+            &
+            \begin{minipage}{0.4\textwidth}
+                \centering
+                {\normalsize \textbf{Giuseppe Paolo Esposito}}\\[0.1cm]
+                {\small Matricola: N86005174}
+            \end{minipage}
+        \end{tabular}
+    \end{tabular}
+\end{tcolorbox}
+
+\vspace{0.1cm}
+
+% Anno accademico e data
+\begin{tcolorbox}[
+    enhanced,
+    colback=UninaBlue!10,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=4pt,
+    width=0.35\textwidth
+]
+    \centering
+    {\small \textbf{Anno Accademico 2025/2026}}\\[0.1cm]
+\end{tcolorbox}
+
+\vfill
+% Linea separatrice
+\rule{0.6\textwidth}{0.8pt}\\[0.3cm]
+
+\end{center}
+\restoregeometry
+\nopagecolor
+\end{titlepage}
+
+% =============================================================
+% Indice - COMPATTATO
+% =============================================================
+\clearpage
+\thispagestyle{empty}
+\setcounter{page}{1}
+
+\begin{center}
+    \vspace*{0.5cm}
+    {\LARGE \textcolor{UninaBlue}{\textbf{Indice}}}\\[0.2cm]
+    \rule{0.7\textwidth}{0.5pt}\\[0.3cm]
+\end{center}
+
+\renewcommand{\contentsname}{}
+{
+    \setlength{\parskip}{3pt}
+    \tableofcontents
+}
+
+\vspace{0.5cm}
+\newpage
+
+% =============================================================
+% 1. Documento di Specifica dei Requisiti Software
+% =============================================================
+\section{Documento di Specifica dei Requisiti Software}
+
+% -------------------------------------------------------------
+% a. Glossario
+% -------------------------------------------------------------
+\subsection*{a. Glossario}
+\phantomsection
+\addcontentsline{toc}{subsection}{a. Glossario}
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Glossario dei Termini,
+    fonttitle=\bfseries\color{UninaBlue},
+    coltitle=UninaBlue
+]
+\begin{itemize}[leftmargin=*]
+\item \textbf{Issue:} Segnalazione creata da un utente per documentare un problema, porre un quesito o richiedere l'inserimento di una funzionalità. 
+\item \textbf{Bug:} Tipo di issue che indica un errore o un malfunzionamento del software.
+\item \textbf{Feature:} Tipo di issue che rappresenta una proposta di aggiunta di una nuova funzionalità.
+\item \textbf{Documentation:} Tipo di issue che riguarda errori o mancanze nella documentazione del progetto.
+\item \textbf{Question:} Tipo di issue utilizzata per porre quesiti o chiedere chiarimenti sul progetto.
+\item \textbf{Priorità:} Livello di urgenza associato a una issue.
+\item \textbf{Stato:} Indica la fase corrente della issue nel suo ciclo di esistenza (todo, assegnata, risolta).
+\item \textbf{Admin:} Utente con privilegi elevati, può creare team e progetti, assegnare issue, gestire utenti dei team e archiviare bug.
+\item \textbf{GenericUser:} Utente non ancora loggato, può solo effettuare il login.
+\item \textbf{LoggedUser:} Utente con privilegi base, visualizza, crea e risolve issues assegnate dagli admin dei team.
+\item \textbf{Team:} Gruppo di utenti responsabili di un progetto, gestito da un admin.
+\item \textbf{Filtro:} Funzione che consente di individuare issue in base a tipologia, stato, priorità o altri parametri.
+\item \textbf{Archivio:} Sezione dove i bug archiviati non sono più visibili nella lista principale; solo l'admin può archiviare.
+\item \textbf{Pull Request:} Permette di notificare la risoluzione locale di una issue, che potrebbe essere accettata o meno a discrezione dell'admin del team.
+\end{itemize}
+\end{tcolorbox}
+
+% -------------------------------------------------------------
+% b. Modellazione dei Casi d'Uso
+% -------------------------------------------------------------
+\subsection*{b. Modellazione dei Casi d'Uso}
+\phantomsection
+\addcontentsline{toc}{subsection}{b. Modellazione dei Casi d'Uso}
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Diagramma Use Case - BugBoard26,
+    fonttitle=\bfseries\color{UninaBlue},
+    coltitle=UninaBlue
+]
+\begin{center}
+
+\includegraphics[width=1.03\textwidth]{immagini/UseCaseDiagram.pdf}
+\captionof{figure}{Diagramma Use Case di BugBoard26}
+\end{center}
+\end{tcolorbox}
+
+% -------------------------------------------------------------
+% c. Personas
+% -------------------------------------------------------------
+\subsection*{c. Personas}
+\phantomsection
+\addcontentsline{toc}{subsection}{c. Personas}
+\input{personas.tex}
+
+% =============================================================
+% d. Requisiti non-funzionali e di dominio
+% =============================================================
+
+\subsection*{d. Requisiti non-funzionali e di dominio}
+\phantomsection
+\addcontentsline{toc}{subsection}{d. Requisiti non-funzionali e di dominio}
+
+% -------------------------------------------------------------
+% (i) Requisiti non-funzionali
+% -------------------------------------------------------------
+\subsubsection*{(i) Requisiti non-funzionali}
+\phantomsection
+\addcontentsline{toc}{subsubsection}{(i) Requisiti non-funzionali}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Requisiti Non-Funzionali Quantificabili,
+    fonttitle=\bfseries\color{UninaBlue},
+    coltitle=UninaBlue
+]
+\begin{enumerate}[label=\textbf{RNF-\arabic*}, leftmargin=*, itemsep=8pt]
+    \item \textbf{Prestazioni}
+    \begin{itemize}
+        \item \textbf{RNF-P1 (Carico Utenti):} Il sistema deve supportare fino a 20 utenti registrati senza degradazione significativa delle prestazioni.
+    \end{itemize}
+    
+    \item \textbf{Sicurezza}
+    \begin{itemize}
+        \item \textbf{RNF-S1 (Autenticazione):} Il sistema deve impedire l'accesso a utenti non autenticati a tutte le funzionalità e dati, eccetto la funzionalità di login.
+        \item \textbf{RNF-S2 (Protezione Dati):} Tutte le password devono essere memorizzate in forma hash (con algoritmo bcrypt) e mai in chiaro nel database.
+    \end{itemize}
+    
+    \item \textbf{Affidabilità}
+    \begin{itemize}
+        \item \textbf{RNF-R1 (Uptime):} Il back-end deve garantire un uptime maggiore del 95\% in un periodo di monitoraggio di 30 giorni.
+    \end{itemize}
+    
+    \item \textbf{Usabilità}
+    \begin{itemize}
+        \item \textbf{RNF-U1 (Efficienza):} Un utente autenticato deve poter creare una nuova issue in meno di 10 clic/interazioni dall'homepage.
+        \item \textbf{RNF-U2 (Apprendibilità):} Un nuovo utente deve poter effettuare login, creare una issue e filtrarle entro 10 minuti dal primo utilizzo.
+    \end{itemize}
+    
+    \item \textbf{Manutenibilità}
+    \begin{itemize}
+        \item \textbf{RNF-M1 (Disaccoppiamento):} Front-end e back-end devono eseguibili indipendentemente.
+    \end{itemize}
+    
+    \item \textbf{Sistema}
+    \begin{itemize}
+        \item \textbf{RNF-C1 (Architettura):} Il sistema deve essere composto da almeno due componenti distribuiti: back-end (API REST) e front-end che comunica solo tramite API.
+        \item \textbf{RNF-C2 (Tecnologia):} Il codice deve essere sviluppato in linguaggio object-oriented.
+    \end{itemize}
+\end{enumerate}
+\end{tcolorbox}
+
+\newpage
+% -------------------------------------------------------------
+% (ii) Vincoli di dominio
+% -------------------------------------------------------------
+\subsubsection*{(ii) Vincoli di dominio}
+\phantomsection
+\addcontentsline{toc}{subsubsection}{(ii) Vincoli di dominio}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=AccentColor,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Vincoli di Dominio (VD-1),
+    fonttitle=\bfseries\color{AccentColor},
+    coltitle=AccentColor,
+    breakable
+]
+\begin{enumerate}[label=\textbf{VD-\arabic*}, leftmargin=*, itemsep=6pt]
+    \item \textbf{Protezione dei Dati Personali (GDPR):} 
+    Il sistema gestisce dati personali, trattati nel rispetto del \textbf{Regolamento UE 2016/679} e del \textbf{D.Lgs. 196/2003}. 
+\end{enumerate}
+\end{tcolorbox}
+
+\newpage
+% -------------------------------------------------------------
+% e. Formalizzazione Casi d'Uso Significativi
+% -------------------------------------------------------------
+\subsection*{e. Formalizzazione Caso d'Uso:  CreaIssue}
+\phantomsection
+\addcontentsline{toc}{subsection}{e. Formalizzazione Caso d'Uso: CreaIssue}
+
+% -------------------------------------------------------------
+% (i) Descrizione testuale strutturata
+% -------------------------------------------------------------
+\subsubsection*{(i) Descrizione testuale strutturata}
+\phantomsection
+\addcontentsline{toc}{subsubsection}{(i) Descrizione testuale strutturata}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Use Case \#1: Crea Issue,
+    fonttitle=\bfseries\color{UninaBlue},
+    coltitle=UninaBlue,
+    breakable
+]
+% TABELLA CORRETTA - linee verticali riparate
+\small
+\renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{6pt}
+\begin{longtable}{|p{2.8cm}|p{2cm}|p{4cm}|p{4cm}|}
+  \hline
+  \textbf{Use Case \#1} & \multicolumn{3}{l|}{\textbf{CreaIssue}} \\ 
+  \hline
+  \textbf{Goal in Context} & \multicolumn{3}{p{10cm}|}{L'utente loggato vuole creare una nuova issue per un progetto a cui partecipa in modo che il sistema la salvi correttamente.} \\
+  \hline
+  \textbf{Preconditions} & \multicolumn{3}{p{10cm}|}{Partecipare ad almeno un team di sviluppo di un progetto.} \\
+  \hline
+  \textbf{Success End Conditions} & \multicolumn{3}{p{10cm}|}{Il sistema tiene traccia della creazione e salva correttamente la issue.} \\
+  \hline
+  \textbf{Failed End Conditions} & \multicolumn{3}{p{10cm}|}{La issue non viene salvata e viene mostrato un messaggio di errore.} \\
+  \hline
+  \textbf{Primary Actor} & \multicolumn{3}{l|}{LoggedUser} \\
+  \hline
+  \textbf{Trigger} & \multicolumn{3}{l|}{L'utente clicca sul pulsante ``Crea Issue'' dalla Homepage.} \\
+  \hline
+  \textbf{Main Scenario} & \textbf{Step} & \textbf{LoggedUser} & \textbf{Sistema} \\
+  \hline
+  & 1  & Clicca ``Crea Issue'' & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} \\
+  \cline{2-4}
+  & 2  & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} & Mostra form creazione issue (M2) \\
+  \cline{2-4}
+  & 3  & Compila i campi e clicca ``Conferma'' & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} \\
+  \cline{2-4}
+  & 4  & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} & Salva la issue e mostra conferma (M3) \\
+  \cline{2-4}
+  & 5  & Clicca ``Ok'' & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} \\
+  \cline{2-4}
+  & 6  & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} & Torna alla homepage (M1) \\
+  \hline
+  \textbf{Extension \#1 (Dati non validi)} & \textbf{Step} & \textbf{LoggedUser} & \textbf{Sistema} \\
+  \hline
+  & 3a & Inserisce dati errati o mancanti & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} \\
+  \cline{2-4}
+  & 3b & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} & Mostra errore di validazione (M4) \\
+  \cline{2-4}
+  & 3c & Corregge i dati e clicca ``Ok'' & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} \\
+  \cline{2-4}
+  & 3d & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} & Ritorna al passo 3 (Main Scenario) \\
+  \hline
+  \textbf{Extension \#2 (Errore di salvataggio)} & \textbf{Step} & \textbf{LoggedUser} & \textbf{Sistema} \\
+  \hline
+  & 4a & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} & Mostra errore di salvataggio (M5) \\
+  \cline{2-4}
+  & 4b & Clicca ``Ok' & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} \\
+  \cline{2-4}
+  & 4c & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} & Ritorna al passo 4 (Main Scenario) \\
+  \hline
+  \textbf{Extension \#3 (Annullamento)} & \textbf{Step} & \textbf{LoggedUser} & \textbf{Sistema} \\
+  \hline
+  & 2a & Clicca ``Annulla'' & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} \\
+  \cline{2-4}
+  & 2b & \multicolumn{1}{c|}{\vphantom{X}\raisebox{0.25ex}{\hbox{\ding{55}}}} & Mostra homepage (M1) \\
+  \hline
+  \textbf{Notes} & \multicolumn{3}{p{10cm}|}{Campi obbligatori per ogni issue: \newline \textbf{Titolo, Descrizione, Tipo e Progetto}. \newline \textbf{M1}: Homepage \newline \textbf{M2}: Form creazione issue \newline \textbf{M3}: Schermata di avvenuto salvataggio \newline \textbf{M4}: Schermata di errore validazione \newline \textbf{M5}: Schermata di errore di salvataggio.} \\
+  \hline
+\end{longtable}
+\end{tcolorbox}
+
+% -------------------------------------------------------------
+% (ii) Prototipazione visuale via Mock-up
+% -------------------------------------------------------------
+\subsubsection*{(ii) Prototipazione visuale via Mock-up}
+\phantomsection
+\addcontentsline{toc}{subsubsection}{(ii) Prototipazione visuale via Mock-up}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Mockup Interfaccia Utente - Pagina 1,
+    fonttitle=\bfseries\color{UninaBlue},
+    coltitle=UninaBlue
+]
+\begin{center}
+\includegraphics[width=1.02\textwidth]{immagini/Mockup-1.png}
+\captionof{figure}{Interfaccia di creazione issue - Homepage e Form creazione}
+\end{center}
+\end{tcolorbox}
+
+\newpage
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Mockup Interfaccia Utente - Pagina 2,
+    fonttitle=\bfseries\color{UninaBlue},
+    coltitle=UninaBlue
+]
+\begin{center}
+\includegraphics[width=1.0\textwidth]{immagini/Mockup-2.png}
+\captionof{figure}{Interfaccia di creazione issue - Notifiche varie}
+\end{center}
+\end{tcolorbox}
+
+\newpage
+% =============================================================
+% 2. Documento di Design del Sistema
+% =============================================================
+\newpage
+\section{Documento di Design del Sistema}
+
+% -------------------------------------------------------------
+% a. Architettura proposta
+% -------------------------------------------------------------
+\vspace*{-0.5cm} 
+\subsection*{a. Descrizione dell'architettura proposta}
+\phantomsection
+\addcontentsline{toc}{subsection}{a. Descrizione dell'architettura proposta}
+
+\vspace{2cm}
+
+\begin{center}
+    \includegraphics[width=1.11\textwidth, height=1.3\textheight, keepaspectratio]{immagini/BugBoard26_Final_Architecture.png}
+    \captionof{figure}{Architettura Distribuita di BugBoard26}
+    \label{fig:arch_diagram}
+\end{center}
+
+\vspace{0.2cm}
+
+\newpage
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Overview Architetturale,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable,
+    bottom=4pt,
+    top=4pt
+]
+Il sistema \textbf{BugBoard26} adotta un'architettura distribuita \textbf{Client-Server}, progettata per massimizzare il disaccoppiamento (\textit{Low Coupling}) e la coesione funzionale (\textit{High Cohesion}) tra i sottosistemi. La comunicazione inter-processo avviene tramite protocollo HTTP su rete TCP/IP, aderendo allo stile architetturale \textbf{REST}.
+
+\vspace{0.2cm}
+\textbf{Macro-Componenti del Sistema:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Backend (Server-Side):} Costituisce il \textit{Core Business} del sistema. È implementato come un'applicazione monolitica modulare containerizzata. Espone un'interfaccia pubblica (API RESTful) per la manipolazione delle risorse (Issues, Utenti, Team, Progetti) ed è responsabile della validazione, dell'autorizzazione e della persistenza dei dati. L'architettura è \textbf{Stateless}: il server non mantiene lo stato della sessione utente tra le richieste, delegando l'autenticazione al passaggio di token JWT per ogni interazione.
+    
+    \item \textbf{Frontend (Client-Side):} Un'applicazione \textit{Rich Desktop Client}. A differenza di un client web tradizionale, il frontend gestisce autonomamente la logica di presentazione, il rendering dell'interfaccia grafica e la validazione preliminare degli input, riducendo il carico di elaborazione sul server.
+\end{itemize}
+\end{tcolorbox}
+
+% --- PATTERN ARCHITETTURALI ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Pattern Architetturali e Design di Dettaglio,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+\textbf{1. Backend: Layered Architecture (N-Tier)} \\
+Il backend adotta il pattern architetturale a strati (\textit{Layered Architecture}), che impone una rigida \textit{Separation of Concerns}. Ogni livello comunica esclusivamente con il livello inferiore:
+
+\begin{itemize}
+    \item \textbf{Web Layer (Boundary):} Gestisce l'interfaccia verso l'esterno. Implementato tramite \textit{REST Controllers}, si occupa del parsing delle richieste HTTP, della deserializzazione dei payload JSON in DTO e della validazione sintattica. Include la \textbf{Security Chain} (Filtri JWT).
+    
+    \item \textbf{Service Layer (Control):} Cuore della logica applicativa. Implementa i casi d'uso del sistema (es. \textit{archiviazione bug}) e gestisce i limiti transazionali (\texttt{@Transactional}).
+    
+    \item \textbf{Persistence Layer (Data Access):} Isola l'accesso ai dati. Utilizza il pattern \textbf{Repository} e un ORM (\textit{Hibernate}) per astrarre le operazioni CRUD sul database relazionale.
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{2. Criteri di Design Trasversali}
+\begin{itemize}
+    \item \textbf{Information Hiding (DTO):} Il sistema non espone mai le entità di persistenza (\texttt{@Entity}) direttamente nelle API, ma utilizza DTO mappati.
+    \item \textbf{Inversion of Control (IoC):} Nel backend, la gestione delle dipendenze è affidata al Container Spring (Dependency Injection).
+\end{itemize}
+
+\textbf{3. Frontend: Model-View-Controller (MVC)} \\
+Il client desktop struttura il codice secondo il pattern MVC:
+\begin{itemize}
+    \item \textbf{Model:} Rappresenta lo stato dell'applicazione e i dati di business (DTO). Include i \textit{Service} che incapsulano le chiamate REST.
+    \item \textbf{View:} Costituita da componenti passivi (pannelli Swing estesi con \textit{FlatLaf}) responsabili del rendering.
+    \item \textbf{Controller:} Intercetta gli eventi utente (Listener), orchestra il flusso applicativo invocando il Model e aggiorna la View.
+    \item \textbf{Gestione della Concorrenza (Responsive UI):} Per rispettare il \textit{Single Thread Rule} di Swing, tutte le operazioni di I/O (rete) sono delegate a \textbf{Worker Threads} separati, prevenendo il blocco dell'interfaccia (EDT).
+\end{itemize}
+\end{tcolorbox}
+
+
+% -------------------------------------------------------------
+% b. Scelte tecnologiche
+% -------------------------------------------------------------
+\subsection*{b. Scelte tecnologiche adottate}
+\phantomsection
+\addcontentsline{toc}{subsection}{b. Scelte tecnologiche adottate}
+
+% --- TABELLA RIFATTA CON LONGTABLE (Risolve il bug della pagina vuota) ---
+{
+\renewcommand{\arraystretch}{1.6}
+\setlength{\tabcolsep}{10pt}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+    
+    % Intestazione della tabella (Simula il titolo del tcolorbox)
+    \hline
+    \rowcolor{UninaBlue} 
+    \multicolumn{2}{|l|}{\textbf{\textcolor{white}{Stack Tecnologico}}} \\ 
+    \hline
+    \endfirsthead
+    
+    % Intestazione per le pagine successive (se la tabella si spezza)
+    \hline
+    \rowcolor{UninaBlue} 
+    \multicolumn{2}{|l|}{\textbf{\textcolor{white}{Stack Tecnologico (continua)}}} \\ 
+    \hline
+    \endhead
+
+    % Contenuto
+    \rowcolor{BoxLight} 
+    \textbf{Ambito} & \textbf{Tecnologia e Motivazione Architetturale} \\ 
+    \hline
+    
+    \textbf{Backend Framework} & \textbf{Spring Boot 3 (Java 21):} Scelto per la riduzione del codice di configurazione (\textit{Boilerplate}) grazie alla \textit{Convention over Configuration}. Fornisce supporto nativo per IoC, Security e JPA. Java 21 LTS garantisce stabilità e performance a lungo termine. \\ 
+    \hline
+    
+    \textbf{Frontend GUI} & \textbf{Java Swing + FlatLaf:} Swing (parte del JDK) garantisce portabilità totale. L'integrazione di \textbf{FlatLaf} modernizza il \textit{Look \& Feel} (Flat Design, supporto HiDPI, temi Dark/Light), superando i limiti estetici dello Swing nativo. \\ 
+    \hline
+    
+   \textbf{Database/Cloud} & \textbf{PostgreSQL su Neon (Hostato su AWS Frankfurt):} Utilizzato esclusivamente come RDBMS standard per la persistenza relazionale (ACID). \newline \textit{\textbf{Nota:}} Non vengono utilizzate funzionalità proprietarie di Neon (es. Auth, Serverless Functions) né servizi MBaaS. Neon funge unicamente da host per il database PostgreSQL, garantendo che la logica di accesso ai dati resti sotto il controllo del codice Java (Repository Pattern). \\ 
+   \hline
+    
+    \textbf{ORM \& Dati} & \textbf{Hibernate (JPA) \& Jackson:} \textbf{Hibernate} gestisce il mapping Oggetto-Relazionale in modo trasparente. \textbf{Jackson} è lo standard industriale per la serializzazione/deserializzazione JSON ad alte prestazioni. \\ 
+    \hline
+    
+    \textbf{Boilerplate Reduction} & \textbf{Lombok:} Automatizza la generazione di metodi ripetitivi (Getter, Setter, Builder), migliorando la leggibilità e riducendo il codice sorgente (\textit{Clean Code}). \\ 
+    \hline
+    
+    \textbf{API Documentation} & \textbf{OpenAPI (Swagger UI):} Integrato via \textit{SpringDoc}, genera automaticamente la documentazione interattiva delle API REST, facilitando il testing degli endpoint e l'integrazione frontend-backend. \\ 
+    \hline
+    
+    \textbf{DevOps} & \textbf{Docker \& Maven:} \textbf{Maven} gestisce il ciclo di vita del build. \textbf{Docker} garantisce la \textit{parità ambientale} tra sviluppo e produzione, incapsulando il backend in container isolati. \\ 
+    \hline
+
+\end{longtable}
+}
+\clearpage
+% =============================================================
+% 3. Documento di Design del Software
+% =============================================================
+\section{Documento di Design del Software}
+
+% -------------------------------------------------------------
+% a. Schema persistenza dati
+% -------------------------------------------------------------
+\subsection*{a. Schema per la persistenza dati}
+\phantomsection
+\addcontentsline{toc}{subsection}{a. Schema per la persistenza dati}
+
+\begin{center}
+    \includegraphics[width=0.92\textwidth, keepaspectratio]{immagini/UML_Database.pdf}
+\end{center}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Descrizione del Modello UML,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+Il livello di persistenza è implementato su \textbf{PostgreSQL}, incapsulato nello schema dedicato \texttt{BugBoard26}.
+
+\vspace{0.2cm}
+\textbf{1. Entità Principali e Tipizzazione} \\
+Per massimizzare l'integrità dei dati, sono stati definiti tipi enumerativi (\texttt{ENUM}) per limitare i valori ammissibili di stati e priorità:
+\begin{itemize}
+    \item \textbf{Utente:} Rappresenta l'attore che interagisce con il sistema, identificato univocamente dall'indirizzo email. La sicurezza è un requisito critico: la password non è salvata in chiaro ma come hash cifrato (\texttt{VARCHAR(60)},  BCrypt). L'attributo booleano \texttt{isAdmin} implementa un controllo degli accessi basato sui ruoli (RBAC), discriminando gli utenti che possono creare e amministrare nuovi Team, Issue e Progetti.
+    
+    \item \textbf{Team:} Entità di aggregazione che definisce il perimetro di collaborazione. Ogni Team è posseduto da un amministratore ed è caratterizzato da un nome univoco. La relazione con l'entità \textit{Utente} è di tipo \textbf{Many-to-Many} (gestita dalla tabella associativa \textit{Partecipanti}), permettendo flessibilità organizzativa: un utente può contribuire a più gruppi di lavoro contemporaneamente.
+    
+    \item \textbf{Progetto:} Unità logica contenuta univocamente all'interno di un Team (\textbf{One-to-Many}). Il ciclo di vita del progetto è governato da una macchina a stati finiti definita dall'enumerativo \texttt{Stato\_Progetto} (\texttt{ATTIVO}, \texttt{FUTURO}, \texttt{CONCLUSO}); vincoli specifici (implementati via Trigger) impediscono la creazione di nuove attività su progetti ormai conclusi o lo spostamento di un progetto da un team all'altro.
+    
+    \item \textbf{Issue:} L'entità core del dominio, rappresentante l'unità di lavoro atomica. È fortemente tipizzata tramite gli Enum \texttt{Tipo\_Issue} (es. BUG, FEATURE) e \texttt{Stato\_Issue}. Oltre ai dati descrittivi, include un flag \texttt{IsArchiviato} che permette l' \textit{archiviazione} (applicabile solo ai Bug risolti).
+\end{itemize}
+
+\textbf{2. Relazioni e Cardinalità}
+Le relazioni tra le entità sono state modellate per riflettere le dinamiche di collaborazione:
+\begin{itemize}
+    \item \textbf{Utente $\leftrightarrow$ Issue (1:N):} Relazione di segnalazione. Ogni issue è creata da un singolo utente; il sistema mantiene traccia dell'autore originale.
+    
+    \item \textbf{Utente $\leftrightarrow$ Issue (N:M):} Gestita dalla tabella associativa \texttt{Assegnazioni}. Una issue può essere assegnata a più sviluppatori contemporaneamente.
+    
+    \item \textbf{Utente $\leftrightarrow$ Team (1:N):} Ogni team è amministrato da un singolo utente con privilegi elevati, responsabile della gestione dei membri.
+    
+    \item \textbf{Utente $\leftrightarrow$ Team (N:M):} Gestita dalla tabella associativa \texttt{Partecipanti}. Un utente può collaborare attivamente in più team distinti con lo stesso account.
+    
+    \item \textbf{Utente $\leftrightarrow$ Progetto (1:N):} Ogni progetto è supervisionato da un responsabile (Admin) che li crea per il suo team.
+    
+    \item \textbf{Team $\rightarrow$ Progetto (1:N):} Relazione di ownership. Un team può gestire molteplici progetti (con uno solo attivo alla volta) , ma ogni progetto appartiene univocamente a un solo team.
+    
+    \item \textbf{Progetto $\rightarrow$ Issue (1:N):} Una issue esiste solo all'interno del contesto di un progetto specifico; non esistono issue "globali".
+\end{itemize}
+\end{tcolorbox}
+
+\newpage
+% -------------------------------------------------------------
+% b. Diagramma delle classi di design (Dettaglio Backend)
+% -------------------------------------------------------------
+\subsection*{b. Diagramma delle classi di design (Dettaglio Backend)}
+\phantomsection
+\addcontentsline{toc}{subsection}{b. Diagramma delle classi di design - Backend}
+
+L'architettura del Backend è stata decomposta in layer logici per facilitare la comprensione del flusso dei dati e delle dipendenze. Di seguito viene presentata l'analisi passo-passo, dal punto di ingresso fino alla persistenza.
+
+% --- STEP 1: ENTRY POINT ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Step 1: Entry Point (Avvio Applicazione),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:}
+    Il punto di ingresso è la classe \texttt{BackendApplication}, annotata con \texttt{@SpringBootApplication}. Questa classe contiene il metodo \texttt{main} che invoca \texttt{SpringApplication.run()}, avviando il container IoC, la scansione dei componenti e l'auto-configurazione del framework.
+    
+    \begin{center}
+        \includegraphics[width=0.6\textwidth]{immagini/backendapplication.png}
+    \end{center}
+\end{tcolorbox}
+
+\newpage
+
+% --- STEP 2: DOMAIN LAYER ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Step 2: Domain Layer (Modello e Persistenza),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:}
+    Il nucleo del sistema è costituito dalle Entità JPA  che mappano le tabelle del database.
+    L'accesso ai dati è gestito tramite interfacce che estendono \texttt{JpaRepository}, fornendo metodi CRUD standard e query custom
+
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{immagini/model.png}
+        \captionof{figure}{Entità del Dominio}
+        \newpage
+        \includegraphics[width=0.97\textwidth]{immagini/repository.png}
+        \captionof{figure}{Interfacce Repository}
+    \end{center}
+\end{tcolorbox}
+
+
+% --- STEP 3: DATA TRANSFER ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Step 3: Data Transfer Layer (DTO \& Mapper),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:}
+    Per disaccoppiare il modello di persistenza dall'API pubblica, vengono utilizzati i DTO. Questi sono divisi in \texttt{Request} (input) e \texttt{Response} (output), e utilizzano \textbf{Lombok per Getter/Setter e Costruttori }(Vuoto e con tutti gli attributi).
+    Il passaggio dati è gestito dai \textbf{Mapper}, componenti annotati che incapsulano la logica di conversione \texttt{toDto} e \texttt{toEntity}, garantendo che le entità non vengano mai esposte direttamente.
+
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{immagini/dto.png}
+        \captionof{figure}{Gerarchia DTO ed Enums}
+        
+        \vspace{0.5cm}
+        
+        \includegraphics[width=0.95\textwidth]{immagini/mapper.png}
+        \captionof{figure}{Componenti Mapper}
+    \end{center}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+\vspace{4cm}
+% --- STEP 4: SERVICE LAYER ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Step 4: Service Layer (Business Logic),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:}
+    Questo layer contiene la logica applicativa pura. I Service orchestrano le operazioni tra Repository e Mapper. 
+    Ad esempio, \texttt{IssueService} gestisce la creazione e l'assegnazione delle issue dipendendo da \texttt{IssueRepository}, \texttt{UtenteRepository} e \texttt{ProgettoRepository}. \texttt{AuthService} gestisce il login interagendo con \texttt{JWTService} per la generazione dei token sicuri.
+
+    \begin{center}
+        \includegraphics[width=1.0\textwidth]{immagini/service.png}
+    \end{center}
+\end{tcolorbox}
+\vspace{4cm}
+
+% --- STEP 5: CONTROLLER LAYER ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Step 5: Controller Layer (API REST),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:}
+    I Controller espongono gli endpoint REST. Essi ricevono i DTO, delegano l'elaborazione al Service corrispondente (es. \texttt{IssueController} usa \texttt{IssueService}) e restituiscono oggetti \texttt{ResponseEntity}. Questo layer non contiene logica di business, fungendo solo da interfaccia.
+
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{immagini/controller.png}
+    \end{center}
+\end{tcolorbox}
+\newpage
+% --- STEP 6: INFRASTRUCTURE ---
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Step 6: Infrastructure (Security \& Exceptions),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:}
+    Le funzionalità trasversali proteggono l'applicazione.
+    La configurazione di sicurezza definisce la catena di filtri, iniettando il \texttt{JwtAuthenticationFilter} che usa \texttt{JWTService} per validare ogni richiesta.
+    La gestione degli errori è centralizzata nel \texttt{GlobalExceptionHandler}, che cattura eccezioni specifiche (es. \texttt{UserNotFoundException}) e le converte in risposte HTTP standardizzate (\texttt{ErrorDTO}).
+
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{immagini/config.png}
+        \captionof{figure}{Security Configuration}
+        
+        \vspace{0.5cm}
+        
+        \includegraphics[width=0.95\textwidth]{immagini/exception.png}
+        \captionof{figure}{Global Exception Handling}
+    \end{center}
+\end{tcolorbox}
+
+% --- FRONTEND CLASS DIAGRAMS COMPLETE ---
+\newpage
+\subsection*{b. Diagramma delle Classi - (Dettaglio Frontend)}
+\phantomsection
+\addcontentsline{toc}{subsection}{b. Diagramma delle classi di design - Frontend}
+
+L'architettura del client è stata progettata seguendo il pattern \textbf{MVC (Model-View-Controller)}, separando nettamente i dati (DTO), la logica di comunicazione (Service), la gestione degli eventi (Controller) e la presentazione (View). Di seguito i diagrammi di dettaglio per ogni layer.
+
+% 1. DTO LAYER
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=1. DTO Layer (Data Transfer Objects),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:} 
+    Definisce le strutture dati utilizzate per il trasferimento delle informazioni tra Frontend e Backend.
+    Include le \textbf{Enum} (Stati, Priorità, Tipi) e le classi \textbf{Request/Response} che mappano i payload JSON delle API REST. Non contengono logica di business, ma solo campi e metodi di accesso.
+
+    \begin{center}
+        \includegraphics[width=1\textwidth]{immagini/frontend_dto.png}
+        \captionof{figure}{Frontend - DTO Package}
+    \end{center}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+% 2. UTILS LAYER
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=2. Utils \& Renderers Layer,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:} 
+    Contiene le classi di utilità trasversali all'applicazione.
+    \begin{itemize}
+        \item \textbf{ImageUtils:} Gestisce la conversione delle immagini da/verso Base64 e il ridimensionamento per le icone Swing.
+        \item \textbf{Renderers:} Classi come \texttt{ImageCellRenderer} e \texttt{UtenteListRenderer} personalizzano la visualizzazione delle celle nelle tabelle (\texttt{JTable}) e nelle liste (\texttt{JList}).
+    \end{itemize}
+
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{immagini/frontend_utils.png}
+        \captionof{figure}{Frontend - Utils Package}
+    \end{center}
+\end{tcolorbox}
+
+\newpage
+
+% 3. SERVICE LAYER
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=3. Service Layer (Business Logic \& HTTP),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:} 
+    Questo layer incapsula la logica di comunicazione con il Backend. Ogni Service (\texttt{AuthService}, \texttt{IssueService}, etc.) utilizza un \texttt{HttpClient} condiviso per effettuare richieste REST, serializzando i DTO tramite \texttt{ObjectMapper}. Gestisce inoltre il token JWT per l'autenticazione.
+
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{immagini/frontend_service.png}
+        \captionof{figure}{Frontend - Service Layer}
+    \end{center}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+% 4. CONTROLLER LAYER
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=4. Controller Layer (MVC Orchestration),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:} 
+    I Controller agiscono da intermediari tra la View e i Service. Intercettano gli eventi dell'interfaccia (click, input), invocano i metodi dei Service (spesso su thread separati per non bloccare la UI) e aggiornano la View con i risultati o gli errori. Il \texttt{NavigationController} gestisce il flusso principale tra le schermate.
+
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{immagini/frontend_controller.png}
+        \captionof{figure}{Frontend - Controller Layer}
+    \end{center}
+\end{tcolorbox}
+
+\newpage
+
+% 5. VIEW LAYER (Introduction)
+Il layer di presentazione è stato modulato in package funzionali. Di seguito i diagrammi specifici per ogni area della GUI.
+
+% VIEW - CORE
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=5.1 View - Core \& Components,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:} 
+    Struttura portante dell'applicazione. \texttt{MainFrame} e \texttt{MainLayoutView} definiscono il contenitore principale e il layout a schede. Include componenti riutilizzabili come \texttt{HeaderPanel} e \texttt{SidebarPanel}.
+
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{immagini/view_start.png}
+        \captionof{figure}{View - Core Components}
+    \end{center}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+% VIEW - USER
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=5.2 View - User Management,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:} 
+    Interfacce per la gestione dell'identità: \texttt{LoginView} per l'accesso, \texttt{RegisterUserDialog} per la creazione di nuovi utenti e \texttt{UpdatePasswordDialog} per cambiare la password.
+
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{immagini/view_user.png}
+        \captionof{figure}{View - User Package}
+    \end{center}
+\end{tcolorbox}
+
+\newpage
+
+% VIEW - PROJECTS
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=5.3 View - Projects,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:} 
+    Gestione dei progetti tramite tabella con azioni integrate (Attiva/Concludi) renderizzate direttamente nelle celle. Include il form di creazione \texttt{CreateProjectDialog}.
+
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{immagini/view_projects.png}
+        \captionof{figure}{View - Projects Package}
+    \end{center}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+% VIEW - TEAMS
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=5.4 View - Teams,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:} 
+    Interfaccia per l'amministrazione dei Team. Permette di visualizzare, creare team e gestire i membri (aggiunta/rimozione) tramite finestre di dialogo dedicate e liste a selezione multipla.
+
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{immagini/view_teams.png}
+        \captionof{figure}{View - Teams Package}
+    \end{center}
+\end{tcolorbox}
+
+\newpage
+
+% VIEW - ISSUES (SVG)
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=5.5 View - Issues (Core Business),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+    \textbf{Descrizione:} 
+    Il modulo centrale per la visualizzazione delle Segnalazioni. \texttt{IssuesView} integra filtri complessi, rendering personalizzato per le immagini (\texttt{ImageCellRenderer}) e pulsanti di azione dinamici basati sullo stato della issue.
+
+    \begin{center}
+        \includegraphics[width=1.0\textwidth]{immagini/view_issues.png}
+        \captionof{figure}{View - Issues Package}
+    \end{center}
+\end{tcolorbox}
+
+\newpage
+
+% -------------------------------------------------------------
+% c. Scelte di software design
+% -------------------------------------------------------------
+\subsection*{c. Descrizione e motivazione delle scelte di software design}
+\phantomsection
+\addcontentsline{toc}{subsection}{c. Scelte di software design}
+
+La progettazione di dettaglio è stata guidata dai principi \textbf{SOLID} e dall'applicazione di \textbf{Design Pattern} per risolvere problemi ricorrenti in modo standardizzato. Di seguito sono dettagliate le scelte implementative principali.
+
+\vspace{1cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=1. Inversion of Control (IoC) \& Dependency Injection,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+Nel backend, è stato evitato l'uso dell'operatore \texttt{new} per istanziare le dipendenze tra le classi di business. La gestione del ciclo di vita degli oggetti è delegata al \textit{Spring IoC Container}.
+\begin{itemize}
+    \item \textbf{Implementazione:} Le dipendenze (es. \texttt{IssueRepository} all'interno di \texttt{IssueService}) vengono iniettate tramite costruttore, sfruttando l'annotazione \texttt{@RequiredArgsConstructor} di Lombok che genera il codice boilerplate necessario.
+    \item \textbf{Motivazione (DIP):} Questa scelta disaccoppia le classi di alto livello dai dettagli implementativi di basso livello. Inoltre, abilita il \textbf{Testing Unitario}: durante i test è possibile iniettare dei \textit{Mock} (oggetti simulati) al posto delle implementazioni reali.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=2. Pattern DTO e Mapper (Object Mapping),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+Il sistema non espone mai le Entità di persistenza (\texttt{@Entity}) direttamente attraverso le API REST. Sono stati definiti oggetti \textbf{DTO} (Data Transfer Object) specifici per ogni operazione.
+\begin{itemize}
+    \item \textbf{Implementazione:} Classi dedicate (es. \texttt{IssueMapper}, \texttt{UtenteMapper}) contengono la logica di conversione \textit{Entity} $\leftrightarrow$ \textit{DTO}. Questo centralizza la logica di trasformazione evitando codice sparso nei Controller.
+    \item \textbf{Motivazione:}
+    \begin{itemize}
+        \item \textbf{Information Hiding:} Previene l'esposizione di dati sensibili (es. password hashate) e dettagli interni del DB.
+        \item \textbf{Disaccoppiamento:} Modifiche allo schema del database non rompono il contratto API verso il client.
+        \item \textbf{Prevenzione Loop:} Evita problemi di ricorsione infinita nella serializzazione JSON di relazioni bidirezionali.
+    \end{itemize}
+\end{itemize}
+\end{tcolorbox}
+
+\newpage
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=3. Repository Pattern (Data Access),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+L'accesso ai dati è stato astratto tramite interfacce che estendono \texttt{JpaRepository}.
+\begin{itemize}
+    \item \textbf{Implementazione:} Interfacce come \texttt{IssueRepository} definiscono i metodi di query, lasciando a Spring Data JPA l'implementazione concreta delle query SQL a runtime.
+    \item \textbf{Motivazione:} Separa la logica di business (Service Layer) dalla logica di accesso ai dati. Permette di cambiare la tecnologia di persistenza o ottimizzare le query senza modificare il codice di business.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=4. Builder Pattern (Creational Pattern),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+Utilizzato estensivamente per la creazione di oggetti complessi, sia DTO che Entità del dominio.
+\begin{itemize}
+    \item \textbf{Implementazione:} Tramite l'annotazione \texttt{@Builder} di Lombok.
+    \item \textbf{Motivazione:} Migliora drasticamente la leggibilità del codice client e riduce la possibilità di errori nello scambio dei parametri nei costruttori.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=5. Observer Pattern (Event Handling),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+Nel Frontend Java Swing, l'interazione utente è gestita tramite il pattern Observer.
+\begin{itemize}
+    \item \textbf{Implementazione:} I componenti della View (es. \texttt{JButton}) agiscono da \textit{Subject}, mentre i metodi nei Controller (implementati tramite listener come \texttt{ActionListener}) agiscono da \textit{Observer}.
+    \item \textbf{Motivazione:} Disaccoppia la componente grafica dalla logica di risposta all'evento. La View non sa cosa succederà quando il bottone viene premuto, si limita a notificare l'evento.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=6. Strategy Pattern (Global Exception Handler),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+La gestione delle eccezioni è centralizzata utilizzando l'Advice di Spring.
+\begin{itemize}
+    \item \textbf{Implementazione:} La classe \texttt{GlobalExceptionHandler} annotata con \texttt{@ControllerAdvice} intercetta le eccezioni lanciate in qualsiasi punto dello stack.
+    \item \textbf{Motivazione:} Implementa il principio \textbf{DRY} e garantisce che il client riceva sempre risposte JSON strutturate in modo coerente (\texttt{ErrorDTO}), indipendentemente dall'origine dell'errore.
+\end{itemize}
+\end{tcolorbox}
+
+\newpage
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=7. Chain of Responsibility (Security Layer),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+La sicurezza è implementata come catena di filtri middleware.
+\begin{itemize}
+    \item \textbf{Implementazione:} Il filtro \texttt{JwtAuthenticationFilter} intercetta le richieste, valida il token e passa il controllo al prossimo filtro nella \texttt{SecurityFilterChain}.
+    \item \textbf{Motivazione:} Gestisce l'autenticazione come un aspetto trasversale, evitando di duplicare i controlli in ogni metodo di business.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=8. Concorrenza nel Frontend (Worker Thread),
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+\begin{itemize}
+    \item \textbf{Problema:} Swing opera su un singolo thread. Eseguire chiamate API sull'EDT bloccherebbe la UI.
+    \item \textbf{Soluzione:} I Controller delegano le operazioni di I/O a \textbf{Worker Threads} separati, aggiornando la UI solo al termine tramite \texttt{SwingUtilities.invokeLater}.
+    \item \textbf{Motivazione:} Garantisce un'applicazione sempre reattiva.
+\end{itemize}
+\end{tcolorbox}
+
+\newpage
+% -------------------------------------------------------------
+% d. Strumenti di versioning
+% -------------------------------------------------------------
+\subsection*{d. Evidenza dell'uso di strumenti di versioning}
+\phantomsection
+\addcontentsline{toc}{subsection}{d. Evidenza dell'uso di strumenti di versioning}
+
+La gestione della configurazione software è stata affidata a \textbf{Git}, con il repository remoto ospitato sulla piattaforma \textbf{GitHub}.
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Statistiche del Repository,
+    fonttitle=\bfseries,
+    coltitle=white,
+]
+\begin{itemize}
+    \item \textbf{Repository URL:} \href{https://github.com/kiyx/progetto-swe-2026}{\texttt{github.com/kiyx/progetto-swe-2026}} \faExternalLink*
+    \item \textbf{Branching Strategy:} Sviluppo diretto sul ramo principale \texttt{main}, garantendo la Continuous Integration.
+    \item \textbf{Totale Commit:} $\sim$110
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{center}
+    \includegraphics[width=0.9\textwidth]{immagini/Commits.png}
+    \captionof{figure}{Grafico della frequenza dei commit (GitHub Insights)}
+\end{center}
+\end{tcolorbox}
+\newpage
+% -------------------------------------------------------------
+% e. Report qualità codice
+% -------------------------------------------------------------
+\subsection*{e. Report di qualità del codice (Backend)}
+\phantomsection
+\addcontentsline{toc}{subsection}{e. Report di qualità del codice}
+
+Il controllo della qualità del codice è stato integrato nel ciclo di sviluppo utilizzando \textbf{SonarCloud} per l'analisi statica (SAST), \textbf{SonarQube IDE} e \textbf{JaCoCo} per la verifica della copertura dei test.
+Il progetto rispetta il \textbf{Quality Gate} definito (Rating A su tutte le metriche principali).
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Metriche Rilevate da SonarCloud,
+    fonttitle=\bfseries,
+    coltitle=white,
+]
+\begin{center}
+    \includegraphics[width=1.02\textwidth]{immagini/SonarCloud.png}
+    \captionof{figure}{Dashboard di Qualità SonarCloud}
+\end{center}
+
+\vspace{0.2cm}
+\textbf{Analisi dei Risultati:}
+\begin{itemize}
+    \item \textbf{Affidabilità (Reliability): Rating A.} Sono stati rilevati \textbf{0 Bug} critici o bloccanti.
+    
+    \item \textbf{Sicurezza (Security): Rating A.} \textbf{0 Vulnerabilità.} \\
+    \textit{Nota:} Un "Security Hotspot" relativo alla disabilitazione della protezione CSRF è stato analizzato manualmente e marcato come \textbf{Safe}. Questa scelta è architetturalmente corretta e intenzionale poiché il sistema utilizza un'autenticazione Stateless basata su Token JWT (che non sfrutta i cookie di sessione), rendendo l'attacco CSRF non applicabile in questo contesto.
+    
+    \item \textbf{Manutenibilità (Maintainability): Rating A.} Il \textit{Debito Tecnico} è assente. L'uso estensivo della libreria \textbf{Lombok} ha contribuito significativamente a questo risultato, eliminando centinaia di righe di codice ripetitivo (getter, setter, costruttori) che avrebbero altrimenti inflazionato la complessità ciclomatica e ridotto la leggibilità.
+
+    \item \textbf{Code Coverage: 5.0\%.} \\
+    Il valore percentuale è apparentemente ridotto perchè l'attività di testing è stata intenzionalmente circoscritta alla verifica di \textbf{due metodi non banali} del Service Layer. 
+\end{itemize}
+\end{tcolorbox}
+\newpage
+
+% -------------------------------------------------------------
+% f. Codice Sorgente sviluppato e Artefatti
+% -------------------------------------------------------------
+\subsection*{f. Codice Sorgente sviluppato e Artefatti}
+\phantomsection
+\addcontentsline{toc}{subsection}{f. Codice Sorgente sviluppato e Artefatti}
+
+Il progetto è organizzato come un \textbf{Monorepo Maven Multi-Modulo}. Questa struttura centralizzata permette di gestire sia il frontend che il backend in modo coerente.
+Per facilitare la valutazione, l'archivio compresso (\texttt{.zip}) consegnato include tutti i file di configurazione necessari (incluso il file \texttt{.env} con le credenziali per il database cloud), rendendo il sistema pronto all'uso.
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Struttura della Directory,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+\small
+\begin{verbatim}
+progetto-swe-2026/
+├── backend/                # Modulo Server (Spring Boot)
+│   ├── .env                 # Configurazione DB (Pre-caricata nel .zip)
+│   ├── Dockerfile           # Configurazione Multi-Stage Build
+│   ├── docker-compose.yml   # Orchestrazione container (Backend)
+│   └── src/                 # Codice sorgente Java
+├── frontend/               # Modulo Client (Java Swing)
+│   ├── mvnw.cmd             # Maven Wrapper (per Windows)
+│   └── src/                 # Codice sorgente Java
+├── .github/workflows/      # Pipeline CI/CD (GitHub Actions)
+└── README.md               # Documentazione introduttiva
+\end{verbatim}
+\end{tcolorbox}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=BoxLight,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Istruzioni per Build ed Esecuzione,
+    fonttitle=\bfseries,
+    coltitle=white,
+    breakable
+]
+
+\vspace{0.3cm}
+\textbf{1. Avvio del Backend (Docker)} \\
+Il backend viene eseguito in un container Docker. Non è necessario avviare un DB locale in quanto il sistema si connette al database Cloud (Neon).
+\begin{tcolorbox}[colback=black!85, colupper=white, boxrule=0pt, arc=2pt, left=2mm, top=1mm, bottom=1mm]
+\small
+\begin{verbatim}
+cd backend
+docker-compose up --build
+\end{verbatim}
+\end{tcolorbox}
+
+\vspace{0.3cm}
+\textbf{2. Avvio del Frontend (Maven)} \\
+Aprire un nuovo terminale ed eseguire il client Desktop:
+\begin{tcolorbox}[colback=black!85, colupper=white, boxrule=0pt, arc=2pt, left=2mm, top=1mm, bottom=1mm]
+\small
+\begin{verbatim}
+cd ../frontend
+mvn clean compile exec:java
+\end{verbatim}
+\end{tcolorbox}
+\end{tcolorbox}
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    sharp corners,
+    title=Strategia di Deployment e CI,
+    fonttitle=\bfseries,
+    coltitle=white,
+]
+\begin{itemize}
+    \item \textbf{Docker Multi-Stage Build:} Il \texttt{Dockerfile} utilizza una strategia a due stadi (Build vs Runtime) per produrre un'immagine sicura e leggera basata su \texttt{eclipse-temurin:21-jre-alpine}.
+    \item \textbf{CI Pipeline:} Configuratata su GitHub Actions (\texttt{build.yml}) per eseguire compilazione, test e analisi SonarCloud ad ogni push sul branch principale.
+\end{itemize}
+\end{tcolorbox}
+
+
+% =============================================================
+% 4. Attività di Testing
+% =============================================================
+\clearpage
+\section{Attività di Testing}
+
+In conformità con la modalità di svolgimento del progetto ("in itinere"), l'attività di testing si è concentrata sulla verifica di unità di due metodi significativi del Service Layer, applicando criteri formali di selezione dei casi di test.
+
+% -------------------------------------------------------------
+% a. Test Plan
+% -------------------------------------------------------------
+\subsection*{a. Test Plan}
+Il piano di test seguente verifica la funzionalità \textbf{Creazione Issue}, identificata come critica per il sistema. L'obiettivo è validare la robustezza dell'applicazione su quattro livelli di difesa:
+\begin{itemize}
+    \item \textbf{Frontend (UI):} Prevenzione errori banali prima dell'invio.
+    \item \textbf{Backend (DTO):} Validazione formale dei dati in ingresso.
+    \item \textbf{Backend (Service):} Logica di business, integrità dei dati e controlli di sicurezza difensivi.
+    \item \textbf{Backend (Security):} Filtri di autenticazione a protezione dell'API.
+\end{itemize}
+
+I casi di test coprono tutte le classi di equivalenza identificate e i valori limite definiti.
+
+% Configurazione tabella
+\renewcommand{\arraystretch}{1.4}
+\small
+\begin{longtable}{|p{1.2cm}|p{6.0cm}|p{5.5cm}|c|}
+    \hline
+    \rowcolor{UninaBlue} 
+    \textbf{\color{white}ID} & \textbf{\color{white}Scenario \& Input} & \textbf{\color{white}Oracolo (Risultato Atteso)} & \textbf{\color{white}Esito} \\ 
+    \hline
+    \endfirsthead
+    
+    \hline
+    \rowcolor{UninaBlue} 
+    \textbf{\color{white}ID} & \textbf{\color{white}Scenario \& Input} & \textbf{\color{white}Oracolo (Risultato Atteso)} & \textbf{\color{white}Esito} \\ 
+    \hline
+    \endhead
+
+    % --- HAPPY PATH ---
+    \multicolumn{4}{|c|}{\cellcolor{BoxLight}\textbf{Scenari di Successo (Happy Path)}} \\ \hline
+    
+    \textbf{TC-01} & 
+    \textbf{Creazione Completa} \newline
+    Titolo="Bug Login",\newline Descr="Errore 500",\newline Tipo=BUG, \newline Priorità=ALTA, \newline Progetto="Magazzino", \newline Img=Gattino. & 
+    \textbf{SUCCESSO (201 Created)} \newline
+    Issue salvata su DB. Il client mostra "Issue creata!" e aggiorna la lista. & 
+    Pass \\ \hline
+
+    \textbf{TC-02} & 
+    \textbf{Creazione Minima} \newline
+    Titolo="Info", \newline Descr="Test", \newline Tipo=QUESTION, \newline Progetto="Magazzino" \newline (No Priorità/Img). & 
+    \textbf{SUCCESSO} \newline
+    Issue creata con valori default (Stato=TODO, Img=null,  Priorità=null). & 
+    Pass \\ \hline
+
+    \textbf{TC-03} & 
+    \textbf{Valori Limite Minimi} \newline
+    Titolo="Ok" (2 char),\newline Descr="No" (2 char). & 
+    \textbf{SUCCESSO} \newline
+    Accettato dal validatore backend \texttt{@Size(min=2)} e Issue creata. & 
+    Pass \\ \hline
+
+    \textbf{TC-04} & 
+    \textbf{Valori Limite Massimi} \newline
+    Titolo="[Stringa di 200 caratteri]", \newline Descr="Ciao" & 
+    \textbf{SUCCESSO} \newline
+    Accettato dal validatore backend \texttt{@Size(max=200)} e Issue creata. & 
+    Pass \\ \hline
+    \multicolumn{4}{|c|}{\cellcolor{white}\textbf{}} \\ \hline
+    
+    % --- FRONTEND ---
+    \multicolumn{4}{|c|}{\cellcolor{BoxLight}\textbf{Validazione Frontend (UI Swing)}} \\ \hline
+
+    \textbf{TC-05} & 
+    \textbf{Titolo Vuoto} \newline
+    Input: Stringa vuota o spazi. & 
+    \textbf{BLOCCO CLIENT} \newline
+    Dialog aperto. Popup: "Il titolo è obbligatorio". & 
+    Pass \\ \hline
+
+    \textbf{TC-06} & 
+    \textbf{Descrizione Vuota} \newline
+    Input: Stringa vuota o spazi. & 
+    \textbf{BLOCCO CLIENT} \newline
+    Dialog aperto. Popup: "La descrizione è obbligatoria". & 
+    Pass \\ \hline
+
+    \textbf{TC-07} & 
+    \textbf{Progetto Non Selezionato} \newline
+    Input: Combo box a null. & 
+    \textbf{BLOCCO CLIENT} \newline
+    Dialog aperto. Popup: "Seleziona un progetto". & 
+    Pass \\ \hline
+
+    % --- BACKEND DTO ---
+    \multicolumn{4}{|c|}{\cellcolor{BoxLight}\textbf{Validazione Backend (DTO Constraints)}} \\ \hline
+
+    \textbf{TC-08} & 
+    \textbf{Titolo Troppo Corto} \newline
+    Input: "A" (1 char). Inviato bypassando UI. & 
+    \textbf{ERRORE 400 (Bad Request)} \newline
+    Violazione \texttt{@Size(min=2)}. & 
+    Pass \\ \hline
+
+    \textbf{TC-09} & 
+    \textbf{Titolo Troppo Lungo} \newline
+    Input: Stringa $>200$ char. & 
+    \textbf{ERRORE 400 (Bad Request)} \newline
+    Violazione \texttt{@Size(max=200)}. & 
+    Pass \\ \hline
+
+    \textbf{TC-10} & 
+    \textbf{Descrizione Corta} \newline
+    Input: "A" (1 char). & 
+    \textbf{ERRORE 400 (Bad Request)} \newline
+    Violazione \texttt{@Size(min=2)}. & 
+    Pass \\ \hline
+
+    \textbf{TC-11} & 
+    \textbf{Tipo Issue Nullo} \newline
+    Input: Campo 'tipo' assente nel JSON. & 
+    \textbf{ERRORE 400 (Bad Request)} \newline
+    Violazione \texttt{@NotBlank} su Enum. & 
+    Pass \\ \hline
+
+    \textbf{TC-12} & 
+    \textbf{ID Progetto Nullo} \newline
+    Input: Campo 'idProgetto' nullo. & 
+    \textbf{ERRORE 400 (Bad Request)} \newline
+    Violazione \texttt{@NotNull}. & 
+    Pass \\ \hline
+
+    % --- BACKEND SERVICE ---
+    \multicolumn{4}{|c|}{\cellcolor{BoxLight}\textbf{Logica di Business (Service \& Security)}} \\ \hline
+
+    \textbf{TC-13} & 
+    \textbf{Security Check Manuale} \newline
+    Service invocato con Context Authentication nullo. & 
+    \textbf{ERRORE 401 (Unauthorized) } \newline
+    Service lancia SecurityException ("Utente non autenticato"). & 
+    Pass \\ \hline
+
+    \textbf{TC-14} & 
+    \textbf{Progetto Inesistente} \newline
+    Input: ID Progetto 9999 (Non nel DB). & 
+    \textbf{ERRORE 404 (Not Found)} \newline
+    \texttt{EntityNotFoundException}. Msg: "Progetto non trovato". & 
+    Pass \\ \hline
+
+    \textbf{TC-15} & 
+    \textbf{Autore Inesistente} \newline
+    Token valido ma utente rimosso fisicamente dal DB. & 
+    \textbf{ERRORE 404 (Not Found)} \newline
+     \texttt{EntityNotFoundException}. Msg: "Utente non trovato". & 
+    Pass  \\ \hline
+
+    \textbf{TC-16} & 
+    \textbf{Filtro Autenticazione} \newline
+    Richiesta HTTP senza Header JWT. & 
+    \textbf{ERRORE 403/401} \newline
+    Bloccato dal JwtAuthenticationFilter prima del Service. & 
+    Pass \\ \hline
+\end{longtable}
+\newpage
+
+\subsection*{b. Codice Sorgente dei Test}
+Di seguito viene riportata l'implementazione dei test di unità per la classe \texttt{IssueService}. Il codice verifica i metodi \texttt{updateIssue} e \texttt{assignIssue} utilizzando Mockito per l'isolamento delle dipendenze.
+
+\begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=UninaBlue,
+    boxrule=0.8pt,
+    arc=3pt,
+    title=IssueServiceTest.java,
+    fonttitle=\bfseries\small,
+    coltitle=white,
+    breakable
+]
+\begin{verbatim}
+@ExtendWith(MockitoExtension.class)
+class IssueServiceTest
+{
+    @Mock IssueRepository issueRepository;
+    @Mock UtenteRepository utenteRepository;
+    @Mock ProgettoRepository progettoRepository;
+    @Mock IssueMapper issueMapper;
+    @InjectMocks IssueService service;
+
+    // ---------------------------------------------
+    // Test per updateIssue
+    // ---------------------------------------------
+
+    // T1: CE-ID2 (Non Esiste) + CE-DTO1 (Valido) -> EntityNotFoundException
+    @Test
+    void updateIssue_T1_NotFound()
+    {
+        Long issueId = 999L;
+        UpdateIssueRequestDTO request = new UpdateIssueRequestDTO();
+
+        when(issueRepository.findById(issueId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, 
+            () -> service.updateIssue(issueId, request));
+
+        verify(issueRepository, never()).save(any());
+    }
+
+    // T2: CE-ID3 (Null) + CE-DTO2 (Null) -> IllegalArgumentException
+    @Test
+    void updateIssue_T2_IdNull_DtoNull()
+    {
+        when(issueRepository.findById(isNull()))
+            .thenThrow(new IllegalArgumentException("ID null"));
+
+        assertThrows(IllegalArgumentException.class, 
+            () -> service.updateIssue(null, null));
+
+        verify(issueRepository).findById(isNull());
+    }
+
+
+    // T3: CE-ID1 (Esiste) + CE-DTO1 (Valido) -> Successo
+    @Test
+    void updateIssue_T3_Success()
+    {
+        Long issueId = 1L;
+        Issue issue = new Issue();
+        issue.setId(issueId);
+
+        UpdateIssueRequestDTO request = new UpdateIssueRequestDTO();
+        request.setTitolo("Nuovo Titolo");
+
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
+
+        // Simuliamo che il mapper aggiorni davvero l'oggetto
+        doAnswer(invocation ->
+        {
+            Issue t = invocation.getArgument(0);
+            UpdateIssueRequestDTO s = invocation.getArgument(1);
+            t.setTitolo(s.getTitolo());
+            return null;
+        }).when(issueMapper).update(any(), any());
+
+        service.updateIssue(issueId, request);
+
+        assertEquals("Nuovo Titolo", issue.getTitolo());
+        verify(issueRepository).save(issue);
+    }
+
+    // T4: CE-ID1 (Esiste) + CE-DTO2 (Null) -> Successo
+    @Test
+    void updateIssue_T4_DtoNull()
+    {
+        Long issueId = 1L;
+        Issue issue = new Issue();
+        issue.setId(issueId);
+
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
+
+        service.updateIssue(issueId, null);
+
+        verify(issueMapper).update(eq(issue), isNull());
+        verify(issueRepository).save(issue);
+    }
+
+
+
+
+
+
+    // ---------------------------------------------
+    // Test per assignIssue
+    // ---------------------------------------------
+
+    // T1: CE-ID1 (TODO) + CE-U1 (Lista Piena) -> Successo + Cambio Stato
+    @Test
+    void assignIssue_T1_Todo_ListNotEmpty()
+    {
+        Long issueId = 1L;
+        Issue issue = new Issue();
+        issue.setStato(StatoIssue.TODO);
+
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
+        when(utenteRepository.findAllById(anyList()))
+            .thenReturn(List.of(new Utente()));
+
+        service.assignIssue(issueId, List.of(10L));
+
+        assertEquals(StatoIssue.ASSEGNATA, issue.getStato());
+        verify(issueRepository).save(issue);
+    }
+
+    // T2: CE-ID2 (Altro Stato) + CE-U2 (Lista Vuota) -> Successo + No Stato
+    @Test
+    void assignIssue_T2_OtherState_EmptyList()
+    {
+        Long issueId = 1L;
+        Issue issue = new Issue();
+        issue.setStato(StatoIssue.RISOLTA);
+
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
+        when(utenteRepository.findAllById(Collections.emptyList()))
+            .thenReturn(Collections.emptyList());
+
+        service.assignIssue(issueId, Collections.emptyList());
+
+        assertEquals(StatoIssue.RISOLTA, issue.getStato());
+    }
+
+    // T3: CE-ID3 (Non Esiste) + CE-U1 (Valid) -> EntityNotFoundException
+    @Test
+    void assignIssue_T3_IssueNotFound()
+    {
+        when(issueRepository.findById(999L)).thenReturn(Optional.empty());
+
+        List<Long> ids = List.of(1L);
+        assertThrows(EntityNotFoundException.class, 
+            () -> service.assignIssue(999L, ids));
+    }
+
+    // T4: CE-ID4 (Null) + CE-U2 (Valid) -> IllegalArgumentException
+    @Test
+    void assignIssue_T4_IssueIdNull()
+    {
+        when(issueRepository.findById(null))
+            .thenThrow(new IllegalArgumentException("ID null"));
+
+        List<Long> emptyList = Collections.emptyList();
+        assertThrows(IllegalArgumentException.class, 
+            () -> service.assignIssue(null, emptyList));
+    }
+
+    // T5: CE-U3 (Null List) + CE-ID2 (Valid) -> IllegalArgumentException
+    @Test
+    void assignIssue_T5_ListNull()
+    {
+        Long issueId = 1L;
+        Issue issue = new Issue();
+        issue.setStato(StatoIssue.RISOLTA);
+
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
+        when(utenteRepository.findAllById(null))
+            .thenThrow(new IllegalArgumentException("List null"));
+
+        assertThrows(IllegalArgumentException.class, 
+            () -> service.assignIssue(issueId, null));
+    }
+}
+\end{verbatim}
+\end{tcolorbox}
+
+\subsection*{c. Documentazione strategie di testing}
+Per la verifica delle unità funzionali del Service Layer, è stata adottata la strategia \textbf{Black Box} denominata \textbf{R-WECT (Robust Weak Equivalence Class Testing)}.
+
+Questa tecnica prevede la partizione del dominio di input $D$ in un insieme di classi di equivalenza disgiunte $C_1, C_2, \dots, C_n$ tali che:
+\[
+D = \bigcup_{i=1}^{n} C_i \quad \text{e} \quad C_i \cap C_j = \emptyset, \forall i \neq j
+\]
+Si assume che il comportamento del software sia omogeneo per tutti i valori appartenenti alla stessa classe $C_i$. La strategia R-WECT impone di testare tutte le classi valide (copertura Weak) e di testare le classi invalide singolarmente (Single Fault Assumption).
+
+\subsubsection*{Motivazione della scelta}
+La decisione di adottare la strategia \textbf{R-WECT} rispetto ad altre tecniche di partizionamento (come la \textit{Strong Normal} o la \textit{Strong Robust}) è supportata dalle seguenti considerazioni progettuali:
+
+\begin{enumerate}
+    \item \textbf{Gestione della Robustezza (Robustness):} 
+    Trattandosi di metodi del \textit{Service Layer} che agiscono da barriera protettiva per il Database, è critico verificare non solo il "percorso felice" (Happy Path), ma soprattutto la capacità del sistema di intercettare e gestire input invalidi (es. \texttt{null}, ID inesistenti) sollevando le eccezioni appropriate (es. \texttt{EntityNotFoundException}), prevenendo corruzione dei dati o \textit{NullPointerException} non gestite.
+
+    \item \textbf{Efficienza (Single Fault Assumption):} 
+    La strategia \textit{Weak} (Debole) permette di contenere il numero di casi di test evitando l'esplosione combinatoria tipica della copertura \textit{Strong} (prodotto cartesiano completo di tutte le classi). 
+    Si assume valida l'ipotesi del "Guasto Singolo" (\textit{Single Fault Assumption}), secondo cui i malfunzionamenti nel codice di business sono raramente causati dalla combinazione specifica di due o più input validi, ma piuttosto da un singolo input invalido o da errori nella logica sequenziale.
+
+    \item \textbf{Natura dei Dati:} 
+    I parametri in ingresso (ID numerici, Enum, Oggetti DTO) si prestano naturalmente a una suddivisione in classi discrete piuttosto che a un'analisi ai valori limite (Boundary Value Analysis), che è stata comunque implicitamente considerata nella definizione delle classi \textit{Boundary} (es. Lista vuota).
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\subsubsection*{1. Analisi Funzionalità: Update Issue}
+Il dominio di input è determinato dal prodotto cartesiano dei parametri $P_1$ (Issue ID) e $P_2$ (Request DTO).
+
+\textbf{Definizione Formale delle Classi di Equivalenza:}
+\begin{itemize}
+    \item \textbf{Parametro $P_1$: Issue ID} ($D_{ID}$)
+    \begin{itemize}
+        \item \textbf{CE-ID1 (Valida):} $\{ id \in D_{ID} \mid \exists \text{issue} \in DB : \text{issue.id} = id \land id \neq null \}$
+        \item \textbf{CE-ID2 (Invalida):} $\{ id \in D_{ID} \mid \neg \exists \text{issue} \in DB : \text{issue.id} = id \land id \neq null \}$
+        \item \textbf{CE-ID3 (Invalida):} $\{ id \in D_{ID} \mid id = null \}$
+    \end{itemize}
+    
+    \item \textbf{Parametro $P_2$: Request DTO} ($D_{DTO}$)
+    \begin{itemize}
+        \item \textbf{CE-DTO1 (Valida):} $\{ d \in D_{DTO} \mid d \neq null \}$
+        \item \textbf{CE-DTO2 (Valida - Boundary):} $\{ d \in D_{DTO} \mid d = null \}$
+    \end{itemize}
+\end{itemize}
+
+\textbf{Casi di Test Selezionati (R-WECT):}
+\renewcommand{\arraystretch}{1.5}
+\begin{longtable}{|p{1.0cm}|p{4.5cm}|p{3.5cm}|p{4.5cm}|}
+    \hline
+    \rowcolor{UninaBlue} 
+    \textbf{\color{white}Test} & \textbf{\color{white}Combinazione ($P_1, P_2$)} & \textbf{\color{white}Tipologia} & \textbf{\color{white}Oracolo (Output)} \\ 
+    \hline
+    \textbf{T1} & CE-ID2, CE-DTO1 & Invalido & Eccezione \texttt{EntityNotFound} \\ \hline
+    \textbf{T2} & CE-ID3, CE-DTO2 & Invalido & Eccezione \texttt{IllegalArgument} \\ \hline
+    \textbf{T3} & CE-ID1, CE-DTO1 & Valido & Successo (Update \& Save) \\ \hline
+    \textbf{T4} & CE-ID1, CE-DTO2 & Valido & Successo (No Change) \\ \hline
+\end{longtable}
+
+\vspace{0.5cm}
+
+\subsubsection*{2. Analisi Funzionalità: Assign Issue}
+Per gestire la dipendenza logica tra l'esistenza dell'entità e il suo stato interno, il primo parametro è stato modellato come "Condizione Issue".
+
+\textbf{Definizione Formale delle Classi di Equivalenza:}
+\begin{itemize}
+    \item \textbf{Parametro $P_1$: Condizione Issue} ($D_{Issue}$)
+    \begin{itemize}
+        \item \textbf{CE-ID1 (Valida):} $\{ i \in D_{Issue} \mid i \in DB \land i.stato = \text{TODO} \}$
+        \item \textbf{CE-ID2 (Valida):} $\{ i \in D_{Issue} \mid i \in DB \land i.stato \neq \text{TODO} \}$
+        \item \textbf{CE-ID3 (Invalida):} $\{ i \in D_{Issue} \mid i \notin DB \}$
+        \item \textbf{CE-ID4 (Invalida):} $\{ i \in D_{Issue} \mid i = null \}$
+    \end{itemize}
+    
+    \item \textbf{Parametro $P_2$: Lista Utenti} ($D_{List}$)
+    \begin{itemize}
+        \item \textbf{CE-U1 (Valida):} $\{ L \in D_{List} \mid |L| \ge 1 \}$
+        \item \textbf{CE-U2 (Valida - Boundary):} $\{ L \in D_{List} \mid L = \emptyset \}$
+        \item \textbf{CE-U3 (Invalida):} $\{ L \in D_{List} \mid L = null \}$
+    \end{itemize}
+\end{itemize}
+
+\textbf{Casi di Test Selezionati (R-WECT):}
+\begin{longtable}{|p{1.0cm}|p{4.5cm}|p{3.5cm}|p{4.5cm}|}
+    \hline
+    \rowcolor{UninaBlue} 
+    \textbf{\color{white}Test} & \textbf{\color{white}Combinazione ($P_1, P_2$)} & \textbf{\color{white}Tipologia} & \textbf{\color{white}Oracolo (Output)} \\ 
+    \hline
+    \textbf{T1} & CE-ID1, CE-U1 & Valido & Successo (Stato $\to$ ASSEGNATA) \\ \hline
+    \textbf{T2} & CE-ID2, CE-U2 & Valido & Successo (Stato invariato) \\ \hline
+    \textbf{T3} & CE-ID3, CE-U1 & Invalido & Eccezione \texttt{EntityNotFound} \\ \hline
+    \textbf{T4} & CE-ID4, CE-U2 & Invalido & Eccezione \texttt{IllegalArgument} \\ \hline
+    \textbf{T5} & CE-ID2, CE-U3 & Invalido & Eccezione \texttt{IllegalArgument} \\ \hline
+\end{longtable}
+
+\end{document}
